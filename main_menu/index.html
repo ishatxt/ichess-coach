@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iChess</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- Removed the tabs section completely -->
+
+    <!-- Drag Handle -->
+    <div class="drag-handle" id="dragHandle">
+      <div class="drag-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <!-- ================= MAIN SETTINGS ================= -->
+    <div class="panel active" id="chess">
+      <h1>iChess - live coach</h1>
+
+      <!-- COACH CARD -->
+      <div class="section-divider"><span>Coach Personality</span></div>
+
+      <div class="coach-card">
+        <div class="coach-card-inner">
+          <div class="coach-avatar-wrap">
+            <div class="coach-avatar-none" id="coachAvatarNone">♟</div>
+            <img class="coach-avatar" id="coachAvatarImg" src="" alt="" style="display: none" />
+            <div class="coach-avatar-badge" id="coachBadge" style="display: none">🎙</div>
+          </div>
+          <div class="coach-info">
+            <div class="coach-name-none" id="coachDisplayName">No Coach</div>
+            <div class="coach-lang" id="coachDisplayLang">Select a coach to get started</div>
+          </div>
+          <div class="coach-select-wrap">
+            <select id="coach">
+              <option selected value="999">None</option>
+              <optgroup label="David">
+                <option value="0">David · English</option>
+                <option value="1">David · Français</option>
+                <option value="2">David · Español</option>
+                <option value="3">David · عربي</option>
+                <option value="4">David · Русский</option>
+                <option value="5">David · Português</option>
+                <option value="6">David · Deutsch</option>
+                <option value="7">David · Italiano</option>
+                <option value="8">David · Türkçe</option>
+                <option value="9">David · Polski</option>
+                <option value="10">David · 한국어</option>
+                <option value="11">David · Indonesia</option>
+              </optgroup>
+              <optgroup label="Mae">
+                <option value="12">Mae · English</option>
+                <option value="13">Mae · Français</option>
+                <option value="14">Mae · Español</option>
+                <option value="15">Mae · عربي</option>
+                <option value="16">Mae · Русский</option>
+                <option value="17">Mae · Português</option>
+                <option value="18">Mae · Deutsch</option>
+                <option value="19">Mae · Italiano</option>
+                <option value="20">Mae · Türkçe</option>
+                <option value="21">Mae · Polski</option>
+                <option value="22">Mae · 한국어</option>
+                <option value="23">Mae · Indonesia</option>
+              </optgroup>
+              <optgroup label="Dante">
+                <option value="24">Dante · English</option>
+                <option value="25">Dante · Français</option>
+                <option value="26">Dante · Español</option>
+                <option value="27">Dante · عربي</option>
+                <option value="28">Dante · Русский</option>
+                <option value="29">Dante · Português</option>
+                <option value="30">Dante · Deutsch</option>
+                <option value="31">Dante · Italiano</option>
+                <option value="32">Dante · Türkçe</option>
+                <option value="33">Dante · Polski</option>
+                <option value="34">Dante · 한국어</option>
+                <option value="35">Dante · Indonesia</option>
+              </optgroup>
+              <optgroup label="Nadia">
+                <option value="36">Nadia · English</option>
+                <option value="37">Nadia · Français</option>
+                <option value="38">Nadia · Español</option>
+                <option value="39">Nadia · عربي</option>
+                <option value="40">Nadia · Русский</option>
+                <option value="41">Nadia · Português</option>
+                <option value="42">Nadia · Deutsch</option>
+                <option value="43">Nadia · Italiano</option>
+                <option value="44">Nadia · Türkçe</option>
+                <option value="45">Nadia · Polski</option>
+                <option value="46">Nadia · 한국어</option>
+                <option value="47">Nadia · Indonesia</option>
+              </optgroup>
+              <optgroup label="Celebrity">
+                <option value="48">Levy · English</option>
+                <option value="49">Magnus · English</option>
+                <option value="50">Hikaru · English</option>
+                <option value="51">Anna · English</option>
+                <option value="52">Canty · English</option>
+                <option value="53">Vishy · English</option>
+                <option value="54">Tania · English</option>
+                <option value="55">Danny · English</option>
+                <option value="56">Botez · English</option>
+                <option value="57">Ben · English</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="setting-help">Choose your coach and preferred language.</div>
+
+      <!-- COACH SUB-SETTINGS -->
+      <div id="coach-container" style="display: none">
+        <div class="setting">
+          <label>Coach Analysis Depth : <span class="value-badge" id="depth2Value">10</span></label>
+          <input type="range" id="depth2" min="1" max="15" step="1" value="10" />
+        </div>
+        <div class="setting-help">Higher depth = more accurate analysis (slower).</div>
+
+        <div class="setting">
+          <span id="moveClassificationStartLabel">Move Classification Icons (OFF)</span>
+          <label class="toggle">
+            <input type="checkbox" id="moveClassification" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-help">Show move quality icons like !! or ?? on the board.</div>
+
+        <div class="setting">
+          <span id="speachStartLabel">Coach Voice Explanation (OFF)</span>
+          <label class="toggle">
+            <input type="checkbox" id="speach" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-help">Coach speaks and explains moves verbally.</div>
+
+        <div class="setting">
+          <span id="accWidgetStartLabel">Accuracy Widget (ON)</span>
+          <label class="toggle">
+            <input type="checkbox" id="showAccWidget" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-help">Show accuracy and rating display during review.</div>
+
+        <div class="setting">
+          <span>Toggle Key</span>
+          <div class="key-input-wrap">
+            <input type="text" class="key-input" id="toggleKey" maxlength="1" placeholder="=" />
+          </div>
+        </div>
+        <div class="setting-help">Key to toggle the coach on/off during game.</div>
+
+        <div class="setting">
+          <span>Switch Key</span>
+          <div class="key-input-wrap">
+            <input type="text" class="key-input" id="switchKey" maxlength="1" placeholder="-" />
+          </div>
+        </div>
+        <div class="setting-help">Key to switch between analysis lines.</div>
+      </div>
+
+      <div class="bottom-actions">
+        <button class="btn" id="reset">Reset to Default</button>
+      </div>
+    </div>
+
+    <script src="index.js"></script>
+  </body>
+</html>
