@@ -21,7 +21,7 @@ A Chrome browser extension that acts as a real-time chess coach, injecting live 
 1. Open **Google Chrome** and navigate to `chrome://extensions/`
 2. Enable **Developer Mode** (toggle in the top-right corner)
 3. Click **"Load unpacked"**
-4. Select the `ichess-coach-main` directory
+4. Select the `ichess-coach` directory
 5. The extension icon will appear in your toolbar
 
 ## Usage
