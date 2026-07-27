@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "iChess",
-  "version": "2",
+  "version": "3",
   "key": "17f06cae4d6be44be69130c560ae714f",
   "description": "Chess - live Coach",
   "icons": {
