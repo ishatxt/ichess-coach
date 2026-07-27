@@ -1564,6 +1564,163 @@ function toggleCoachMenu() {
   credits.appendChild(creditsSub);
   panel.appendChild(credits);
 
+  /* -------- Credits Modal -------- */
+  const creditsModalStyles = document.createElement("style");
+  creditsModalStyles.id = "ichess-credits-modal-styles";
+  creditsModalStyles.textContent = `
+    #ichess-credits-modal-overlay {
+      position:fixed; inset:0; z-index:10000000;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.7);
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      animation:ichessFadeIn .25s ease;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-content {
+      position:relative;
+      width:340px; padding:32px 28px;
+      background:rgba(16,16,16,.92);
+      backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:16px;
+      font-family:'Space Mono',monospace; color:#f5f5f5;
+      animation:ichessPanelIn .3s cubic-bezier(.16,1,.3,1);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.03) inset,
+        0 32px 80px rgba(0,0,0,.6),
+        0 0 120px rgba(255,255,255,.015),
+        inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    #ichess-credits-modal-overlay .ichess-credits-close {
+      position:absolute; top:14px; right:16px;
+      width:30px; height:30px;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:8px; color:#888;
+      font-size:18px; cursor:pointer;
+      transition:all .2s; line-height:1;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-close:hover {
+      background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.2);
+      color:#fff;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-title {
+      text-align:center; margin-bottom:28px;
+      font-size:14px; font-weight:700;
+      letter-spacing:3px; text-transform:uppercase; color:#fff;
+      text-shadow:0 0 12px rgba(255,255,255,.3);
+    }
+    #ichess-credits-modal-overlay .ichess-credits-section { margin-bottom:20px; }
+    #ichess-credits-modal-overlay .ichess-credits-label {
+      font-size:10px; font-weight:700;
+      letter-spacing:2.5px; text-transform:uppercase;
+      color:#888; margin-bottom:8px;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-value {
+      font-size:13px; font-weight:600; color:#e0e0e0;
+      letter-spacing:.3px;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-divider {
+      height:1px; margin:4px 0 20px;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);
+    }
+    #ichess-credits-modal-overlay .ichess-credits-link {
+      display:inline-block; padding:9px 20px;
+      font-family:'Space Mono',monospace; font-size:11px;
+      font-weight:700; letter-spacing:2px; text-transform:uppercase;
+      border-radius:10px; border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.05);
+      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+      color:#e0e0e0; text-decoration:none; cursor:pointer;
+      transition:all .22s cubic-bezier(.4,0,.2,1);
+      position:relative; overflow:hidden;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-link::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,transparent 50%);
+      opacity:0; transition:opacity .22s;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-link:hover {
+      background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.2);
+      box-shadow:0 0 24px rgba(255,255,255,.06), inset 0 1px 0 rgba(255,255,255,.08);
+      color:#fff;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-link:hover::before { opacity:1; }
+  `;
+  document.head.appendChild(creditsModalStyles);
+
+  function openCreditsModal() {
+    const mOverlay = document.createElement("div");
+    mOverlay.id = "ichess-credits-modal-overlay";
+
+    const mContent = document.createElement("div");
+    mContent.className = "ichess-credits-content";
+
+    const mClose = document.createElement("button");
+    mClose.className = "ichess-credits-close";
+    mClose.innerHTML = "\u00d7";
+
+    const mTitle = document.createElement("div");
+    mTitle.className = "ichess-credits-title";
+    mTitle.textContent = "iChess Coach";
+
+    const secDev = document.createElement("div");
+    secDev.className = "ichess-credits-section";
+    const lblDev = document.createElement("div");
+    lblDev.className = "ichess-credits-label";
+    lblDev.textContent = "Developer";
+    const valDev = document.createElement("div");
+    valDev.className = "ichess-credits-value";
+    valDev.textContent = "(i) ishatxt";
+    secDev.appendChild(lblDev);
+    secDev.appendChild(valDev);
+
+    const divider = document.createElement("div");
+    divider.className = "ichess-credits-divider";
+
+    const secCommunity = document.createElement("div");
+    secCommunity.className = "ichess-credits-section";
+    const lblCommunity = document.createElement("div");
+    lblCommunity.className = "ichess-credits-label";
+    lblCommunity.textContent = "Community & Support";
+    const linkBtn = document.createElement("a");
+    linkBtn.className = "ichess-credits-link";
+    linkBtn.href = "https://discord.gg/gVgn5Bn8d5";
+    linkBtn.target = "_blank";
+    linkBtn.rel = "noopener noreferrer";
+    linkBtn.textContent = "Join Discord";
+    secCommunity.appendChild(lblCommunity);
+    secCommunity.appendChild(linkBtn);
+
+    mContent.appendChild(mClose);
+    mContent.appendChild(mTitle);
+    mContent.appendChild(secDev);
+    mContent.appendChild(divider);
+    mContent.appendChild(secCommunity);
+    mOverlay.appendChild(mContent);
+
+    function closeModal() {
+      mOverlay.classList.add("ichess-closing");
+      setTimeout(() => { mOverlay.remove(); }, 150);
+    }
+
+    mClose.addEventListener("click", closeModal);
+    mOverlay.addEventListener("click", (e) => { if (e.target === mOverlay) closeModal(); });
+
+    document.body.appendChild(mOverlay);
+  }
+
+  footer.innerHTML = "";
+  const creditsBtnRow = document.createElement("div");
+  creditsBtnRow.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;";
+  const creditsBtn = document.createElement("button");
+  creditsBtn.className = "ichess-reset-btn";
+  creditsBtn.textContent = "Credits";
+  creditsBtn.onclick = openCreditsModal;
+  creditsBtnRow.appendChild(creditsBtn);
+  creditsBtnRow.appendChild(resetBtn);
+  footer.appendChild(creditsBtnRow);
+
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
 }
