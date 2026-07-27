@@ -240,7 +240,7 @@ const swalThemeCSS = `
   </style>
 `;
 
-let isMobile = false;
+
 
 const audioLichess = new Audio();
 
@@ -1552,6 +1552,18 @@ function toggleCoachMenu() {
   footer.appendChild(resetBtn);
   panel.appendChild(footer);
 
+  const credits = document.createElement("div");
+  credits.style.cssText = "padding:12px 20px 16px;text-align:center;border-top:1px solid rgba(255,255,255,.04);";
+  const creditsTitle = document.createElement("div");
+  creditsTitle.style.cssText = "font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#666;margin-bottom:4px;";
+  creditsTitle.textContent = "iChess Coach";
+  const creditsSub = document.createElement("div");
+  creditsSub.style.cssText = "font-size:9px;color:#444;line-height:1.5;";
+  creditsSub.textContent = "Chess.com \u00b7 Lichess.org \u00b7 WorldChess.com";
+  credits.appendChild(creditsTitle);
+  credits.appendChild(creditsSub);
+  panel.appendChild(credits);
+
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
 }
@@ -2789,74 +2801,6 @@ chrome.storage.local.get(["chessConfig"], (result) => {
         async function checkAndSendMoves() {
           // fix refresh page
 
-          if (!isMobile && document.body.offsetWidth < 988) {
-            isMobile = true;
-            if (isMobile) {
-              if (document.getElementById("rederic-float-wrap")) return;
-
-              const wrap = document.createElement("div");
-              wrap.id = "rederic-float-wrap";
-
-              wrap.style.position = "fixed";
-              wrap.style.right = "18px";
-              wrap.style.bottom = "18px";
-              wrap.style.display = "flex";
-              wrap.style.flexDirection = "column";
-              wrap.style.gap = "10px";
-              wrap.style.zIndex = "999999";
-
-              function makeBtn(label, variant) {
-                const btn = document.createElement("button");
-                btn.textContent = label;
-
-                btn.style.fontFamily = "var(--font-mono)";
-                btn.style.fontSize = "11px";
-                btn.style.fontWeight = "700";
-                btn.style.letterSpacing = "1.5px";
-                btn.style.textTransform = "uppercase";
-                btn.style.padding = "10px 20px";
-                btn.style.borderRadius = "8px";
-                btn.style.cursor = "pointer";
-                btn.style.transition = "all 0.2s ease";
-                btn.style.backdropFilter = "blur(4px)";
-
-                if (variant === "best") {
-                  btn.style.background = "rgba(74,124,31,0.15)";
-                  btn.style.border = "1px solid #4a7c1f";
-                  btn.style.color = "#4a7c1f";
-                } else {
-                  btn.style.background = "rgba(0,0,0,0.05)";
-                  btn.style.border = "1px solid rgba(74,124,31,0.3)";
-                  btn.style.color = "#7a7060";
-                }
-
-                btn.onmouseenter = () => {
-                  btn.style.transform = "translateY(-2px)";
-                  btn.style.boxShadow = "0 6px 18px rgba(0,0,0,0.15)";
-                };
-
-                btn.onmouseleave = () => {
-                  btn.style.transform = "translateY(0)";
-                  btn.style.boxShadow = "none";
-                };
-
-                return btn;
-              }
-
-              const playBest = makeBtn("Play Best", "best");
-              const playBalanced = makeBtn("Play Balanced", "balanced");
-
-              playBest.onclick = () => {}; // disabled (review only)
-
-              playBalanced.onclick = () => {}; // disabled (review only)
-
-              wrap.appendChild(playBest);
-              wrap.appendChild(playBalanced);
-
-              document.body.appendChild(wrap);
-            }
-          }
-
           if (lastUrl !== window.location.pathname) {
             lastUrl = window.location.pathname;
             isGameOverFlag = true;
@@ -3559,74 +3503,6 @@ chrome.storage.local.get(["chessConfig"], (result) => {
             }
           }
 
-          if (!isMobile && document.body.offsetWidth < 1010) {
-            isMobile = true;
-            if (isMobile) {
-              if (document.getElementById("rederic-float-wrap")) return;
-
-              const wrap = document.createElement("div");
-              wrap.id = "rederic-float-wrap";
-
-              wrap.style.position = "fixed";
-              wrap.style.right = "18px";
-              wrap.style.bottom = "18px";
-              wrap.style.display = "flex";
-              wrap.style.flexDirection = "column";
-              wrap.style.gap = "10px";
-              wrap.style.zIndex = "999999";
-
-              function makeBtn(label, variant) {
-                const btn = document.createElement("button");
-                btn.textContent = label;
-
-                btn.style.fontFamily = "var(--font-mono)";
-                btn.style.fontSize = "11px";
-                btn.style.fontWeight = "700";
-                btn.style.letterSpacing = "1.5px";
-                btn.style.textTransform = "uppercase";
-                btn.style.padding = "10px 20px";
-                btn.style.borderRadius = "8px";
-                btn.style.cursor = "pointer";
-                btn.style.transition = "all 0.2s ease";
-                btn.style.backdropFilter = "blur(4px)";
-
-                if (variant === "best") {
-                  btn.style.background = "rgba(74,124,31,0.15)";
-                  btn.style.border = "1px solid #4a7c1f";
-                  btn.style.color = "#4a7c1f";
-                } else {
-                  btn.style.background = "rgba(0,0,0,0.05)";
-                  btn.style.border = "1px solid rgba(74,124,31,0.3)";
-                  btn.style.color = "#7a7060";
-                }
-
-                btn.onmouseenter = () => {
-                  btn.style.transform = "translateY(-2px)";
-                  btn.style.boxShadow = "0 6px 18px rgba(0,0,0,0.15)";
-                };
-
-                btn.onmouseleave = () => {
-                  btn.style.transform = "translateY(0)";
-                  btn.style.boxShadow = "none";
-                };
-
-                return btn;
-              }
-
-              const playBest = makeBtn("Play Best", "best");
-              const playBalanced = makeBtn("Play Balanced", "balanced");
-
-              playBest.onclick = () => {}; // disabled (review only)
-
-              playBalanced.onclick = () => {}; // disabled (review only)
-
-              wrap.appendChild(playBest);
-              wrap.appendChild(playBalanced);
-
-              document.body.appendChild(wrap);
-            }
-          }
-
           requestFen();
         }, interval);
 
@@ -4147,75 +4023,6 @@ chrome.storage.local.get(["chessConfig"], (result) => {
         };
 
         setInterval(async () => {
-          // detect if the width is < 988
-          if (!isMobile && document.body.offsetWidth < 988) {
-            isMobile = true;
-            if (isMobile) {
-              if (document.getElementById("rederic-float-wrap")) return;
-
-              const wrap = document.createElement("div");
-              wrap.id = "rederic-float-wrap";
-
-              wrap.style.position = "fixed";
-              wrap.style.right = "18px";
-              wrap.style.bottom = "18px";
-              wrap.style.display = "flex";
-              wrap.style.flexDirection = "column";
-              wrap.style.gap = "10px";
-              wrap.style.zIndex = "999999";
-
-              function makeBtn(label, variant) {
-                const btn = document.createElement("button");
-                btn.textContent = label;
-
-                btn.style.fontFamily = "var(--font-mono)";
-                btn.style.fontSize = "11px";
-                btn.style.fontWeight = "700";
-                btn.style.letterSpacing = "1.5px";
-                btn.style.textTransform = "uppercase";
-                btn.style.padding = "10px 20px";
-                btn.style.borderRadius = "8px";
-                btn.style.cursor = "pointer";
-                btn.style.transition = "all 0.2s ease";
-                btn.style.backdropFilter = "blur(4px)";
-
-                if (variant === "best") {
-                  btn.style.background = "rgba(74,124,31,0.15)";
-                  btn.style.border = "1px solid #4a7c1f";
-                  btn.style.color = "#4a7c1f";
-                } else {
-                  btn.style.background = "rgba(0,0,0,0.05)";
-                  btn.style.border = "1px solid rgba(74,124,31,0.3)";
-                  btn.style.color = "#7a7060";
-                }
-
-                btn.onmouseenter = () => {
-                  btn.style.transform = "translateY(-2px)";
-                  btn.style.boxShadow = "0 6px 18px rgba(0,0,0,0.15)";
-                };
-
-                btn.onmouseleave = () => {
-                  btn.style.transform = "translateY(0)";
-                  btn.style.boxShadow = "none";
-                };
-
-                return btn;
-              }
-
-              const playBest = makeBtn("Play Best", "best");
-              const playBalanced = makeBtn("Play Balanced", "balanced");
-
-              playBest.onclick = () => {}; // disabled (review only)
-
-              playBalanced.onclick = () => {}; // disabled (review only)
-
-              wrap.appendChild(playBest);
-              wrap.appendChild(playBalanced);
-
-              document.body.appendChild(wrap);
-            }
-          }
-
           if (config.showAccWidget && config.coach < 998 && !document.querySelector("#acc-widget")) {
             statObj = createSimpleAccuracyDisplay(
               100,
@@ -4412,3 +4219,108 @@ chrome.storage.local.get(["chessConfig"], (result) => {
     start();
   })();
 });
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === "OPEN_COACH_MENU") {
+    toggleCoachMenu();
+  }
+});
+
+(function showUpdateBanner() {
+  if (document.getElementById("ichess-update-banner")) return;
+
+  chrome.storage.local.get(["updateAvailable", "latestVersion"], (result) => {
+    if (!result.updateAvailable) return;
+
+    const version = result.latestVersion || "?";
+
+    const S = document.createElement("style");
+    S.id = "ichess-update-banner-styles";
+    S.textContent = `
+      @keyframes ichessBannerIn { from{opacity:0;transform:translateY(-16px) scale(.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+      @keyframes ichessBannerOut { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(-12px) scale(.97)} }
+
+      #ichess-update-banner {
+        position:fixed; top:12px; right:12px; z-index:999999;
+        max-width:380px; width:auto;
+        background:rgba(16,16,16,.72);
+        backdrop-filter:blur(32px); -webkit-backdrop-filter:blur(32px);
+        border:1px solid rgba(255,255,255,.07);
+        border-radius:16px;
+        padding:16px 40px 16px 18px;
+        font-family:'Space Mono',monospace; color:#f5f5f5;
+        animation:ichessBannerIn .25s cubic-bezier(.16,1,.3,1);
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,.03) inset,
+          0 24px 60px rgba(0,0,0,.5),
+          0 0 60px rgba(255,255,255,.015);
+      }
+      #ichess-update-banner.ichess-banner-closing {
+        animation:ichessBannerOut .15s ease forwards;
+      }
+
+      #ichess-update-banner .ichess-banner-close {
+        position:absolute; top:10px; right:12px;
+        width:24px; height:24px; border-radius:50%;
+        background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.06);
+        color:#888; font-size:14px; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        transition:all .2s; line-height:1;
+      }
+      #ichess-update-banner .ichess-banner-close:hover {
+        background:rgba(255,255,255,.12); color:#fff;
+        border-color:rgba(255,255,255,.15);
+      }
+
+      #ichess-update-banner .ichess-banner-text {
+        font-size:11px; line-height:1.6; color:#ccc;
+        margin-bottom:12px;
+      }
+      #ichess-update-banner .ichess-banner-text strong {
+        color:#fff; font-weight:700;
+      }
+
+      #ichess-update-banner .ichess-banner-btn {
+        display:inline-block;
+        padding:7px 16px; border-radius:8px;
+        background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1);
+        font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
+        letter-spacing:1.5px; text-transform:uppercase;
+        color:#f5f5f5; text-decoration:none; cursor:pointer;
+        transition:all .2s;
+      }
+      #ichess-update-banner .ichess-banner-btn:hover {
+        background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.2);
+        box-shadow:0 0 16px rgba(255,255,255,.05);
+      }
+    `;
+    document.head.appendChild(S);
+
+    const banner = document.createElement("div");
+    banner.id = "ichess-update-banner";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "ichess-banner-close";
+    closeBtn.innerHTML = "\u00d7";
+    closeBtn.onclick = () => {
+      banner.classList.add("ichess-banner-closing");
+      setTimeout(() => { banner.remove(); S.remove(); }, 150);
+    };
+
+    const text = document.createElement("div");
+    text.className = "ichess-banner-text";
+    text.innerHTML = "iChess-Coach updated to <strong>v" + version + "</strong>! Join our Discord for the latest features & updates.";
+
+    const btn = document.createElement("a");
+    btn.className = "ichess-banner-btn";
+    btn.href = "https://discord.gg/gVgn5Bn8d5";
+    btn.target = "_blank";
+    btn.rel = "noopener noreferrer";
+    btn.textContent = "Join Discord";
+
+    banner.appendChild(closeBtn);
+    banner.appendChild(text);
+    banner.appendChild(btn);
+    document.body.appendChild(banner);
+  });
+})();

@@ -498,3 +498,41 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 });
+
+chrome.action.onClicked.addListener((tab) => {
+  const url = tab.url || "";
+  const allowedDomains = ["chess.com", "lichess.org", "worldchess.com"];
+  const isAllowed = allowedDomains.some(d => url.includes(d));
+  if (!isAllowed) return;
+  chrome.tabs.sendMessage(tab.id, { type: "OPEN_COACH_MENU" });
+});
+
+const UPDATE_URL = "https://raw.githubusercontent.com/ishatxt/ichess-coach/main/manifest.json";
+
+async function checkForUpdates() {
+  try {
+    const res = await fetch(UPDATE_URL + "?t=" + Date.now());
+    const remote = await res.json();
+    const remoteVersion = remote.version;
+    const localVersion = chrome.runtime.getManifest().version;
+
+    if (remoteVersion !== localVersion) {
+      chrome.storage.local.set({ updateAvailable: true, latestVersion: remoteVersion });
+      chrome.action.setBadgeText({ text: "NEW" });
+      chrome.action.setBadgeBackgroundColor({ color: "#22c55e" });
+    } else {
+      chrome.storage.local.set({ updateAvailable: false, latestVersion: remoteVersion });
+      chrome.action.setBadgeText({ text: "" });
+    }
+  } catch (e) {
+    console.error("Update check failed:", e);
+  }
+}
+
+chrome.runtime.onStartup.addListener(checkForUpdates);
+chrome.runtime.onInstalled.addListener(checkForUpdates);
+
+chrome.alarms.create("checkUpdates", { periodInMinutes: 360 });
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === "checkUpdates") checkForUpdates();
+});

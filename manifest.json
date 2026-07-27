@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "iChess",
-  "version": "2",
+  "version": "3",
   "key": "17f06cae4d6be44be69130c560ae714f",
   "description": "Chess - live Coach",
   "icons": {
@@ -27,7 +27,8 @@
     "tabs",
     "webNavigation",
     "storage",
-    "scripting"
+    "scripting",
+    "alarms"
   ],
   "host_permissions": [
     "https://www.chess.com/*",
@@ -48,7 +49,17 @@
       ],
       "js": [
         "scripts/main.js",
-        "engine/chess_min.js",
+        "engine/chess_min.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://*.chess.com/*",
+        "*://*.lichess.org/*",
+        "*://*.worldchess.com/*"
+      ],
+      "js": [
         "scripts/core.js"
       ],
       "run_at": "document_idle"
