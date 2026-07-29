@@ -1537,6 +1537,43 @@ function toggleCoachMenu() {
   addToggle("Coach Voice", "speach", "Coach speaks move explanations");
   addToggle("Accuracy Widget", "showAccWidget", "Show accuracy display during review");
 
+  (function addEvalBarToggle() {
+    const row = document.createElement("div");
+    row.className = "ichess-row";
+    const sp = document.createElement("span");
+    sp.textContent = "Evaluation Bar";
+    const wrap = document.createElement("label");
+    wrap.className = "ichess-toggle";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = !!config.showEval;
+    cb.onchange = () => {
+      config.showEval = cb.checked;
+      chrome.storage.local.set({ chessConfig: config });
+      if (!cb.checked) {
+        const el = document.querySelector("#customEval");
+        if (el) el.remove();
+      } else if (typeof createEvalBar === "function") {
+        const board = document.querySelector(".board, cg-board");
+        if (!document.querySelector("#customEval") && board) {
+          const eb = createEvalBar();
+          if (eb) eb.update("0.0", "white");
+        }
+      }
+    };
+    const sl = document.createElement("span");
+    sl.className = "ichess-slider";
+    wrap.appendChild(cb);
+    wrap.appendChild(sl);
+    row.appendChild(sp);
+    row.appendChild(wrap);
+    body.appendChild(row);
+    const h = document.createElement("div");
+    h.className = "ichess-help";
+    h.textContent = "Show live evaluation bar on the board";
+    body.appendChild(h);
+  })();
+
   const footer = document.createElement("div");
   footer.className = "ichess-footer";
   const resetBtn = document.createElement("button");
@@ -1544,7 +1581,7 @@ function toggleCoachMenu() {
   resetBtn.textContent = "Reset Defaults";
   resetBtn.onclick = () => {
     config.coach = 999; config.depth2 = 10;
-    config.moveClassification = false; config.speach = false; config.showAccWidget = true;
+    config.moveClassification = false; config.speach = false; config.showAccWidget = true; config.showEval = false;
     chrome.storage.local.set({ chessConfig: config });
     overlay.remove(); S.remove();
     toggleCoachMenu();
@@ -2584,18 +2621,19 @@ chrome.storage.local.get(["chessConfig"], (result) => {
 
           if (!boardContainer) return console.error("Plateau non trouvé !");
 
-          // Conteneur principal
           const evalContainer = document.createElement("div");
           evalContainer.id = "customEval";
           evalContainer.style.zIndex = "9999";
           evalContainer.style.width = `${(w_ * 6) / 100}px`;
           evalContainer.style.height = `${boardContainer.offsetWidth}px`;
-          evalContainer.style.background = "#eee";
-          evalContainer.style.marginLeft = "10px";
+          evalContainer.style.background = "rgba(16,16,16,.65)";
+          evalContainer.style.backdropFilter = "blur(24px)";
+          evalContainer.style.marginLeft = "12px";
           evalContainer.style.position = "relative";
-          evalContainer.style.border = "1px solid #aaa";
-          evalContainer.style.borderRadius = "4px";
+          evalContainer.style.border = "1px solid rgba(255,255,255,.08)";
+          evalContainer.style.borderRadius = "12px";
           evalContainer.style.overflow = "hidden";
+          evalContainer.style.boxShadow = "0 8px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset";
 
           const topBar = document.createElement("div");
           const bottomBar = document.createElement("div");
@@ -2611,15 +2649,16 @@ chrome.storage.local.get(["chessConfig"], (result) => {
 
           evalContainer.appendChild(topBar);
           evalContainer.appendChild(bottomBar);
-          // Texte en bas
           const scoreText = document.createElement("div");
           scoreText.style.position = "absolute";
-          scoreText.style.bottom = "0";
+          scoreText.style.bottom = "4px";
           scoreText.style.left = "50%";
           scoreText.style.transform = "translateX(-50%)";
-          scoreText.style.color = "red";
-          scoreText.style.fontWeight = "bold";
-          scoreText.style.fontSize = "12px";
+          scoreText.style.color = "rgba(255,255,255,.85)";
+          scoreText.style.fontWeight = "700";
+          scoreText.style.fontSize = "11px";
+          scoreText.style.fontFamily = "'Space Mono', monospace";
+          scoreText.style.textShadow = "0 0 12px rgba(0,0,0,.6), 0 2px 4px rgba(0,0,0,.4)";
           scoreText.style.pointerEvents = "none";
           evalContainer.appendChild(scoreText);
 
@@ -2991,7 +3030,7 @@ chrome.storage.local.get(["chessConfig"], (result) => {
           if (!document.querySelector("#customEval") && config.showEval) {
             const boardContainer = document.querySelector(".board");
             if (boardContainer) {
-              evalObj = null; // createEvalBar disabled
+              evalObj = createEvalBar();
             }
           }
 
@@ -3646,8 +3685,7 @@ chrome.storage.local.get(["chessConfig"], (result) => {
           if (!document.querySelector("#customEval") && config.showEval) {
             const boardContainer = document.querySelector("cg-container");
             if (boardContainer) {
-              evalObj = null; // createEvalBar disabled
-              // customEval = document.querySelector("#customEval");
+              evalObj = createEvalBar();
             }
           }
 
@@ -4039,19 +4077,20 @@ chrome.storage.local.get(["chessConfig"], (result) => {
 
           if (!boardContainer) return console.error("Plateau non trouvé !");
           let w_ = boardContainer.offsetWidth;
-          // Conteneur principal
           const evalContainer = document.createElement("div");
           evalContainer.id = "customEval";
           evalContainer.style.zIndex = "9999";
           evalContainer.style.width = `${(w_ * 6) / 100}px`;
           evalContainer.style.height = `${boardContainer.offsetWidth}px`;
-          evalContainer.style.background = "#eee";
-          evalContainer.style.marginLeft = "10px";
+          evalContainer.style.background = "rgba(16,16,16,.65)";
+          evalContainer.style.backdropFilter = "blur(24px)";
+          evalContainer.style.marginLeft = "12px";
           evalContainer.style.position = "relative";
           evalContainer.style.left = "-10px";
-          evalContainer.style.border = "1px solid #aaa";
-          evalContainer.style.borderRadius = "4px";
+          evalContainer.style.border = "1px solid rgba(255,255,255,.08)";
+          evalContainer.style.borderRadius = "12px";
           evalContainer.style.overflow = "hidden";
+          evalContainer.style.boxShadow = "0 8px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset";
 
           const topBar = document.createElement("div");
           const bottomBar = document.createElement("div");
@@ -4070,12 +4109,14 @@ chrome.storage.local.get(["chessConfig"], (result) => {
 
           const scoreText = document.createElement("div");
           scoreText.style.position = "absolute";
-          scoreText.style.bottom = "0";
+          scoreText.style.bottom = "4px";
           scoreText.style.left = "50%";
           scoreText.style.transform = "translateX(-50%)";
-          scoreText.style.color = "red";
-          scoreText.style.fontWeight = "bold";
-          scoreText.style.fontSize = "12px";
+          scoreText.style.color = "rgba(255,255,255,.85)";
+          scoreText.style.fontWeight = "700";
+          scoreText.style.fontSize = "11px";
+          scoreText.style.fontFamily = "'Space Mono', monospace";
+          scoreText.style.textShadow = "0 0 12px rgba(0,0,0,.6), 0 2px 4px rgba(0,0,0,.4)";
           scoreText.style.pointerEvents = "none";
           evalContainer.appendChild(scoreText);
 
@@ -4200,7 +4241,7 @@ chrome.storage.local.get(["chessConfig"], (result) => {
           if (!document.querySelector("#customEval") && config.showEval) {
             const boardContainer = document.querySelector("cg-board");
             if (boardContainer) {
-              evalObj = null; // createEvalBar disabled
+              evalObj = createEvalBar();
             }
           }
 
