@@ -239,9 +239,6 @@ const swalThemeCSS = `
     }
   </style>
 `;
-
-
-
 const audioLichess = new Audio();
 
 // old code
@@ -1136,26 +1133,6 @@ preInjection();
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function squareToPixels(square, boardInfo, orientation = "white") {
-  const files = "abcdefgh";
-  const file = files.indexOf(square[0]); // e = 4
-  const rank = parseInt(square[1], 10) - 1; // 2 -> index 1
-
-  const squareSize = boardInfo.width / 8;
-
-  let x, y;
-
-  if (orientation === "white") {
-    x = boardInfo.left + file * squareSize + squareSize / 2;
-    y = boardInfo.top + (7 - rank) * squareSize + squareSize / 2;
-  } else {
-    x = boardInfo.left + (7 - file) * squareSize + squareSize / 2;
-    y = boardInfo.top + rank * squareSize + squareSize / 2;
-  }
-
-  return { x, y };
 }
 
 function countMoves(fenString) {
@@ -2376,75 +2353,7 @@ chrome.storage.local.get(["chessConfig"], (result) => {
 
     // balanced Move priority
 
-    function extractNormalMove(moves, side = "white") {
-      const factor = side === "white" ? 1 : -1;
-
-      // 1. BOOK
-      const book = moves.find((m) => m.eval === "book");
-      if (book) return book;
-
-      // 2. MATE CHECK
-      const mates = moves.filter(
-        (m) => typeof m.eval === "string" && m.eval.includes("#"),
-      );
-
-      if (mates.length > 0) {
-        const allMate = mates.length === moves.length;
-
-        if (allMate) {
-          return mates.sort((a, b) => {
-            const ma = Math.abs(parseInt(a.eval.replace("#", "")));
-            const mb = Math.abs(parseInt(b.eval.replace("#", "")));
-            return ma - mb;
-          })[0];
-        }
-
-        const strong = moves
-          .filter((m) => typeof m.eval === "string" && !m.eval.includes("#"))
-          .map((m) => ({
-            ...m,
-            score: parseFloat(m.eval) * factor,
-          }))
-          .filter((m) => !isNaN(m.score));
-
-        const filtered = strong.filter((m) => m.score > 2.5);
-
-        if (filtered.length > 0) {
-          return filtered[Math.floor(Math.random() * filtered.length)];
-        }
-      }
-
-      const normal = moves
-        .filter((m) => typeof m.eval === "string" && !m.eval.includes("#"))
-        .map((m) => ({
-          ...m,
-          score: parseFloat(m.eval) * factor,
-        }))
-        .filter((m) => !isNaN(m.score));
-
-      if (normal.length === 0) return moves[0];
-
-      const sorted = normal.sort((a, b) => b.score - a.score);
-
-      const zone12 = sorted.filter((m) => Math.abs(m.score - 1.0) <= 0.4);
-      if (zone12.length > 0) {
-        return zone12[Math.floor(Math.random() * zone12.length)];
-      }
-
-      const zone0 = sorted.filter((m) => Math.abs(m.score) <= 0.5);
-      if (zone0.length > 0) {
-        return zone0[Math.floor(Math.random() * zone0.length)];
-      }
-
-      const allWinning = normal.every((m) => m.score > 2.5);
-      if (allWinning) {
-        return normal.sort((a, b) => a.score - b.score)[0];
-      }
-
-      return sorted[0];
-    }
-
-    // based on torch
+        // based on torch
 
     class CoachEngine {
       constructor() {
@@ -2747,238 +2656,7 @@ chrome.storage.local.get(["chessConfig"], (result) => {
         function requestFen() {
           window.postMessage({ type: "GET_FEN" }, "*");
         }
-        function requestMove(from, to, promotion = "q", key = false) {
-          key
-            ? (moveDelay = 0)
-            : (moveDelay = randomIntBetween(100, config.delay));
-          window.postMessage(
-            {
-              type: "MOVE",
-              from,
-              to,
-              promotion,
-              moveDelay,
-            },
-            "*",
-          );
-        }
-
-        function highlightMovesOnBoard(moves, side) {
-          return; // Coach Only Mode: Arrows disabled
-          if (!Array.isArray(moves)) return;
-          if (
-            !(
-              (side === "w" && fen_.split(" ")[1] === "w") ||
-              (side === "b" && fen_.split(" ")[1] === "b")
-            )
-          ) {
-            return;
-          }
-          if (config.onlyShowEval) return;
-
-          const parent = document.querySelector("wc-chess-board");
-          if (!parent) return;
-
-          const squareSize = parent.offsetWidth / 8;
-          const maxMoves = 5;
-          let colors = config.colors;
-
-          parent.querySelectorAll(".customH").forEach((el) => el.remove());
-
-          function squareToPosition(square) {
-            const fileChar = square[0];
-            const rankChar = square[1];
-            const rank = parseInt(rankChar, 10) - 1;
-
-            let file;
-            if (side === "w") {
-              file = fileChar.charCodeAt(0) - "a".charCodeAt(0);
-              const y = (7 - rank) * squareSize;
-              const x = file * squareSize;
-              return { x, y };
-            } else {
-              file = "h".charCodeAt(0) - fileChar.charCodeAt(0);
-              const y = rank * squareSize;
-              const x = file * squareSize;
-              return { x, y };
-            }
-          }
-
-          function drawArrow(fromSquare, toSquare, color, score) {
-            const from = squareToPosition(fromSquare);
-            const to = squareToPosition(toSquare);
-
-            const svg = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "svg",
-            );
-            svg.setAttribute("class", "customH");
-            svg.setAttribute("width", parent.offsetWidth);
-            svg.setAttribute("height", parent.offsetWidth);
-            svg.style.position = "absolute";
-            svg.style.left = "0";
-            svg.style.top = "0";
-            svg.style.pointerEvents = "none";
-            svg.style.overflow = "visible";
-            svg.style.zIndex = "10";
-
-            const defs = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "defs",
-            );
-            const marker = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "marker",
-            );
-            marker.setAttribute("id", `arrowhead-${color}`);
-            marker.setAttribute("markerWidth", "3.5");
-            marker.setAttribute("markerHeight", "2.5");
-            marker.setAttribute("refX", "1.75");
-            marker.setAttribute("refY", "1.25");
-            marker.setAttribute("orient", "auto");
-            marker.setAttribute("markerUnits", "strokeWidth");
-
-            const arrowPath = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "path",
-            );
-            arrowPath.setAttribute("d", "M0,0 L3.5,1.25 L0,2.5 Z");
-            arrowPath.setAttribute("fill", color);
-            marker.appendChild(arrowPath);
-            defs.appendChild(marker);
-            svg.appendChild(defs);
-
-            const line = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "line",
-            );
-            line.setAttribute("x1", from.x + squareSize / 2);
-            line.setAttribute("y1", from.y + squareSize / 2);
-            line.setAttribute("x2", to.x + squareSize / 2);
-            line.setAttribute("y2", to.y + squareSize / 2);
-            line.setAttribute("stroke", color);
-            line.setAttribute("stroke-width", "5");
-            line.setAttribute("marker-end", `url(#arrowhead-${color})`);
-            line.setAttribute("opacity", "0.6");
-            svg.appendChild(line);
-
-            if (score !== undefined) {
-              if (score === "book") {
-                const foreignObject = document.createElementNS(
-                  "http://www.w3.org/2000/svg",
-                  "foreignObject",
-                );
-                foreignObject.setAttribute("x", to.x + squareSize - 12);
-                foreignObject.setAttribute("y", to.y - 12);
-                foreignObject.setAttribute("width", "24");
-                foreignObject.setAttribute("height", "24");
-
-                const div = document.createElement("div");
-                div.innerHTML = bookSVG;
-                foreignObject.appendChild(div);
-                svg.appendChild(foreignObject);
-              } else {
-                const group = document.createElementNS(
-                  "http://www.w3.org/2000/svg",
-                  "g",
-                );
-
-                const text = document.createElementNS(
-                  "http://www.w3.org/2000/svg",
-                  "text",
-                );
-
-                text.setAttribute("x", to.x + squareSize);
-                text.setAttribute("y", to.y);
-                text.setAttribute("font-size", "9");
-                text.setAttribute("font-weight", "bold");
-                text.setAttribute("text-anchor", "middle");
-                text.setAttribute("dominant-baseline", "middle");
-                text.setAttribute("fill", color);
-
-                let isNegative = false;
-                let displayScore = score;
-
-                const hasHash = score.startsWith("#");
-                let raw = hasHash ? score.slice(1) : score;
-
-                if (raw.startsWith("-")) {
-                  isNegative = true;
-                  raw = raw.slice(1);
-                } else if (raw.startsWith("+")) {
-                  raw = raw.slice(1);
-                }
-
-                displayScore = hasHash ? "#" + raw : raw;
-                text.textContent = displayScore;
-
-                group.appendChild(text);
-                svg.appendChild(group);
-
-                requestAnimationFrame(() => {
-                  const bbox = text.getBBox();
-
-                  const paddingX = 2;
-                  const paddingY = 2;
-
-                  const rect = document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "rect",
-                  );
-
-                  rect.setAttribute("x", bbox.x - paddingX);
-                  rect.setAttribute("y", bbox.y - paddingY);
-                  rect.setAttribute("width", bbox.width + paddingX * 2);
-                  rect.setAttribute("height", bbox.height + paddingY * 2);
-
-                  rect.setAttribute("rx", "8");
-                  rect.setAttribute("ry", "8");
-
-                  rect.setAttribute("fill", isNegative ? "#312e2b" : "#ffffff");
-                  rect.setAttribute("fill-opacity", "0.85");
-                  rect.setAttribute(
-                    "stroke",
-                    isNegative ? "#000000" : "#cccccc",
-                  );
-                  rect.setAttribute("stroke-width", "1");
-
-                  group.insertBefore(rect, text);
-                });
-              }
-            }
-
-            parent.appendChild(svg);
-          }
-
-          parent.style.position = "relative";
-
-          let filteredMoves = moves;
-          if (config.winningMove) {
-            filteredMoves = moves.filter((move) => {
-              const evalValue = parseFloat(move.eval);
-              if (side === "w") {
-                return (
-                  evalValue >= 2 ||
-                  (move.eval.startsWith("#") &&
-                    parseInt(move.eval.slice(1)) > 0)
-                );
-              } else {
-                return (
-                  evalValue <= -2 ||
-                  (move.eval.startsWith("#-") &&
-                    parseInt(move.eval.slice(2)) > 0)
-                );
-              }
-            });
-          }
-
-          filteredMoves.slice(0, maxMoves).forEach((move, index) => {
-            const color = colors[index] || "red";
-             // drawArrow(move.from, move.to, color, move.eval);
-          });
-        }
-
-        function squareToIndex(square) {
+                        function squareToIndex(square) {
           const file = square.charCodeAt(0) - 96; // a=1 ... h=8
           const rank = parseInt(square[1], 10); // 1..8
           return file * 10 + rank;
@@ -3117,18 +2795,10 @@ chrome.storage.local.get(["chessConfig"], (result) => {
               engine.getMovesByFen(fen_, getSide()).then((moves) => {
                 send4(moves);
                 keyMove = moves;
-                if (false) { // autoMove disabled (review only)
-                  if (config.autoMoveBalanced) {
-                    const moveBalanced = extractNormalMove(moves, getSide());
-                    requestMove(moveBalanced.from, moveBalanced.to);
-                  } else {
-                    requestMove(moves[0].from, moves[0].to);
-                  }
-                }
-                if (moves.length > 0 && evalObj) {
+                                if (moves.length > 0 && evalObj) {
                   evalObj.update(moves[0].eval, getSide());
                 }
-                highlightMovesOnBoard(moves, getSide()[0]);
+                
               });
             }
           }
@@ -3168,18 +2838,10 @@ chrome.storage.local.get(["chessConfig"], (result) => {
                 send4(moves);
                 keyMove = moves;
 
-                if (false) { // autoMove disabled (review only)
-                  if (config.autoMoveBalanced) {
-                    const moveBalanced = extractNormalMove(moves, getSide());
-                    requestMove(moveBalanced.from, moveBalanced.to);
-                  } else {
-                    requestMove(moves[0].from, moves[0].to);
-                  }
-                }
-                if (moves.length > 0 && evalObj) {
+                                if (moves.length > 0 && evalObj) {
                   evalObj.update(moves[0].eval, getSide());
                 }
-                highlightMovesOnBoard(moves, getSide()[0]);
+                
               });
             }
           }
@@ -3322,222 +2984,7 @@ chrome.storage.local.get(["chessConfig"], (result) => {
           return { update };
         }
 
-        function highlightMovesOnBoard(moves, side) {
-          return; // Coach Only Mode: Arrows disabled
-          if (!Array.isArray(moves)) return;
-          if (
-            !(
-              (side === "w" && fen_.split(" ")[1] === "w") ||
-              (side === "b" && fen_.split(" ")[1] === "b")
-            )
-          ) {
-            return;
-          }
-          if (config.onlyShowEval) return;
-
-          const parent = document.querySelector("cg-container");
-          if (!parent) return;
-
-          const squareSize = parent.offsetWidth / 8;
-          const maxMoves = 5;
-          let colors = config.colors;
-
-          parent.querySelectorAll(".customH").forEach((el) => el.remove());
-
-          function squareToPosition(square) {
-            const fileChar = square[0];
-            const rankChar = square[1];
-            const rank = parseInt(rankChar, 10) - 1;
-
-            let file;
-            if (side === "w") {
-              file = fileChar.charCodeAt(0) - "a".charCodeAt(0);
-              const y = (7 - rank) * squareSize;
-              const x = file * squareSize;
-              return { x, y };
-            } else {
-              file = "h".charCodeAt(0) - fileChar.charCodeAt(0);
-              const y = rank * squareSize;
-              const x = file * squareSize;
-              return { x, y };
-            }
-          }
-
-          function drawArrow(fromSquare, toSquare, color, score) {
-            const from = squareToPosition(fromSquare);
-            const to = squareToPosition(toSquare);
-
-            const svg = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "svg",
-            );
-            svg.setAttribute("class", "customH");
-            svg.setAttribute("width", parent.offsetWidth);
-            svg.setAttribute("height", parent.offsetWidth);
-            svg.style.position = "absolute";
-            svg.style.left = "0";
-            svg.style.top = "0";
-            svg.style.pointerEvents = "none";
-            svg.style.overflow = "visible";
-            svg.style.zIndex = "10";
-
-            const defs = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "defs",
-            );
-            const marker = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "marker",
-            );
-            marker.setAttribute("id", `arrowhead-${color}`);
-            marker.setAttribute("markerWidth", "3.5");
-            marker.setAttribute("markerHeight", "2.5");
-            marker.setAttribute("refX", "1.75");
-            marker.setAttribute("refY", "1.25");
-            marker.setAttribute("orient", "auto");
-            marker.setAttribute("markerUnits", "strokeWidth");
-
-            const arrowPath = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "path",
-            );
-            arrowPath.setAttribute("d", "M0,0 L3.5,1.25 L0,2.5 Z");
-            arrowPath.setAttribute("fill", color);
-            marker.appendChild(arrowPath);
-            defs.appendChild(marker);
-            svg.appendChild(defs);
-
-            const line = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "line",
-            );
-            line.setAttribute("x1", from.x + squareSize / 2);
-            line.setAttribute("y1", from.y + squareSize / 2);
-            line.setAttribute("x2", to.x + squareSize / 2);
-            line.setAttribute("y2", to.y + squareSize / 2);
-            line.setAttribute("stroke", color);
-            line.setAttribute("stroke-width", "5");
-            line.setAttribute("marker-end", `url(#arrowhead-${color})`);
-            line.setAttribute("opacity", "0.6");
-            svg.appendChild(line);
-
-            if (score !== undefined) {
-              if (score === "book") {
-                const foreignObject = document.createElementNS(
-                  "http://www.w3.org/2000/svg",
-                  "foreignObject",
-                );
-                foreignObject.setAttribute("x", to.x + squareSize - 12);
-                foreignObject.setAttribute("y", to.y - 12);
-                foreignObject.setAttribute("width", "24");
-                foreignObject.setAttribute("height", "24");
-
-                const div = document.createElement("div");
-                div.innerHTML = bookSVG;
-                foreignObject.appendChild(div);
-                svg.appendChild(foreignObject);
-              } else {
-                const group = document.createElementNS(
-                  "http://www.w3.org/2000/svg",
-                  "g",
-                );
-
-                const text = document.createElementNS(
-                  "http://www.w3.org/2000/svg",
-                  "text",
-                );
-
-                text.setAttribute("x", to.x + squareSize);
-                text.setAttribute("y", to.y);
-                text.setAttribute("font-size", "9");
-                text.setAttribute("font-weight", "bold");
-                text.setAttribute("text-anchor", "middle");
-                text.setAttribute("dominant-baseline", "middle");
-                text.setAttribute("fill", color);
-
-                let isNegative = false;
-                let displayScore = score;
-
-                const hasHash = score.startsWith("#");
-                let raw = hasHash ? score.slice(1) : score;
-
-                if (raw.startsWith("-")) {
-                  isNegative = true;
-                  raw = raw.slice(1);
-                } else if (raw.startsWith("+")) {
-                  raw = raw.slice(1);
-                }
-
-                displayScore = hasHash ? "#" + raw : raw;
-                text.textContent = displayScore;
-
-                group.appendChild(text);
-                svg.appendChild(group);
-
-                requestAnimationFrame(() => {
-                  const bbox = text.getBBox();
-
-                  const paddingX = 2;
-                  const paddingY = 2;
-
-                  const rect = document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "rect",
-                  );
-
-                  rect.setAttribute("x", bbox.x - paddingX);
-                  rect.setAttribute("y", bbox.y - paddingY);
-                  rect.setAttribute("width", bbox.width + paddingX * 2);
-                  rect.setAttribute("height", bbox.height + paddingY * 2);
-
-                  rect.setAttribute("rx", "8");
-                  rect.setAttribute("ry", "8");
-
-                  rect.setAttribute("fill", isNegative ? "#312e2b" : "#ffffff");
-                  rect.setAttribute("fill-opacity", "0.85");
-                  rect.setAttribute(
-                    "stroke",
-                    isNegative ? "#000000" : "#cccccc",
-                  );
-                  rect.setAttribute("stroke-width", "1");
-
-                  group.insertBefore(rect, text);
-                });
-              }
-            }
-
-            parent.appendChild(svg);
-          }
-
-          parent.style.position = "relative";
-
-          let filteredMoves = moves;
-          if (config.winningMove) {
-            filteredMoves = moves.filter((move) => {
-              const evalValue = parseFloat(move.eval);
-              if (side === "w") {
-                return (
-                  evalValue >= 2 ||
-                  (move.eval.startsWith("#") &&
-                    parseInt(move.eval.slice(1)) > 0)
-                );
-              } else {
-                return (
-                  evalValue <= -2 ||
-                  (move.eval.startsWith("#-") &&
-                    parseInt(move.eval.slice(2)) > 0)
-                );
-              }
-            });
-          }
-
-          filteredMoves.slice(0, maxMoves).forEach((move, index) => {
-            const color = colors[index] || "red";
-             // drawArrow(move.from, move.to, color, move.eval);
-          });
-        }
-
-        function getSide() {
+                function getSide() {
           const board = document.querySelector(".cg-wrap");
           if (!board) return "white"; // si le plateau n'est pas trouvé
 
@@ -3554,40 +3001,8 @@ chrome.storage.local.get(["chessConfig"], (result) => {
           window.postMessage({ type: "FEN" }, "*");
         }
 
-        async function movePiece(from, to, delay) {
-          const fromSquare = from;
-          const toSquare = to;
-          const moveDelay = delay;
-
-          const board = document.querySelector("cg-board");
-          const rect = board.getBoundingClientRect();
-
-          const boardInfo = {
-            left: rect.left,
-            top: rect.top,
-            width: rect.width,
-            height: rect.height,
-          };
-
-          send5(boardInfo);
-          const coordFrom = squareToPixels(fromSquare, boardInfo, getSide());
-          const coordTo = squareToPixels(toSquare, boardInfo, getSide());
-
-          await sleep(moveDelay);
-
-          send6(coordFrom, coordTo);
-        }
-
-        window.onkeyup = async (e) => {
+                window.onkeyup = async (e) => {
           if (e.key === config.key) { toggleCoachMenu(); return; }
-          return; // disabled (review only)
-          if (e.key === config.key) {
-            await movePiece(keyMove[0].from, keyMove[0].to, 0);
-          }
-          if (e.key === config.key2) {
-            const balancedMove = extractNormalMove(keyMove, getSide());
-            await movePiece(balancedMove.from, balancedMove.to, 0);
-          }
         };
 
         /////////////////////////////////////////////   calculation /////////////////////////////////////////////
@@ -3631,33 +3046,13 @@ chrome.storage.local.get(["chessConfig"], (result) => {
                   (getSide()[0] === "b" && fen_.split(" ")[1] === "b")
                 ) {
                   engine.getMovesByFen(fen_, getSide()).then(async (moves) => {
-                    highlightMovesOnBoard(moves, getSide()[0]);
+                    
                     keyMove = moves;
                     if (moves.length > 0 && evalObj) {
                       evalObj.update(moves[0].eval, getSide());
                     }
 
-                    if (false) { // autoMove disabled (review only)
-                      if (config.autoMoveBalanced) {
-                        const balancedMove = extractNormalMove(
-                          moves,
-                          getSide(),
-                        );
-                        await movePiece(
-                          balancedMove.from,
-                          balancedMove.to,
-                          randomIntBetween(0, config.delay),
-                        );
-                      } else {
-                        await movePiece(
-                          moves[0].from,
-                          moves[0].to,
-                          randomIntBetween(0, config.delay),
-                        );
-                      }
-                    }
-
-                    // chrome.runtime.sendMessage({
+                                        // chrome.runtime.sendMessage({
                     //   type: "FROM_CONTENT",
                     //   data: moves,
                     // });
@@ -3729,29 +3124,13 @@ chrome.storage.local.get(["chessConfig"], (result) => {
               (getSide()[0] === "b" && fen_.split(" ")[1] === "b")
             ) {
               engine.getMovesByFen(fen_, getSide()).then(async (moves) => {
-                highlightMovesOnBoard(moves, getSide()[0]);
+                
                 keyMove = moves;
                 if (moves.length > 0 && evalObj) {
                   evalObj.update(moves[0].eval, getSide());
                 }
 
-                if (false) { // autoMove disabled (review only)
-                  if (config.autoMoveBalanced) {
-                    const balancedMove = extractNormalMove(moves, getSide());
-                    await movePiece(
-                      balancedMove.from,
-                      balancedMove.to,
-                      randomIntBetween(0, config.delay),
-                    );
-                  } else {
-                    await movePiece(
-                      moves[0].from,
-                      moves[0].to,
-                      randomIntBetween(0, config.delay),
-                    );
-                  }
-                }
-                send3(moves);
+                                send3(moves);
               });
             }
           }
@@ -3856,223 +3235,7 @@ chrome.storage.local.get(["chessConfig"], (result) => {
           return side;
         }
 
-        function highlightMovesOnBoard(moves, side) {
-          return; // Coach Only Mode: Arrows disabled
-          if (!Array.isArray(moves)) return;
-          if (
-            !(
-              (side === "w" && fen_.split(" ")[1] === "w") ||
-              (side === "b" && fen_.split(" ")[1] === "b")
-            )
-          ) {
-            return;
-          }
-          if (config.onlyShowEval) return;
-
-          const parent = document.querySelector("cg-board").parentElement;
-          if (!parent) return;
-
-          const squareSize = parent.offsetWidth / 8;
-          const maxMoves = 5;
-          let colors = config.colors;
-          // let colors = ["blue","green","yellow","orange","red"];
-
-          parent.querySelectorAll(".customH").forEach((el) => el.remove());
-
-          function squareToPosition(square) {
-            const fileChar = square[0];
-            const rankChar = square[1];
-            const rank = parseInt(rankChar, 10) - 1;
-
-            let file;
-            if (side === "w") {
-              file = fileChar.charCodeAt(0) - "a".charCodeAt(0);
-              const y = (7 - rank) * squareSize;
-              const x = file * squareSize;
-              return { x, y };
-            } else {
-              file = "h".charCodeAt(0) - fileChar.charCodeAt(0);
-              const y = rank * squareSize;
-              const x = file * squareSize;
-              return { x, y };
-            }
-          }
-
-          function drawArrow(fromSquare, toSquare, color, score) {
-            const from = squareToPosition(fromSquare);
-            const to = squareToPosition(toSquare);
-
-            const svg = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "svg",
-            );
-            svg.setAttribute("class", "customH");
-            svg.setAttribute("width", parent.offsetWidth);
-            svg.setAttribute("height", parent.offsetWidth);
-            svg.style.position = "absolute";
-            svg.style.left = "0";
-            svg.style.top = "0";
-            svg.style.pointerEvents = "none";
-            svg.style.overflow = "visible";
-            svg.style.zIndex = "10";
-
-            const defs = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "defs",
-            );
-            const marker = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "marker",
-            );
-            marker.setAttribute("id", `arrowhead-${color}`);
-            marker.setAttribute("markerWidth", "3.5");
-            marker.setAttribute("markerHeight", "2.5");
-            marker.setAttribute("refX", "1.75");
-            marker.setAttribute("refY", "1.25");
-            marker.setAttribute("orient", "auto");
-            marker.setAttribute("markerUnits", "strokeWidth");
-
-            const arrowPath = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "path",
-            );
-            arrowPath.setAttribute("d", "M0,0 L3.5,1.25 L0,2.5 Z");
-            arrowPath.setAttribute("fill", color);
-            marker.appendChild(arrowPath);
-            defs.appendChild(marker);
-            svg.appendChild(defs);
-
-            const line = document.createElementNS(
-              "http://www.w3.org/2000/svg",
-              "line",
-            );
-            line.setAttribute("x1", from.x + squareSize / 2);
-            line.setAttribute("y1", from.y + squareSize / 2);
-            line.setAttribute("x2", to.x + squareSize / 2);
-            line.setAttribute("y2", to.y + squareSize / 2);
-            line.setAttribute("stroke", color);
-            line.setAttribute("stroke-width", "5");
-            line.setAttribute("marker-end", `url(#arrowhead-${color})`);
-            line.setAttribute("opacity", "0.6");
-            svg.appendChild(line);
-
-            if (score !== undefined) {
-              if (score === "book") {
-                const foreignObject = document.createElementNS(
-                  "http://www.w3.org/2000/svg",
-                  "foreignObject",
-                );
-                foreignObject.setAttribute("x", to.x + squareSize - 12);
-                foreignObject.setAttribute("y", to.y - 12);
-                foreignObject.setAttribute("width", "24");
-                foreignObject.setAttribute("height", "24");
-
-                const div = document.createElement("div");
-                div.innerHTML = bookSVG;
-                foreignObject.appendChild(div);
-                svg.appendChild(foreignObject);
-              } else {
-                const group = document.createElementNS(
-                  "http://www.w3.org/2000/svg",
-                  "g",
-                );
-
-                const text = document.createElementNS(
-                  "http://www.w3.org/2000/svg",
-                  "text",
-                );
-
-                text.setAttribute("x", to.x + squareSize);
-                text.setAttribute("y", to.y);
-                text.setAttribute("font-size", "9");
-                text.setAttribute("font-weight", "bold");
-                text.setAttribute("text-anchor", "middle");
-                text.setAttribute("dominant-baseline", "middle");
-                text.setAttribute("fill", color);
-
-                let isNegative = false;
-                let displayScore = score;
-
-                const hasHash = score.startsWith("#");
-                let raw = hasHash ? score.slice(1) : score;
-
-                if (raw.startsWith("-")) {
-                  isNegative = true;
-                  raw = raw.slice(1);
-                } else if (raw.startsWith("+")) {
-                  raw = raw.slice(1);
-                }
-
-                displayScore = hasHash ? "#" + raw : raw;
-                text.textContent = displayScore;
-
-                group.appendChild(text);
-                svg.appendChild(group);
-
-                requestAnimationFrame(() => {
-                  const bbox = text.getBBox();
-
-                  const paddingX = 2;
-                  const paddingY = 2;
-
-                  const rect = document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "rect",
-                  );
-
-                  rect.setAttribute("x", bbox.x - paddingX);
-                  rect.setAttribute("y", bbox.y - paddingY);
-                  rect.setAttribute("width", bbox.width + paddingX * 2);
-                  rect.setAttribute("height", bbox.height + paddingY * 2);
-
-                  rect.setAttribute("rx", "8");
-                  rect.setAttribute("ry", "8");
-
-                  rect.setAttribute("fill", isNegative ? "#312e2b" : "#ffffff");
-                  rect.setAttribute("fill-opacity", "0.85");
-                  rect.setAttribute(
-                    "stroke",
-                    isNegative ? "#000000" : "#cccccc",
-                  );
-                  rect.setAttribute("stroke-width", "1");
-
-                  group.insertBefore(rect, text);
-                });
-              }
-            }
-
-            parent.appendChild(svg);
-          }
-
-          parent.style.position = "relative";
-
-          let filteredMoves = moves;
-          if (config.winningMove) {
-            filteredMoves = moves.filter((move) => {
-              const evalValue = parseFloat(move.eval);
-              if (side === "w") {
-                return (
-                  evalValue >= 2 ||
-                  (move.eval.startsWith("#") &&
-                    parseInt(move.eval.slice(1)) > 0)
-                );
-              } else {
-                return (
-                  evalValue <= -2 ||
-                  (move.eval.startsWith("#-") &&
-                    parseInt(move.eval.slice(2)) > 0)
-                );
-              }
-            });
-          }
-
-          filteredMoves.slice(0, maxMoves).forEach((move, index) => {
-            const color = colors[index] || "red";
-             // drawArrow(move.from, move.to, color, move.eval);
-          });
-        }
-
-        function createEvalBar(initialScore = "0.0", initialColor = "white") {
+                function createEvalBar(initialScore = "0.0", initialColor = "white") {
           const boardContainer = document.querySelector("cg-board");
 
           if (!boardContainer) return console.error("Plateau non trouvé !");
@@ -4185,39 +3348,8 @@ chrome.storage.local.get(["chessConfig"], (result) => {
           return { update };
         }
 
-        async function movePiece(from, to, delay) {
-          const fromSquare = from;
-          const toSquare = to;
-          const moveDelay = delay;
-
-          const board = document.querySelector("cg-board");
-          const rect = board.getBoundingClientRect();
-
-          const boardInfo = {
-            left: rect.left,
-            top: rect.top,
-            width: rect.width,
-            height: rect.height,
-          };
-
-          send5(boardInfo);
-          const coordFrom = squareToPixels(fromSquare, boardInfo, getSide());
-          const coordTo = squareToPixels(toSquare, boardInfo, getSide());
-
-          await sleep(moveDelay);
-          send6(coordFrom, coordTo);
-        }
-
-        window.onkeyup = async (e) => {
+                window.onkeyup = async (e) => {
           if (e.key === config.key) { toggleCoachMenu(); return; }
-          return; // disabled (review only)
-          if (e.key === config.key) {
-            movePiece(keyMove[0].from, keyMove[0].to, 0);
-          }
-          if (e.key === config.key2) {
-            const balancedMove = extractNormalMove(keyMove, getSide());
-            movePiece(balancedMove.from, balancedMove.to, 0);
-          }
         };
 
         setInterval(async () => {
@@ -4273,29 +3405,11 @@ chrome.storage.local.get(["chessConfig"], (result) => {
                 keyMove = moves;
 
                 send3(moves);
-                highlightMovesOnBoard(moves, getSide()[0]);
-
                 if (moves.length > 0 && evalObj) {
                   evalObj.update(moves[0].eval, getSide());
                 }
 
-                if (false) { // autoMove disabled (review only)
-                  if (config.autoMoveBalanced) {
-                    const balancedMove = extractNormalMove(moves, getSide());
-                    movePiece(
-                      balancedMove.from,
-                      balancedMove.to,
-                      randomIntBetween(0, config.delay),
-                    );
-                  } else {
-                    movePiece(
-                      moves[0].from,
-                      moves[0].to,
-                      randomIntBetween(0, config.delay),
-                    );
-                  }
-                }
-              });
+                              });
             }
           }
         }, interval);
@@ -4334,29 +3448,11 @@ chrome.storage.local.get(["chessConfig"], (result) => {
                 //   data: moves,
                 // });
                 send3(moves);
-                highlightMovesOnBoard(moves, getSide()[0]);
-
                 if (moves.length > 0 && evalObj) {
                   evalObj.update(moves[0].eval, getSide());
                 }
 
-                if (false) { // autoMove disabled (review only)
-                  if (config.autoMoveBalanced) {
-                    const balancedMove = extractNormalMove(moves, getSide());
-                    movePiece(
-                      balancedMove.from,
-                      balancedMove.to,
-                      randomIntBetween(0, config.delay),
-                    );
-                  } else {
-                    movePiece(
-                      moves[0].from,
-                      moves[0].to,
-                      randomIntBetween(0, config.delay),
-                    );
-                  }
-                }
-              });
+                              });
             }
           }
         });
