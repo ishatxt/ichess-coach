@@ -1,0 +1,2422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b0d09">
+<title>iChess Coach - UI Reference</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --olive:#7fb04a; --olive-strong:#5a8a30; --olive-dim:rgba(127,176,74,.30);
+    --bg:#0b0d09; --panel:#13160e; --panel2:#181c11; --code-bg:#0d100b;
+    --border:#252c1c; --text:#dad7cd; --soft:#8f8878;
+    --mono:'Space Mono',ui-monospace,SFMono-Regular,monospace;
+    --sans:'DM Sans',system-ui,-apple-system,sans-serif;
+  }
+  * { box-sizing:border-box }
+  html { scroll-behavior:smooth }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans);
+         font-size:14px; padding-top:54px }
+  ::selection { background:rgba(127,176,74,.35) }
+
+  /* ---------- topbar (mobile) ---------- */
+  #topbar { position:fixed; inset:0 0 auto 0; height:54px; z-index:50; display:flex;
+            align-items:center; gap:12px; padding:0 14px;
+            background:rgba(13,16,10,.92); backdrop-filter:blur(10px);
+            border-bottom:1px solid var(--border) }
+  #topbar .tb-title { font-family:var(--mono); font-size:11px; letter-spacing:2px;
+                      text-transform:uppercase; color:#fff }
+  #topbar .tb-title em { color:var(--olive); font-style:normal }
+  #menu-btn { width:38px; height:38px; flex-shrink:0; border:1px solid var(--border);
+              background:transparent; border-radius:9px; cursor:pointer;
+              display:flex; flex-direction:column; justify-content:center; align-items:center; gap:4px }
+  #menu-btn span { width:16px; height:2px; background:var(--olive); border-radius:2px }
+  .tb-copy { margin-left:auto }
+
+  /* ---------- sidebar ---------- */
+  #sidebar { width:300px; flex-shrink:0; position:sticky; top:0; height:100vh; overflow-y:auto;
+             padding:26px 18px 40px; background:var(--panel); border-right:1px solid var(--border) }
+  #sidebar h1 { font-family:var(--mono); font-size:13px; letter-spacing:2px;
+                text-transform:uppercase; color:#fff; margin:0 0 4px }
+  #sidebar .sub { font-size:11px; color:var(--soft); margin:0 0 6px; line-height:1.5 }
+  #filter { width:100%; margin:14px 0 10px; padding:9px 12px; background:var(--panel2);
+            border:1px solid var(--border); border-radius:9px; color:var(--text);
+            font:12.5px var(--sans); outline:none; transition:border-color .15s }
+  #filter:focus { border-color:var(--olive-dim) }
+  #filter::placeholder { color:var(--soft) }
+  .links { display:flex; flex-direction:column; gap:2px }
+  .links a { display:flex; gap:10px; align-items:baseline; padding:8px 10px; border-radius:8px;
+             border-left:2px solid transparent; color:var(--text); text-decoration:none;
+             font-size:12.5px; line-height:1.35; transition:background .15s }
+  .links a:hover { background:rgba(127,176,74,.10) }
+  .links a.active { background:rgba(127,176,74,.14); border-left-color:var(--olive) }
+  .num { font-family:var(--mono); font-size:10px; color:var(--olive); flex-shrink:0;
+         border:1px solid var(--olive-dim); border-radius:5px; padding:1px 6px }
+  .links a.active .num { background:var(--olive-strong); color:#fff; border-color:var(--olive-strong) }
+
+  /* ---------- main ---------- */
+  main { flex:1; min-width:0; padding:30px clamp(14px,4vw,44px) 90px }
+  main > * { max-width:1080px; margin-left:auto; margin-right:auto }
+  header.top::before { content:''; display:block; height:2px; margin-bottom:22px;
+                       background:linear-gradient(90deg,transparent,var(--olive),transparent) }
+  header.top h1 { font-family:var(--mono); font-size:clamp(13px,3vw,15px); letter-spacing:2px;
+                  text-transform:uppercase; color:#fff; margin:0 0 6px }
+  header.top p { color:var(--soft); font-size:12.5px; margin:0 0 18px; line-height:1.55 }
+
+  section.card { background:var(--panel); border:1px solid var(--border); border-radius:14px;
+                 padding:clamp(12px,2.5vw,20px); margin-bottom:26px; scroll-margin-top:70px }
+  h2 { display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-family:var(--mono);
+       font-size:clamp(11px,2.8vw,12.5px); letter-spacing:1px; color:#fff;
+       border-bottom:1px solid var(--border); padding-bottom:12px; margin:0 0 14px }
+  h2 .tt { flex:1; min-width:130px }
+  h2 .src { flex-basis:100%; font-family:var(--sans); font-weight:400; font-size:10.5px;
+            letter-spacing:.3px; color:var(--soft); text-transform:none }
+
+  pre { margin:0; border:1px solid var(--border); border-radius:10px; background:var(--code-bg);
+        overflow:auto; max-height:72vh }
+  pre::-webkit-scrollbar-corner { background:transparent }
+  pre code.hljs { background:transparent; padding:16px; font-size:clamp(10.5px,2.2vw,12.5px) !important;
+                  line-height:1.6; tab-size:2 }
+
+  /* ---------- buttons ---------- */
+  .copy-btn, #copy-all { font-family:var(--mono); font-size:10px; letter-spacing:1px;
+    text-transform:uppercase; cursor:pointer; transition:all .15s ease; white-space:nowrap;
+    background:rgba(127,176,74,.12); color:#9dc76a; border:1px solid var(--olive-dim); border-radius:6px }
+  .copy-btn:hover, #copy-all:hover { background:rgba(127,176,74,.28); color:#fff }
+  .copy-btn.ok, #copy-all.ok { background:var(--olive-strong); color:#fff; border-color:var(--olive-strong) }
+  .copy-btn { margin-left:auto; padding:4px 10px; flex-shrink:0 }
+  #copy-all { font-size:11px; font-weight:700; padding:8px 18px; display:inline-block }
+
+  /* ---------- overlays ---------- */
+  #backdrop { position:fixed; inset:0; z-index:40; background:rgba(0,0,0,.55);
+              opacity:0; pointer-events:none; transition:opacity .25s }
+  #backdrop.show { opacity:1; pointer-events:auto }
+  #to-top { position:fixed; right:18px; bottom:18px; z-index:45; width:42px; height:42px;
+            border-radius:50%; border:1px solid var(--olive-dim); background:var(--panel2);
+            color:var(--olive); font-size:17px; line-height:1; cursor:pointer;
+            opacity:0; pointer-events:none; transition:all .25s }
+  #to-top.show { opacity:1; pointer-events:auto }
+  #to-top:hover { background:var(--olive-strong); color:#fff; border-color:var(--olive-strong) }
+
+  ::-webkit-scrollbar { width:10px; height:10px }
+  ::-webkit-scrollbar-track { background:transparent }
+  ::-webkit-scrollbar-thumb { background:#2b3320; border-radius:99px; border:2px solid var(--bg) }
+
+  @media (max-width:959px) {
+    #sidebar { position:fixed; left:0; top:0; bottom:0; z-index:60; width:min(84vw,320px);
+               transform:translateX(-105%); transition:transform .28s ease;
+               box-shadow:24px 0 60px rgba(0,0,0,.5); height:100dvh }
+    body.nav-open #sidebar { transform:none }
+    main { padding-top:20px }
+    section.card { scroll-margin-top:66px }
+    pre { max-height:62vh }
+  }
+  @media (min-width:960px) {
+    #sidebar { transition:margin-left .28s ease }
+    body.nav-closed #sidebar { margin-left:-301px }
+  }
+  @media print {
+    #topbar, #sidebar, #backdrop, #to-top, .copy-btn, #copy-all, #filter { display:none !important }
+    body { display:block; background:#fff; color:#000; padding:0 }
+    section.card { border-color:#bbb; break-inside:avoid }
+    pre { max-height:none; border-color:#bbb }
+  }
+</style>
+</head>
+<body>
+<div id="backdrop"></div>
+
+<header id="topbar">
+  <button id="menu-btn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  <div class="tb-title">iChess Coach <em>/</em> UI Reference</div>
+  <button id="copy-all-m" class="copy-btn tb-copy">Copy all</button>
+</header>
+
+<nav id="sidebar">
+  <h1>iChess Coach</h1>
+  <p class="sub">UI reference &mdash; extracted from<br>scripts/core.js &rarr; ui.txt</p>
+  <input id="filter" type="search" placeholder="Filter sections&hellip;" autocomplete="off">
+  <div class="links">
+  <a href="#sec-1"><span class="num">1</span>SWEETALERT THEME CSS (swalThemeCSS)</a>
+  <a href="#sec-2"><span class="num">2</span>MOVE CLASSIFICATION ENUM</a>
+  <a href="#sec-3"><span class="num">3</span>CLASSIFICATION ICON SVGs + MAPS</a>
+  <a href="#sec-4"><span class="num">4</span>BOARD ICON PLACEMENT + ANIMATIONS (placeSVGOnBoard)</a>
+  <a href="#sec-5"><span class="num">5</span>SETTINGS MENU OVERLAY + CREDITS MODAL (toggleCoachMenu)</a>
+  <a href="#sec-6"><span class="num">6</span>FLOATING ACCURACY WIDGET (createSimpleAccuracyDisplay)</a>
+  <a href="#sec-7"><span class="num">7</span>EVAL BAR - CHESS.COM VARIANT (createEvalBar)</a>
+  <a href="#sec-8"><span class="num">8</span>EVAL BAR - LICHESS VARIANT (createEvalBar)</a>
+  <a href="#sec-9"><span class="num">9</span>EVAL BAR - WORLDCHESS VARIANT (createEvalBar)</a>
+  <a href="#sec-10"><span class="num">10</span>UPDATE BANNER (showUpdateBanner)</a>
+  </div>
+</nav>
+
+<main>
+  <header class="top">
+    <h1>UI Components Overview</h1>
+    <p>Reference copy only &mdash; core.js was not modified. Generated from scripts/ui.txt.</p>
+    <button id="copy-all">Copy all</button>
+  </header>
+  <section id="sec-1">
+  <h2><span class="badge">1</span> SWEETALERT THEME CSS (swalThemeCSS)
+    <span class="src">source: scripts/core.js lines 4-241</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+const swalThemeCSS = `
+  &lt;style&gt;
+    @import url(&#x27;https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;family=DM+Sans:wght@400;500;600;700&amp;display=swap&#x27;);
+    :root {
+      --olive-vivid:   #4a7c1f;
+      --olive-mid:     #5a8a30;
+      --olive-border:  rgba(74,124,31,0.30);
+      --bg-panel:      #faf8f5;
+      --bg-card:       #ffffff;
+      --bg-hover:      #eeeae3;
+      --border-strong: rgba(74,124,31,0.28);
+      --grey-fish:     #1a1714;
+      --text-main:     #2e2a24;
+      --text-soft:     #7a7060;
+      --text-dim:      #b0a898;
+      --font-mono:     &#x27;Space Mono&#x27;, monospace;
+      --font-body:     &#x27;DM Sans&#x27;, sans-serif;
+    }
+    .swal2-popup.swal-rederic {
+      font-family: var(--font-body) !important;
+      background: var(--bg-panel) !important;
+      border: 1px solid var(--border-strong) !important;
+      border-radius: 18px !important;
+      padding: 32px 28px 24px !important;
+      box-shadow: 0 0 0 1px rgba(74,124,31,0.04) inset, 0 24px 70px rgba(0,0,0,0.13) !important;
+      max-width: 460px !important;
+      width: 94% !important;
+      position: relative;
+    }
+    .swal2-popup.swal-rederic::before {
+      content: &#x27;&#x27;;
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--olive-mid), transparent);
+      border-radius: 0 0 4px 4px;
+    }
+    .swal2-popup.swal-rederic .swal2-title {
+      font-family: var(--font-mono) !important;
+      font-size: 13px !important;
+      font-weight: 700 !important;
+      letter-spacing: 3px !important;
+      text-transform: uppercase !important;
+      color: var(--grey-fish) !important;
+    }
+    .swal2-popup.swal-rederic .swal2-html-container {
+      color: var(--text-soft) !important;
+      font-size: 13.5px !important;
+      line-height: 1.65 !important;
+      margin: 0 !important;
+    }
+    .swal2-popup.swal-rederic .swal2-close {
+      color: var(--text-dim) !important;
+      font-size: 22px !important;
+      border-radius: 6px !important;
+      transition: all 0.2s !important;
+    }
+    .swal2-popup.swal-rederic .swal2-close:hover {
+      color: var(--grey-fish) !important;
+      background: var(--bg-hover) !important;
+    }
+    .swal2-popup.swal-rederic .swal2-confirm {
+      font-family: var(--font-mono) !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 1.5px !important;
+      text-transform: uppercase !important;
+      padding: 10px 26px !important;
+      border-radius: 8px !important;
+      background: rgba(74,124,31,0.12) !important;
+      border: 1px solid var(--olive-mid) !important;
+      color: var(--olive-vivid) !important;
+      box-shadow: none !important;
+      transition: all 0.2s ease !important;
+    }
+    .swal2-popup.swal-rederic .swal2-confirm:hover {
+      background: rgba(74,124,31,0.22) !important;
+      border-color: var(--olive-vivid) !important;
+      color: var(--grey-fish) !important;
+    }
+    .swal2-popup.swal-rederic .swal2-cancel {
+      font-family: var(--font-mono) !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 1.5px !important;
+      text-transform: uppercase !important;
+      padding: 10px 26px !important;
+      border-radius: 8px !important;
+      background: transparent !important;
+      border: 1px solid var(--border-strong) !important;
+      color: var(--text-soft) !important;
+      box-shadow: none !important;
+      transition: all 0.2s ease !important;
+    }
+    .swal2-popup.swal-rederic .swal2-cancel:hover {
+      background: var(--bg-hover) !important;
+      color: var(--text-main) !important;
+    }
+    .swal2-popup.swal-rederic .swal2-actions {
+      margin-top: 18px !important;
+      gap: 10px !important;
+    }
+    .swal2-container.swal2-backdrop-show {
+      background: rgba(26,23,20,0.55) !important;
+      backdrop-filter: blur(4px) !important;
+    }
+
+    .chv3-loading-wrap {
+      margin: 18px 0 8px;
+    }
+    .chv3-loading-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .chv3-bar-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(74,124,31,0.12);
+      border-radius: 99px;
+      overflow: hidden;
+      border: 1px solid var(--olive-border);
+    }
+    .chv3-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--olive-mid);
+      border-radius: 99px;
+      transition: width 0.35s ease;
+    }
+    .chv3-game-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 7px;
+      min-height: 14px;
+      text-align: left;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 13px 10px;
+      text-align: center;
+    }
+    .stat-card .s-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      display: block;
+      margin-bottom: 5px;
+    }
+    .stat-card .s-value {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--grey-fish);
+    }
+    .stat-card.s-win  .s-value { color: #3a7d1e; }
+    .stat-card.s-lost .s-value { color: #b84040; }
+    .stat-card.s-draw .s-value { color: #8a7040; }
+    .stat-card.s-acc  .s-value { color: #4a7c1f; }
+
+    .safety-row {
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .safety-row .s-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .safety-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 5px 11px;
+      border-radius: 6px;
+    }
+    .badge-legit   { background: rgba(58,125,30,0.13);  color: #3a7d1e; border: 1px solid rgba(58,125,30,0.3); }
+    .badge-sus     { background: rgba(186,64,64,0.10);  color: #b84040; border: 1px solid rgba(186,64,64,0.3); }
+    .badge-cheater { background: rgba(60,60,60,0.10);   color: #2e2a24; border: 1px solid rgba(60,60,60,0.25); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+    .dot-legit   { background: #3a7d1e; }
+    .dot-sus     { background: #b84040; }
+    .dot-cheater { background: #888; }
+
+    .swal-footer-note {
+      padding: 11px 14px;
+      background: rgba(74,124,31,0.06);
+      border: 1px solid var(--olive-border);
+      border-radius: 9px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--text-dim);
+      text-align: left;
+      margin-bottom: 14px;
+    }
+    .swal-footer-note::before { content: &#x27;// &#x27;; color: var(--olive-vivid); font-weight: 700; }
+    .swal-author {
+      display: block;
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+  &lt;/style&gt;
+`;
+
+/==============================================================================/</code></pre>
+</section>
+<section id="sec-2">
+  <h2><span class="badge">2</span> MOVE CLASSIFICATION ENUM
+    <span class="src">source: scripts/core.js lines 603-615</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+const MoveClassification = {
+  Brilliant: &quot;brilliant&quot;,
+  Great: &quot;greatFind&quot;,
+  Best: &quot;best&quot;,
+  Excellent: &quot;excellent&quot;,
+  Good: &quot;good&quot;,
+  Book: &quot;book&quot;,
+  Inaccuracy: &quot;inaccuracy&quot;,
+  Mistake: &quot;mistake&quot;,
+  Miss: &quot;miss&quot;,
+  Blunder: &quot;blunder&quot;,
+  Forced: &quot;forced&quot;,
+};
+
+/==============================================================================/</code></pre>
+</section>
+<section id="sec-3">
+  <h2><span class="badge">3</span> CLASSIFICATION ICON SVGs + MAPS (classMoveClassification, *SVG, Logo*SVG, classificationSVG, classificationColor)
+    <span class="src">source: scripts/core.js lines 622-950</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+const classMoveClassification = &quot;hint-svg&quot;;
+
+const BrillantSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;Brilliant&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#26c2a3&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M12.57,14.6a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0L10,14.84A.41.41,0,0,1,10,14.6V12.7a.32.32,0,0,1,.09-.23.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H10.35a.31.31,0,0,1-.34-.31L9.86,3.9A.36.36,0,0,1,10,3.66a.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H12.3a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M8.07,14.6a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.7a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13ZM8,10.67a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H5.85a.31.31,0,0,1-.34-.31L5.36,3.9a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H7.8a.35.35,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M12.57,14.1a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0L10,14.34A.41.41,0,0,1,10,14.1V12.2A.32.32,0,0,1,10,12a.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H10.35a.31.31,0,0,1-.34-.31L9.86,3.4A.36.36,0,0,1,10,3.16a.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H12.3a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M8.07,14.1a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.2a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2A.31.31,0,0,1,8,12a.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13ZM8,10.17a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H5.85a.31.31,0,0,1-.34-.31L5.36,3.4a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H7.8a.35.35,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const forcedSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;forced&quot;&gt;
+    &lt;g id=&quot;fast_win&quot;&gt;
+      &lt;g&gt;
+        &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+        &lt;path class=&quot;icon-background&quot; fill=&quot;#96af8b&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+      &lt;/g&gt;
+    &lt;/g&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M14.39,9.07,9,4.31a.31.31,0,0,0-.3,0,.32.32,0,0,0-.13.1.29.29,0,0,0,0,.16V7.42H3.9a.58.58,0,0,0-.19,0,.5.5,0,0,0-.17.11.91.91,0,0,0-.11.16.63.63,0,0,0,0,.19v3.41a.58.58,0,0,0,0,.19.64.64,0,0,0,.11.16.39.39,0,0,0,.17.11.41.41,0,0,0,.19,0H8.5v2.74a.26.26,0,0,0,.16.26.3.3,0,0,0,.16,0A.34.34,0,0,0,9,14.79L14.39,10a.69.69,0,0,0,.16-.22.7.7,0,0,0,0-.52A.69.69,0,0,0,14.39,9.07Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M14.39,8.57,9,3.81a.31.31,0,0,0-.3,0,.32.32,0,0,0-.13.1A.29.29,0,0,0,8.5,4V6.92H3.9a.58.58,0,0,0-.19,0,.5.5,0,0,0-.17.11.91.91,0,0,0-.11.16.63.63,0,0,0,0,.19v3.41a.58.58,0,0,0,0,.19.64.64,0,0,0,.11.16.39.39,0,0,0,.17.11.41.41,0,0,0,.19,0H8.5v2.74a.26.26,0,0,0,.16.26.3.3,0,0,0,.16,0A.34.34,0,0,0,9,14.29l5.42-4.76a.69.69,0,0,0,.16-.22.7.7,0,0,0,0-.52A.69.69,0,0,0,14.39,8.57Z&quot;&gt;&lt;/path&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const greatMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;great_find&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#749BBF&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g&gt;
+      &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+        &lt;path d=&quot;M10.32,14.6a.27.27,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0H8l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.7a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H8.1a.31.31,0,0,1-.34-.31L7.61,3.9a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0h2.11a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+      &lt;/g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M10.32,14.1a.27.27,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0H8l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.2a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H8.1a.31.31,0,0,1-.34-.31L7.61,3.4a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0h2.11a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const bookSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;book&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#D5A47D&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component-shadow&quot; opacity=&quot;0.3&quot; isolation=&quot;isolate&quot; d=&quot;M8.45,5.9c-1-.75-2.51-1.09-4.83-1.09H2.54v8.71H3.62a8.16,8.16,0,0,1,4.83,1.17Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component-shadow&quot; opacity=&quot;0.3&quot; isolation=&quot;isolate&quot; d=&quot;M9.54,14.69a8.14,8.14,0,0,1,4.84-1.17h1.08V4.81H14.38c-2.31,0-3.81.34-4.84,1.09Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M8.45,5.4c-1-.75-2.51-1.09-4.83-1.09H3V13h.58a8.09,8.09,0,0,1,4.83,1.17Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M9.54,14.19A8.14,8.14,0,0,1,14.38,13H15V4.31h-.58c-2.31,0-3.81.34-4.84,1.09Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const bestMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;best&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#81B64C&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot; d=&quot;M9,3.43a.5.5,0,0,0-.27.08.46.46,0,0,0-.17.22L7.24,7.17l-3.68.19a.52.52,0,0,0-.26.1.53.53,0,0,0-.16.23.45.45,0,0,0,0,.28.44.44,0,0,0,.15.23l2.86,2.32-1,3.56a.45.45,0,0,0,0,.28.46.46,0,0,0,.17.22.41.41,0,0,0,.26.09.43.43,0,0,0,.27-.08l3.09-2,3.09,2a.46.46,0,0,0,.53,0,.46.46,0,0,0,.17-.22.53.53,0,0,0,0-.28l-1-3.56L14.71,8.2A.44.44,0,0,0,14.86,8a.45.45,0,0,0,0-.28.53.53,0,0,0-.16-.23.52.52,0,0,0-.26-.1l-3.68-.2L9.44,3.73a.46.46,0,0,0-.17-.22A.5.5,0,0,0,9,3.43Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M9,2.93A.5.5,0,0,0,8.73,3a.46.46,0,0,0-.17.22L7.24,6.67l-3.68.19A.52.52,0,0,0,3.3,7a.53.53,0,0,0-.16.23.45.45,0,0,0,0,.28.44.44,0,0,0,.15.23L6.15,10l-1,3.56a.45.45,0,0,0,0,.28.46.46,0,0,0,.17.22.41.41,0,0,0,.26.09.43.43,0,0,0,.27-.08l3.09-2,3.09,2a.46.46,0,0,0,.53,0,.46.46,0,0,0,.17-.22.53.53,0,0,0,0-.28l-1-3.56L14.71,7.7a.44.44,0,0,0,.15-.23.45.45,0,0,0,0-.28A.53.53,0,0,0,14.7,7a.52.52,0,0,0-.26-.1l-3.68-.2L9.44,3.23A.46.46,0,0,0,9.27,3,.5.5,0,0,0,9,2.93Z&quot;&gt;&lt;/path&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const excellentMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;excellent&quot;&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-background&quot; fill=&quot;#81B64C&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M13.79,11.34c0-.2.4-.53.4-.94S14,9.72,14,9.58a2.06,2.06,0,0,0,.18-.83,1,1,0,0,0-.3-.69,1.13,1.13,0,0,0-.55-.2,10.29,10.29,0,0,1-2.07,0c-.37-.23,0-1.18.18-1.7S11.9,4,10.62,3.7c-.69-.17-.66.37-.78.9-.05.21-.09.43-.13.57A5,5,0,0,1,7.05,8.23a1.57,1.57,0,0,1-.42.18v4.94A7.23,7.23,0,0,1,8,13.53c.52.12.91.25,1.44.33A11.11,11.11,0,0,0,11,14a6.65,6.65,0,0,0,1.18,0,1.09,1.09,0,0,0,1-.59.66.66,0,0,0,.06-.2,1.63,1.63,0,0,1,.07-.3c.13-.28.37-.3.5-.68S13.74,11.53,13.79,11.34Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M5.49,8.09H4.31a.5.5,0,0,0-.5.5v4.56a.5.5,0,0,0,.5.5H5.49a.5.5,0,0,0,.5-.5V8.59A.5.5,0,0,0,5.49,8.09Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M13.79,10.84c0-.2.4-.53.4-.94S14,9.22,14,9.08a2.06,2.06,0,0,0,.18-.83,1,1,0,0,0-.3-.69,1.13,1.13,0,0,0-.55-.2,10.29,10.29,0,0,1-2.07,0c-.37-.23,0-1.18.18-1.7s.51-2.12-.77-2.43c-.69-.17-.66.37-.78.9-.05.21-.09.43-.13.57A5,5,0,0,1,7.05,7.73a1.57,1.57,0,0,1-.42.18v4.94A7.23,7.23,0,0,1,8,13c.52.12.91.25,1.44.33a11.11,11.11,0,0,0,1.62.16,6.65,6.65,0,0,0,1.18,0,1.09,1.09,0,0,0,1-.59.66.66,0,0,0,.06-.2,1.63,1.63,0,0,1,.07-.3c.13-.28.37-.3.5-.68S13.74,11,13.79,10.84Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M5.49,7.59H4.31a.5.5,0,0,0-.5.5v4.56a.5.5,0,0,0,.5.5H5.49a.5.5,0,0,0,.5-.5V8.09A.5.5,0,0,0,5.49,7.59Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const goodMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;good&quot;&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-background&quot; fill=&quot;#95b776&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot; d=&quot;M15.11,6.81,9.45,12.47,7.79,14.13a.39.39,0,0,1-.28.11.39.39,0,0,1-.27-.11L2.89,9.78a.39.39,0,0,1-.11-.28.39.39,0,0,1,.11-.27L4.28,7.85a.34.34,0,0,1,.12-.09l.15,0a.37.37,0,0,1,.15,0,.38.38,0,0,1,.13.09l2.69,2.68,5.65-5.65a.38.38,0,0,1,.13-.09.37.37,0,0,1,.15,0,.4.4,0,0,1,.15,0,.34.34,0,0,1,.12.09l1.39,1.38a.41.41,0,0,1,.08.13.33.33,0,0,1,0,.15.4.4,0,0,1,0,.15A.5.5,0,0,1,15.11,6.81Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M15.11,6.31,9.45,12,7.79,13.63a.39.39,0,0,1-.28.11.39.39,0,0,1-.27-.11L2.89,9.28A.39.39,0,0,1,2.78,9a.39.39,0,0,1,.11-.27L4.28,7.35a.34.34,0,0,1,.12-.09l.15,0a.37.37,0,0,1,.15,0,.38.38,0,0,1,.13.09L7.52,10l5.65-5.65a.38.38,0,0,1,.13-.09.37.37,0,0,1,.15,0,.4.4,0,0,1,.15,0,.34.34,0,0,1,.12.09l1.39,1.38a.41.41,0,0,1,.08.13.33.33,0,0,1,0,.15.4.4,0,0,1,0,.15A.5.5,0,0,1,15.11,6.31Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const inaccuracyMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;inaccuracy&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#F7C631&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M13.66,14.8a.28.28,0,0,1,0,.13.23.23,0,0,1-.08.11.28.28,0,0,1-.11.08l-.12,0h-2l-.13,0a.27.27,0,0,1-.1-.08A.36.36,0,0,1,11,14.8V12.9a.59.59,0,0,1,0-.13.36.36,0,0,1,.07-.1l.1-.08.13,0h2a.33.33,0,0,1,.23.1.39.39,0,0,1,.08.1.28.28,0,0,1,0,.13Zm-.12-3.93a.31.31,0,0,1,0,.13.3.3,0,0,1-.07.1.3.3,0,0,1-.23.08H11.43a.31.31,0,0,1-.34-.31L10.94,4.1A.5.5,0,0,1,11,3.86l.11-.08.13,0h2.11a.35.35,0,0,1,.26.1.41.41,0,0,1,.08.24Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M7.65,14.82a.27.27,0,0,1,0,.12.26.26,0,0,1-.07.11l-.1.07-.13,0H5.43a.25.25,0,0,1-.12,0,.27.27,0,0,1-.1-.08.31.31,0,0,1-.09-.22V13a.36.36,0,0,1,.09-.23l.1-.07.12,0H7.32a.32.32,0,0,1,.23.09.3.3,0,0,1,.07.1.28.28,0,0,1,0,.13Zm2.2-7.17a3.1,3.1,0,0,1-.36.73A5.58,5.58,0,0,1,9,9a4.85,4.85,0,0,1-.52.49,8,8,0,0,0-.65.63,1,1,0,0,0-.27.7V11a.21.21,0,0,1,0,.12.17.17,0,0,1-.06.1.23.23,0,0,1-.1.07l-.12,0H5.53a.21.21,0,0,1-.12,0,.18.18,0,0,1-.1-.07.2.2,0,0,1-.08-.1.37.37,0,0,1,0-.12v-.35a2.68,2.68,0,0,1,.13-.84,2.91,2.91,0,0,1,.33-.66,3.38,3.38,0,0,1,.45-.55c.16-.15.33-.29.49-.42a7.84,7.84,0,0,0,.65-.64,1,1,0,0,0,.25-.67.77.77,0,0,0-.07-.34.67.67,0,0,0-.23-.27A1.16,1.16,0,0,0,6.49,6,1.61,1.61,0,0,0,6,6.11a3,3,0,0,0-.41.18,1.75,1.75,0,0,0-.29.18l-.11.09A.5.5,0,0,1,5,6.62a.31.31,0,0,1-.21-.13l-1-1.21a.3.3,0,0,1,0-.4A1.36,1.36,0,0,1,4,4.68a3.07,3.07,0,0,1,.56-.38,5.49,5.49,0,0,1,.9-.37,3.69,3.69,0,0,1,1.19-.17,3.92,3.92,0,0,1,2.3.75,2.85,2.85,0,0,1,.77.92A2.82,2.82,0,0,1,10,6.71,3,3,0,0,1,9.85,7.65Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M13.66,14.3a.28.28,0,0,1,0,.13.23.23,0,0,1-.08.11.28.28,0,0,1-.11.08l-.12,0h-2l-.13,0a.27.27,0,0,1-.1-.08A.36.36,0,0,1,11,14.3V12.4a.59.59,0,0,1,0-.13.36.36,0,0,1,.07-.1l.1-.08.13,0h2a.33.33,0,0,1,.23.1.39.39,0,0,1,.08.1.28.28,0,0,1,0,.13Zm-.12-3.93a.31.31,0,0,1,0,.13.3.3,0,0,1-.07.1.3.3,0,0,1-.23.08H11.43a.31.31,0,0,1-.34-.31L10.94,3.6A.5.5,0,0,1,11,3.36l.11-.08.13,0h2.11a.35.35,0,0,1,.26.1.41.41,0,0,1,.08.24Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M7.65,14.32a.27.27,0,0,1,0,.12.26.26,0,0,1-.07.11l-.1.07-.13,0H5.43a.25.25,0,0,1-.12,0,.27.27,0,0,1-.1-.08.31.31,0,0,1-.09-.22V12.49a.36.36,0,0,1,.09-.23l.1-.07.12,0H7.32a.32.32,0,0,1,.23.09.3.3,0,0,1,.07.1.28.28,0,0,1,0,.13Zm2.2-7.17a3.1,3.1,0,0,1-.36.73,5.58,5.58,0,0,1-.49.6A4.85,4.85,0,0,1,8.48,9a8,8,0,0,0-.65.63,1,1,0,0,0-.27.7v.22a.21.21,0,0,1,0,.12.17.17,0,0,1-.06.1.23.23,0,0,1-.1.07l-.12,0H5.53a.21.21,0,0,1-.12,0,.18.18,0,0,1-.1-.07.2.2,0,0,1-.08-.1.37.37,0,0,1,0-.12v-.35a2.68,2.68,0,0,1,.13-.84,2.91,2.91,0,0,1,.33-.66,3.38,3.38,0,0,1,.45-.55c.16-.15.33-.29.49-.42a7.84,7.84,0,0,0,.65-.64,1,1,0,0,0,.25-.67.77.77,0,0,0-.07-.34.67.67,0,0,0-.23-.27,1.16,1.16,0,0,0-.72-.24A1.61,1.61,0,0,0,6,5.61a3,3,0,0,0-.41.18A1.75,1.75,0,0,0,5.3,6l-.11.09A.5.5,0,0,1,5,6.12.31.31,0,0,1,4.74,6l-1-1.21a.3.3,0,0,1,0-.4A1.36,1.36,0,0,1,4,4.18a3.07,3.07,0,0,1,.56-.38,5.49,5.49,0,0,1,.9-.37,3.69,3.69,0,0,1,1.19-.17A3.92,3.92,0,0,1,8.93,4a2.85,2.85,0,0,1,.77.92A2.82,2.82,0,0,1,10,6.21,3,3,0,0,1,9.85,7.15Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const mistakeSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;mistake&quot;&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-background&quot; fill=&quot;#FFA459&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+        &lt;path d=&quot;M9.92,15a.27.27,0,0,1,0,.12.41.41,0,0,1-.07.11.32.32,0,0,1-.23.09H7.7a.25.25,0,0,1-.12,0,.27.27,0,0,1-.1-.08A.31.31,0,0,1,7.39,15V13.19A.32.32,0,0,1,7.48,13l.1-.07.12,0H9.59a.32.32,0,0,1,.23.09.61.61,0,0,1,.07.1.28.28,0,0,1,0,.13Zm2.2-7.17a3.1,3.1,0,0,1-.36.73,5.58,5.58,0,0,1-.49.6,6,6,0,0,1-.52.49,8,8,0,0,0-.65.63,1,1,0,0,0-.27.7v.22a.24.24,0,0,1,0,.12.17.17,0,0,1-.06.1.3.3,0,0,1-.1.07l-.12,0H7.79l-.12,0a.3.3,0,0,1-.1-.07.26.26,0,0,1-.07-.1.37.37,0,0,1,0-.12v-.35A2.42,2.42,0,0,1,7.61,10a2.55,2.55,0,0,1,.33-.66,3.38,3.38,0,0,1,.45-.55c.16-.15.33-.29.49-.42a7.73,7.73,0,0,0,.64-.64,1,1,0,0,0,.26-.67.77.77,0,0,0-.07-.34.75.75,0,0,0-.23-.27,1.16,1.16,0,0,0-.72-.24,1.61,1.61,0,0,0-.49.07,3,3,0,0,0-.41.18,1.41,1.41,0,0,0-.29.18l-.11.09a.5.5,0,0,1-.24.06A.31.31,0,0,1,7,6.69L6,5.48a.29.29,0,0,1,0-.4,1.36,1.36,0,0,1,.21-.2,3.07,3.07,0,0,1,.56-.38,5.38,5.38,0,0,1,.89-.37A3.75,3.75,0,0,1,8.9,4a4.07,4.07,0,0,1,1.2.19,4,4,0,0,1,1.09.56,2.76,2.76,0,0,1,.78.92,2.82,2.82,0,0,1,.28,1.28A3,3,0,0,1,12.12,7.85Z&quot;&gt;&lt;/path&gt;
+      &lt;/g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M9.92,14.52a.27.27,0,0,1,0,.12.41.41,0,0,1-.07.11.32.32,0,0,1-.23.09H7.7a.25.25,0,0,1-.12,0,.27.27,0,0,1-.1-.08.31.31,0,0,1-.09-.22V12.69a.32.32,0,0,1,.09-.23l.1-.07.12,0H9.59a.32.32,0,0,1,.23.09.61.61,0,0,1,.07.1.28.28,0,0,1,0,.13Zm2.2-7.17a3.1,3.1,0,0,1-.36.73,5.58,5.58,0,0,1-.49.6,6,6,0,0,1-.52.49,8,8,0,0,0-.65.63,1,1,0,0,0-.27.7v.22a.24.24,0,0,1,0,.12.17.17,0,0,1-.06.1.3.3,0,0,1-.1.07l-.12,0H7.79l-.12,0a.3.3,0,0,1-.1-.07.26.26,0,0,1-.07-.1.37.37,0,0,1,0-.12v-.35a2.42,2.42,0,0,1,.13-.84,2.55,2.55,0,0,1,.33-.66,3.38,3.38,0,0,1,.45-.55c.16-.15.33-.29.49-.42a7.73,7.73,0,0,0,.64-.64,1,1,0,0,0,.26-.67.77.77,0,0,0-.07-.34A.75.75,0,0,0,9.48,6a1.16,1.16,0,0,0-.72-.24,1.61,1.61,0,0,0-.49.07A3,3,0,0,0,7.86,6a1.41,1.41,0,0,0-.29.18l-.11.09a.5.5,0,0,1-.24.06A.31.31,0,0,1,7,6.19L6,5a.29.29,0,0,1,0-.4,1.36,1.36,0,0,1,.21-.2A3.07,3.07,0,0,1,6.81,4a5.38,5.38,0,0,1,.89-.37,3.75,3.75,0,0,1,1.2-.17,4.07,4.07,0,0,1,1.2.19,4,4,0,0,1,1.09.56,2.76,2.76,0,0,1,.78.92,2.82,2.82,0,0,1,.28,1.28A3,3,0,0,1,12.12,7.35Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const missSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+  &lt;path class=&quot;icon-background&quot; fill=&quot;#FF7769&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+      &lt;defs&gt;&lt;style&gt;.cls-1{fill:#f1f2f2;}.cls-2{fill:#FF7769;}.cls-3{opacity:.2;}.cls-4{opacity:.3;}&lt;/style&gt;&lt;/defs&gt;&lt;g id=&quot;incorrect&quot;&gt;&lt;path class=&quot;cls-4&quot; d=&quot;M9,.5C4.03,.5,0,4.53,0,9.5s4.03,9,9,9,9-4.03,9-9S13.97,.5,9,.5Z&quot;&gt;&lt;/path&gt;&lt;path class=&quot;cls-2&quot; d=&quot;M9,0C4.03,0,0,4.03,0,9s4.03,9,9,9,9-4.03,9-9S13.97,0,9,0Z&quot;&gt;&lt;/path&gt;&lt;g class=&quot;cls-3&quot;&gt;&lt;path d=&quot;M13.99,12.51s.06,.08,.08,.13c.02,.05,.03,.1,.03,.15s-.01,.1-.03,.15c-.02,.05-.05,.09-.08,.13l-1.37,1.37s-.08,.06-.13,.08c-.05,.02-.1,.03-.15,.03s-.1-.01-.15-.03c-.05-.02-.09-.05-.13-.08l-3.06-3.06-3.06,3.06s-.08,.06-.13,.08c-.05,.02-.1,.03-.15,.03s-.1-.01-.15-.03c-.05-.02-.09-.05-.13-.08l-1.37-1.37c-.07-.07-.11-.17-.11-.28s.04-.2,.11-.28l3.06-3.06-3.06-3.06c-.07-.07-.11-.17-.11-.28s.04-.2,.11-.28l1.37-1.37c.07-.07,.17-.11,.28-.11s.2,.04,.28,.11l3.06,3.06,3.06-3.06c.07-.07,.17-.11,.28-.11s.2,.04,.28,.11l1.37,1.37s.06,.08,.08,.13c.02,.05,.03,.1,.03,.15s-.01,.1-.03,.15c-.02,.05-.05,.09-.08,.13l-3.06,3.06,3.06,3.06Z&quot;&gt;&lt;/path&gt;&lt;/g&gt;&lt;path class=&quot;cls-1&quot; d=&quot;M13.99,12.01s.06,.08,.08,.13c.02,.05,.03,.1,.03,.15s-.01,.1-.03,.15c-.02,.05-.05,.09-.08,.13l-1.37,1.37s-.08,.06-.13,.08c-.05,.02-.1,.03-.15,.03s-.1-.01-.15-.03c-.05-.02-.09-.05-.13-.08l-3.06-3.06-3.06,3.06s-.08,.06-.13,.08c-.05,.02-.1,.03-.15,.03s-.1-.01-.15-.03c-.05-.02-.09-.05-.13-.08l-1.37-1.37c-.07-.07-.11-.17-.11-.28s.04-.2,.11-.28l3.06-3.06-3.06-3.06c-.07-.07-.11-.17-.11-.28s.04-.2,.11-.28l1.37-1.37c.07-.07,.17-.11,.28-.11s.2,.04,.28,.11l3.06,3.06,3.06-3.06c.07-.07,.17-.11,.28-.11s.2,.04,.28,.11l1.37,1.37s.06,.08,.08,.13c.02,.05,.03,.1,.03,.15s-.01,.1-.03,.15c-.02,.05-.05,.09-.08,.13l-3.06,3.06,3.06,3.06Z&quot;&gt;&lt;/path&gt;&lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const blunderSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;blunder&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#FA412D&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M14.74,5.45A2.58,2.58,0,0,0,14,4.54,3.76,3.76,0,0,0,12.89,4a4.07,4.07,0,0,0-1.2-.19A3.92,3.92,0,0,0,10.51,4a5.87,5.87,0,0,0-.9.37,3,3,0,0,0-.32.2,3.46,3.46,0,0,1,.42.63,3.29,3.29,0,0,1,.36,1.47.31.31,0,0,0,.19-.06l.11-.08a2.9,2.9,0,0,1,.29-.19,3.89,3.89,0,0,1,.41-.17,1.55,1.55,0,0,1,.48-.07,1.1,1.1,0,0,1,.72.24.72.72,0,0,1,.23.26.8.8,0,0,1,.07.34,1,1,0,0,1-.25.67,7.71,7.71,0,0,1-.65.63,6.2,6.2,0,0,0-.48.43,2.93,2.93,0,0,0-.45.54,2.55,2.55,0,0,0-.33.66,2.62,2.62,0,0,0-.13.83V11a.24.24,0,0,0,0,.12.35.35,0,0,0,.17.17l.12,0h1.71l.12,0a.23.23,0,0,0,.1-.07.21.21,0,0,0,.06-.1.27.27,0,0,0,0-.12V10.8a1,1,0,0,1,.26-.7q.27-.28.66-.63A5.79,5.79,0,0,0,14.05,9a4.51,4.51,0,0,0,.48-.6,2.56,2.56,0,0,0,.36-.72,2.81,2.81,0,0,0,.14-1A2.66,2.66,0,0,0,14.74,5.45Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M12.38,12.65H10.5l-.12,0a.34.34,0,0,0-.18.29v1.82a.36.36,0,0,0,.08.23.23.23,0,0,0,.1.07l.12,0h1.88a.24.24,0,0,0,.12,0,.26.26,0,0,0,.11-.07.36.36,0,0,0,.07-.1.28.28,0,0,0,0-.13V13a.27.27,0,0,0,0-.12.61.61,0,0,0-.07-.1A.32.32,0,0,0,12.38,12.65Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M6.79,12.65H4.91l-.12,0a.34.34,0,0,0-.18.29v1.82a.36.36,0,0,0,.08.23.23.23,0,0,0,.1.07l.12,0H6.79a.24.24,0,0,0,.12,0A.26.26,0,0,0,7,15a.36.36,0,0,0,.07-.1.28.28,0,0,0,0-.13V13a.27.27,0,0,0,0-.12.61.61,0,0,0-.07-.1A.32.32,0,0,0,6.79,12.65Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M8.39,4.54A3.76,3.76,0,0,0,7.3,4a4.07,4.07,0,0,0-1.2-.19A3.92,3.92,0,0,0,4.92,4a5.87,5.87,0,0,0-.9.37,3.37,3.37,0,0,0-.55.38l-.21.19a.32.32,0,0,0,0,.41l1,1.2a.26.26,0,0,0,.2.12.48.48,0,0,0,.24-.06l.11-.08a2.9,2.9,0,0,1,.29-.19l.4-.17A1.66,1.66,0,0,1,6,6.06a1.1,1.1,0,0,1,.72.24.72.72,0,0,1,.23.26A.77.77,0,0,1,7,6.9a1,1,0,0,1-.26.67,7.6,7.6,0,0,1-.64.63,6.28,6.28,0,0,0-.49.43,2.93,2.93,0,0,0-.45.54,2.72,2.72,0,0,0-.33.66,2.62,2.62,0,0,0-.13.83V11a.43.43,0,0,0,0,.12.39.39,0,0,0,.08.1.18.18,0,0,0,.1.07.21.21,0,0,0,.12,0H6.72l.12,0a.23.23,0,0,0,.1-.07.36.36,0,0,0,.07-.1A.5.5,0,0,0,7,11V10.8a1,1,0,0,1,.27-.7A8,8,0,0,1,8,9.47c.18-.15.35-.31.52-.48A7,7,0,0,0,9,8.39a3.23,3.23,0,0,0,.36-.72,3.07,3.07,0,0,0,.13-1,2.66,2.66,0,0,0-.29-1.27A2.58,2.58,0,0,0,8.39,4.54Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M14.74,5A2.58,2.58,0,0,0,14,4a3.76,3.76,0,0,0-1.09-.56,4.07,4.07,0,0,0-1.2-.19,3.92,3.92,0,0,0-1.18.17,5.87,5.87,0,0,0-.9.37,3,3,0,0,0-.32.2,3.46,3.46,0,0,1,.42.63,3.29,3.29,0,0,1,.36,1.47.31.31,0,0,0,.19-.06L10.37,6a2.9,2.9,0,0,1,.29-.19,3.89,3.89,0,0,1,.41-.17,1.55,1.55,0,0,1,.48-.07,1.1,1.1,0,0,1,.72.24.72.72,0,0,1,.23.26.8.8,0,0,1,.07.34,1,1,0,0,1-.25.67,7.71,7.71,0,0,1-.65.63,6.2,6.2,0,0,0-.48.43,2.93,2.93,0,0,0-.45.54,2.55,2.55,0,0,0-.33.66,2.62,2.62,0,0,0-.13.83v.35a.24.24,0,0,0,0,.12.35.35,0,0,0,.17.17l.12,0h1.71l.12,0a.23.23,0,0,0,.1-.07.21.21,0,0,0,.06-.1.27.27,0,0,0,0-.12V10.3a1,1,0,0,1,.26-.7q.27-.28.66-.63a5.79,5.79,0,0,0,.51-.48,4.51,4.51,0,0,0,.48-.6,2.56,2.56,0,0,0,.36-.72,2.81,2.81,0,0,0,.14-1A2.66,2.66,0,0,0,14.74,5Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M12.38,12.15H10.5l-.12,0a.34.34,0,0,0-.18.29v1.82a.36.36,0,0,0,.08.23.23.23,0,0,0,.1.07l.12,0h1.88a.24.24,0,0,0,.12,0,.26.26,0,0,0,.11-.07.36.36,0,0,0,.07-.1.28.28,0,0,0,0-.13V12.46a.27.27,0,0,0,0-.12.61.61,0,0,0-.07-.1A.32.32,0,0,0,12.38,12.15Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M6.79,12.15H4.91l-.12,0a.34.34,0,0,0-.18.29v1.82a.36.36,0,0,0,.08.23.23.23,0,0,0,.1.07l.12,0H6.79a.24.24,0,0,0,.12,0A.26.26,0,0,0,7,14.51a.36.36,0,0,0,.07-.1.28.28,0,0,0,0-.13V12.46a.27.27,0,0,0,0-.12.61.61,0,0,0-.07-.1A.32.32,0,0,0,6.79,12.15Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M8.39,4A3.76,3.76,0,0,0,7.3,3.48a4.07,4.07,0,0,0-1.2-.19,3.92,3.92,0,0,0-1.18.17,5.87,5.87,0,0,0-.9.37,3.37,3.37,0,0,0-.55.38l-.21.19a.32.32,0,0,0,0,.41l1,1.2a.26.26,0,0,0,.2.12.48.48,0,0,0,.24-.06L4.78,6a2.9,2.9,0,0,1,.29-.19l.4-.17A1.66,1.66,0,0,1,6,5.56a1.1,1.1,0,0,1,.72.24.72.72,0,0,1,.23.26A.77.77,0,0,1,7,6.4a1,1,0,0,1-.26.67,7.6,7.6,0,0,1-.64.63,6.28,6.28,0,0,0-.49.43,2.93,2.93,0,0,0-.45.54,2.72,2.72,0,0,0-.33.66,2.62,2.62,0,0,0-.13.83v.35a.43.43,0,0,0,0,.12.39.39,0,0,0,.08.1.18.18,0,0,0,.1.07.21.21,0,0,0,.12,0H6.72l.12,0a.23.23,0,0,0,.1-.07.36.36,0,0,0,.07-.1.5.5,0,0,0,0-.12V10.3a1,1,0,0,1,.27-.7A8,8,0,0,1,8,9c.18-.15.35-.31.52-.48A7,7,0,0,0,9,7.89a3.23,3.23,0,0,0,.36-.72,3.07,3.07,0,0,0,.13-1A2.66,2.66,0,0,0,9.15,5,2.58,2.58,0,0,0,8.39,4Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+/////////////////////// LOGO
+
+const LogoBrillantSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;Brilliant&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#26c2a3&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M12.57,14.6a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0L10,14.84A.41.41,0,0,1,10,14.6V12.7a.32.32,0,0,1,.09-.23.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H10.35a.31.31,0,0,1-.34-.31L9.86,3.9A.36.36,0,0,1,10,3.66a.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H12.3a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M8.07,14.6a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.7a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13ZM8,10.67a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H5.85a.31.31,0,0,1-.34-.31L5.36,3.9a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H7.8a.35.35,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M12.57,14.1a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0L10,14.34A.41.41,0,0,1,10,14.1V12.2A.32.32,0,0,1,10,12a.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H10.35a.31.31,0,0,1-.34-.31L9.86,3.4A.36.36,0,0,1,10,3.16a.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H12.3a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M8.07,14.1a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.2a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2A.31.31,0,0,1,8,12a.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13ZM8,10.17a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H5.85a.31.31,0,0,1-.34-.31L5.36,3.4a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H7.8a.35.35,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogoforcedSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;forced&quot;&gt;
+    &lt;g id=&quot;fast_win&quot;&gt;
+      &lt;g&gt;
+        &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+        &lt;path class=&quot;icon-background&quot; fill=&quot;#96af8b&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+      &lt;/g&gt;
+    &lt;/g&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M14.39,9.07,9,4.31a.31.31,0,0,0-.3,0,.32.32,0,0,0-.13.1.29.29,0,0,0,0,.16V7.42H3.9a.58.58,0,0,0-.19,0,.5.5,0,0,0-.17.11.91.91,0,0,0-.11.16.63.63,0,0,0,0,.19v3.41a.58.58,0,0,0,0,.19.64.64,0,0,0,.11.16.39.39,0,0,0,.17.11.41.41,0,0,0,.19,0H8.5v2.74a.26.26,0,0,0,.16.26.3.3,0,0,0,.16,0A.34.34,0,0,0,9,14.79L14.39,10a.69.69,0,0,0,.16-.22.7.7,0,0,0,0-.52A.69.69,0,0,0,14.39,9.07Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M14.39,8.57,9,3.81a.31.31,0,0,0-.3,0,.32.32,0,0,0-.13.1A.29.29,0,0,0,8.5,4V6.92H3.9a.58.58,0,0,0-.19,0,.5.5,0,0,0-.17.11.91.91,0,0,0-.11.16.63.63,0,0,0,0,.19v3.41a.58.58,0,0,0,0,.19.64.64,0,0,0,.11.16.39.39,0,0,0,.17.11.41.41,0,0,0,.19,0H8.5v2.74a.26.26,0,0,0,.16.26.3.3,0,0,0,.16,0A.34.34,0,0,0,9,14.29l5.42-4.76a.69.69,0,0,0,.16-.22.7.7,0,0,0,0-.52A.69.69,0,0,0,14.39,8.57Z&quot;&gt;&lt;/path&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogogreatMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;great_find&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#749BBF&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g&gt;
+      &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+        &lt;path d=&quot;M10.32,14.6a.27.27,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0H8l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.7a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H8.1a.31.31,0,0,1-.34-.31L7.61,3.9a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0h2.11a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+      &lt;/g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M10.32,14.1a.27.27,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0H8l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.2a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H8.1a.31.31,0,0,1-.34-.31L7.61,3.4a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0h2.11a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogobookSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;book&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#D5A47D&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component-shadow&quot; opacity=&quot;0.3&quot; isolation=&quot;isolate&quot; d=&quot;M8.45,5.9c-1-.75-2.51-1.09-4.83-1.09H2.54v8.71H3.62a8.16,8.16,0,0,1,4.83,1.17Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component-shadow&quot; opacity=&quot;0.3&quot; isolation=&quot;isolate&quot; d=&quot;M9.54,14.69a8.14,8.14,0,0,1,4.84-1.17h1.08V4.81H14.38c-2.31,0-3.81.34-4.84,1.09Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M8.45,5.4c-1-.75-2.51-1.09-4.83-1.09H3V13h.58a8.09,8.09,0,0,1,4.83,1.17Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M9.54,14.19A8.14,8.14,0,0,1,14.38,13H15V4.31h-.58c-2.31,0-3.81.34-4.84,1.09Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogobestMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;best&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#81B64C&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot; d=&quot;M9,3.43a.5.5,0,0,0-.27.08.46.46,0,0,0-.17.22L7.24,7.17l-3.68.19a.52.52,0,0,0-.26.1.53.53,0,0,0-.16.23.45.45,0,0,0,0,.28.44.44,0,0,0,.15.23l2.86,2.32-1,3.56a.45.45,0,0,0,0,.28.46.46,0,0,0,.17.22.41.41,0,0,0,.26.09.43.43,0,0,0,.27-.08l3.09-2,3.09,2a.46.46,0,0,0,.53,0,.46.46,0,0,0,.17-.22.53.53,0,0,0,0-.28l-1-3.56L14.71,8.2A.44.44,0,0,0,14.86,8a.45.45,0,0,0,0-.28.53.53,0,0,0-.16-.23.52.52,0,0,0-.26-.1l-3.68-.2L9.44,3.73a.46.46,0,0,0-.17-.22A.5.5,0,0,0,9,3.43Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M9,2.93A.5.5,0,0,0,8.73,3a.46.46,0,0,0-.17.22L7.24,6.67l-3.68.19A.52.52,0,0,0,3.3,7a.53.53,0,0,0-.16.23.45.45,0,0,0,0,.28.44.44,0,0,0,.15.23L6.15,10l-1,3.56a.45.45,0,0,0,0,.28.46.46,0,0,0,.17.22.41.41,0,0,0,.26.09.43.43,0,0,0,.27-.08l3.09-2,3.09,2a.46.46,0,0,0,.53,0,.46.46,0,0,0,.17-.22.53.53,0,0,0,0-.28l-1-3.56L14.71,7.7a.44.44,0,0,0,.15-.23.45.45,0,0,0,0-.28A.53.53,0,0,0,14.7,7a.52.52,0,0,0-.26-.1l-3.68-.2L9.44,3.23A.46.46,0,0,0,9.27,3,.5.5,0,0,0,9,2.93Z&quot;&gt;&lt;/path&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogoexcellentMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;excellent&quot;&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-background&quot; fill=&quot;#81B64C&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M13.79,11.34c0-.2.4-.53.4-.94S14,9.72,14,9.58a2.06,2.06,0,0,0,.18-.83,1,1,0,0,0-.3-.69,1.13,1.13,0,0,0-.55-.2,10.29,10.29,0,0,1-2.07,0c-.37-.23,0-1.18.18-1.7S11.9,4,10.62,3.7c-.69-.17-.66.37-.78.9-.05.21-.09.43-.13.57A5,5,0,0,1,7.05,8.23a1.57,1.57,0,0,1-.42.18v4.94A7.23,7.23,0,0,1,8,13.53c.52.12.91.25,1.44.33A11.11,11.11,0,0,0,11,14a6.65,6.65,0,0,0,1.18,0,1.09,1.09,0,0,0,1-.59.66.66,0,0,0,.06-.2,1.63,1.63,0,0,1,.07-.3c.13-.28.37-.3.5-.68S13.74,11.53,13.79,11.34Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M5.49,8.09H4.31a.5.5,0,0,0-.5.5v4.56a.5.5,0,0,0,.5.5H5.49a.5.5,0,0,0,.5-.5V8.59A.5.5,0,0,0,5.49,8.09Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M13.79,10.84c0-.2.4-.53.4-.94S14,9.22,14,9.08a2.06,2.06,0,0,0,.18-.83,1,1,0,0,0-.3-.69,1.13,1.13,0,0,0-.55-.2,10.29,10.29,0,0,1-2.07,0c-.37-.23,0-1.18.18-1.7s.51-2.12-.77-2.43c-.69-.17-.66.37-.78.9-.05.21-.09.43-.13.57A5,5,0,0,1,7.05,7.73a1.57,1.57,0,0,1-.42.18v4.94A7.23,7.23,0,0,1,8,13c.52.12.91.25,1.44.33a11.11,11.11,0,0,0,1.62.16,6.65,6.65,0,0,0,1.18,0,1.09,1.09,0,0,0,1-.59.66.66,0,0,0,.06-.2,1.63,1.63,0,0,1,.07-.3c.13-.28.37-.3.5-.68S13.74,11,13.79,10.84Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M5.49,7.59H4.31a.5.5,0,0,0-.5.5v4.56a.5.5,0,0,0,.5.5H5.49a.5.5,0,0,0,.5-.5V8.09A.5.5,0,0,0,5.49,7.59Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogogoodMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;good&quot;&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-background&quot; fill=&quot;#95b776&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot; d=&quot;M15.11,6.81,9.45,12.47,7.79,14.13a.39.39,0,0,1-.28.11.39.39,0,0,1-.27-.11L2.89,9.78a.39.39,0,0,1-.11-.28.39.39,0,0,1,.11-.27L4.28,7.85a.34.34,0,0,1,.12-.09l.15,0a.37.37,0,0,1,.15,0,.38.38,0,0,1,.13.09l2.69,2.68,5.65-5.65a.38.38,0,0,1,.13-.09.37.37,0,0,1,.15,0,.4.4,0,0,1,.15,0,.34.34,0,0,1,.12.09l1.39,1.38a.41.41,0,0,1,.08.13.33.33,0,0,1,0,.15.4.4,0,0,1,0,.15A.5.5,0,0,1,15.11,6.81Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M15.11,6.31,9.45,12,7.79,13.63a.39.39,0,0,1-.28.11.39.39,0,0,1-.27-.11L2.89,9.28A.39.39,0,0,1,2.78,9a.39.39,0,0,1,.11-.27L4.28,7.35a.34.34,0,0,1,.12-.09l.15,0a.37.37,0,0,1,.15,0,.38.38,0,0,1,.13.09L7.52,10l5.65-5.65a.38.38,0,0,1,.13-.09.37.37,0,0,1,.15,0,.4.4,0,0,1,.15,0,.34.34,0,0,1,.12.09l1.39,1.38a.41.41,0,0,1,.08.13.33.33,0,0,1,0,.15.4.4,0,0,1,0,.15A.5.5,0,0,1,15.11,6.31Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogoinaccuracyMoveSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;inaccuracy&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#F7C631&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M13.66,14.8a.28.28,0,0,1,0,.13.23.23,0,0,1-.08.11.28.28,0,0,1-.11.08l-.12,0h-2l-.13,0a.27.27,0,0,1-.1-.08A.36.36,0,0,1,11,14.8V12.9a.59.59,0,0,1,0-.13.36.36,0,0,1,.07-.1l.1-.08.13,0h2a.33.33,0,0,1,.23.1.39.39,0,0,1,.08.1.28.28,0,0,1,0,.13Zm-.12-3.93a.31.31,0,0,1,0,.13.3.3,0,0,1-.07.1.3.3,0,0,1-.23.08H11.43a.31.31,0,0,1-.34-.31L10.94,4.1A.5.5,0,0,1,11,3.86l.11-.08.13,0h2.11a.35.35,0,0,1,.26.1.41.41,0,0,1,.08.24Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M7.65,14.82a.27.27,0,0,1,0,.12.26.26,0,0,1-.07.11l-.1.07-.13,0H5.43a.25.25,0,0,1-.12,0,.27.27,0,0,1-.1-.08.31.31,0,0,1-.09-.22V13a.36.36,0,0,1,.09-.23l.1-.07.12,0H7.32a.32.32,0,0,1,.23.09.3.3,0,0,1,.07.1.28.28,0,0,1,0,.13Zm2.2-7.17a3.1,3.1,0,0,1-.36.73A5.58,5.58,0,0,1,9,9a4.85,4.85,0,0,1-.52.49,8,8,0,0,0-.65.63,1,1,0,0,0-.27.7V11a.21.21,0,0,1,0,.12.17.17,0,0,1-.06.1.23.23,0,0,1-.1.07l-.12,0H5.53a.21.21,0,0,1-.12,0,.18.18,0,0,1-.1-.07.2.2,0,0,1-.08-.1.37.37,0,0,1,0-.12v-.35a2.68,2.68,0,0,1,.13-.84,2.91,2.91,0,0,1,.33-.66,3.38,3.38,0,0,1,.45-.55c.16-.15.33-.29.49-.42a7.84,7.84,0,0,0,.65-.64,1,1,0,0,0,.25-.67.77.77,0,0,0-.07-.34.67.67,0,0,0-.23-.27A1.16,1.16,0,0,0,6.49,6,1.61,1.61,0,0,0,6,6.11a3,3,0,0,0-.41.18,1.75,1.75,0,0,0-.29.18l-.11.09A.5.5,0,0,1,5,6.62a.31.31,0,0,1-.21-.13l-1-1.21a.3.3,0,0,1,0-.4A1.36,1.36,0,0,1,4,4.68a3.07,3.07,0,0,1,.56-.38,5.49,5.49,0,0,1,.9-.37,3.69,3.69,0,0,1,1.19-.17,3.92,3.92,0,0,1,2.3.75,2.85,2.85,0,0,1,.77.92A2.82,2.82,0,0,1,10,6.71,3,3,0,0,1,9.85,7.65Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M13.66,14.3a.28.28,0,0,1,0,.13.23.23,0,0,1-.08.11.28.28,0,0,1-.11.08l-.12,0h-2l-.13,0a.27.27,0,0,1-.1-.08A.36.36,0,0,1,11,14.3V12.4a.59.59,0,0,1,0-.13.36.36,0,0,1,.07-.1l.1-.08.13,0h2a.33.33,0,0,1,.23.1.39.39,0,0,1,.08.1.28.28,0,0,1,0,.13Zm-.12-3.93a.31.31,0,0,1,0,.13.3.3,0,0,1-.07.1.3.3,0,0,1-.23.08H11.43a.31.31,0,0,1-.34-.31L10.94,3.6A.5.5,0,0,1,11,3.36l.11-.08.13,0h2.11a.35.35,0,0,1,.26.1.41.41,0,0,1,.08.24Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M7.65,14.32a.27.27,0,0,1,0,.12.26.26,0,0,1-.07.11l-.1.07-.13,0H5.43a.25.25,0,0,1-.12,0,.27.27,0,0,1-.1-.08.31.31,0,0,1-.09-.22V12.49a.36.36,0,0,1,.09-.23l.1-.07.12,0H7.32a.32.32,0,0,1,.23.09.3.3,0,0,1,.07.1.28.28,0,0,1,0,.13Zm2.2-7.17a3.1,3.1,0,0,1-.36.73,5.58,5.58,0,0,1-.49.6A4.85,4.85,0,0,1,8.48,9a8,8,0,0,0-.65.63,1,1,0,0,0-.27.7v.22a.21.21,0,0,1,0,.12.17.17,0,0,1-.06.1.23.23,0,0,1-.1.07l-.12,0H5.53a.21.21,0,0,1-.12,0,.18.18,0,0,1-.1-.07.2.2,0,0,1-.08-.1.37.37,0,0,1,0-.12v-.35a2.68,2.68,0,0,1,.13-.84,2.91,2.91,0,0,1,.33-.66,3.38,3.38,0,0,1,.45-.55c.16-.15.33-.29.49-.42a7.84,7.84,0,0,0,.65-.64,1,1,0,0,0,.25-.67.77.77,0,0,0-.07-.34.67.67,0,0,0-.23-.27,1.16,1.16,0,0,0-.72-.24A1.61,1.61,0,0,0,6,5.61a3,3,0,0,0-.41.18A1.75,1.75,0,0,0,5.3,6l-.11.09A.5.5,0,0,1,5,6.12.31.31,0,0,1,4.74,6l-1-1.21a.3.3,0,0,1,0-.4A1.36,1.36,0,0,1,4,4.18a3.07,3.07,0,0,1,.56-.38,5.49,5.49,0,0,1,.9-.37,3.69,3.69,0,0,1,1.19-.17A3.92,3.92,0,0,1,8.93,4a2.85,2.85,0,0,1,.77.92A2.82,2.82,0,0,1,10,6.21,3,3,0,0,1,9.85,7.15Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogomistakeSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;mistake&quot;&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-background&quot; fill=&quot;#FFA459&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+        &lt;path d=&quot;M9.92,15a.27.27,0,0,1,0,.12.41.41,0,0,1-.07.11.32.32,0,0,1-.23.09H7.7a.25.25,0,0,1-.12,0,.27.27,0,0,1-.1-.08A.31.31,0,0,1,7.39,15V13.19A.32.32,0,0,1,7.48,13l.1-.07.12,0H9.59a.32.32,0,0,1,.23.09.61.61,0,0,1,.07.1.28.28,0,0,1,0,.13Zm2.2-7.17a3.1,3.1,0,0,1-.36.73,5.58,5.58,0,0,1-.49.6,6,6,0,0,1-.52.49,8,8,0,0,0-.65.63,1,1,0,0,0-.27.7v.22a.24.24,0,0,1,0,.12.17.17,0,0,1-.06.1.3.3,0,0,1-.1.07l-.12,0H7.79l-.12,0a.3.3,0,0,1-.1-.07.26.26,0,0,1-.07-.1.37.37,0,0,1,0-.12v-.35A2.42,2.42,0,0,1,7.61,10a2.55,2.55,0,0,1,.33-.66,3.38,3.38,0,0,1,.45-.55c.16-.15.33-.29.49-.42a7.73,7.73,0,0,0,.64-.64,1,1,0,0,0,.26-.67.77.77,0,0,0-.07-.34.75.75,0,0,0-.23-.27,1.16,1.16,0,0,0-.72-.24,1.61,1.61,0,0,0-.49.07,3,3,0,0,0-.41.18,1.41,1.41,0,0,0-.29.18l-.11.09a.5.5,0,0,1-.24.06A.31.31,0,0,1,7,6.69L6,5.48a.29.29,0,0,1,0-.4,1.36,1.36,0,0,1,.21-.2,3.07,3.07,0,0,1,.56-.38,5.38,5.38,0,0,1,.89-.37A3.75,3.75,0,0,1,8.9,4a4.07,4.07,0,0,1,1.2.19,4,4,0,0,1,1.09.56,2.76,2.76,0,0,1,.78.92,2.82,2.82,0,0,1,.28,1.28A3,3,0,0,1,12.12,7.85Z&quot;&gt;&lt;/path&gt;
+      &lt;/g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M9.92,14.52a.27.27,0,0,1,0,.12.41.41,0,0,1-.07.11.32.32,0,0,1-.23.09H7.7a.25.25,0,0,1-.12,0,.27.27,0,0,1-.1-.08.31.31,0,0,1-.09-.22V12.69a.32.32,0,0,1,.09-.23l.1-.07.12,0H9.59a.32.32,0,0,1,.23.09.61.61,0,0,1,.07.1.28.28,0,0,1,0,.13Zm2.2-7.17a3.1,3.1,0,0,1-.36.73,5.58,5.58,0,0,1-.49.6,6,6,0,0,1-.52.49,8,8,0,0,0-.65.63,1,1,0,0,0-.27.7v.22a.24.24,0,0,1,0,.12.17.17,0,0,1-.06.1.3.3,0,0,1-.1.07l-.12,0H7.79l-.12,0a.3.3,0,0,1-.1-.07.26.26,0,0,1-.07-.1.37.37,0,0,1,0-.12v-.35a2.42,2.42,0,0,1,.13-.84,2.55,2.55,0,0,1,.33-.66,3.38,3.38,0,0,1,.45-.55c.16-.15.33-.29.49-.42a7.73,7.73,0,0,0,.64-.64,1,1,0,0,0,.26-.67.77.77,0,0,0-.07-.34A.75.75,0,0,0,9.48,6a1.16,1.16,0,0,0-.72-.24,1.61,1.61,0,0,0-.49.07A3,3,0,0,0,7.86,6a1.41,1.41,0,0,0-.29.18l-.11.09a.5.5,0,0,1-.24.06A.31.31,0,0,1,7,6.19L6,5a.29.29,0,0,1,0-.4,1.36,1.36,0,0,1,.21-.2A3.07,3.07,0,0,1,6.81,4a5.38,5.38,0,0,1,.89-.37,3.75,3.75,0,0,1,1.2-.17,4.07,4.07,0,0,1,1.2.19,4,4,0,0,1,1.09.56,2.76,2.76,0,0,1,.78.92,2.82,2.82,0,0,1,.28,1.28A3,3,0,0,1,12.12,7.35Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogomissSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;defs&gt;&lt;style&gt;.cls-1{fill:#f1f2f2;}.cls-2{fill:#FF7769;}.cls-3{opacity:.2;}.cls-4{opacity:.3;}&lt;/style&gt;&lt;/defs&gt;&lt;g id=&quot;incorrect&quot;&gt;&lt;path class=&quot;cls-4&quot; d=&quot;M9,.5C4.03,.5,0,4.53,0,9.5s4.03,9,9,9,9-4.03,9-9S13.97,.5,9,.5Z&quot;&gt;&lt;/path&gt;&lt;path class=&quot;cls-2&quot; d=&quot;M9,0C4.03,0,0,4.03,0,9s4.03,9,9,9,9-4.03,9-9S13.97,0,9,0Z&quot;&gt;&lt;/path&gt;&lt;g class=&quot;cls-3&quot;&gt;&lt;path d=&quot;M13.99,12.51s.06,.08,.08,.13c.02,.05,.03,.1,.03,.15s-.01,.1-.03,.15c-.02,.05-.05,.09-.08,.13l-1.37,1.37s-.08,.06-.13,.08c-.05,.02-.1,.03-.15,.03s-.1-.01-.15-.03c-.05-.02-.09-.05-.13-.08l-3.06-3.06-3.06,3.06s-.08,.06-.13,.08c-.05,.02-.1,.03-.15,.03s-.1-.01-.15-.03c-.05-.02-.09-.05-.13-.08l-1.37-1.37c-.07-.07-.11-.17-.11-.28s.04-.2,.11-.28l3.06-3.06-3.06-3.06c-.07-.07-.11-.17-.11-.28s.04-.2,.11-.28l1.37-1.37c.07-.07,.17-.11,.28-.11s.2,.04,.28,.11l3.06,3.06,3.06-3.06c.07-.07,.17-.11,.28-.11s.2,.04,.28,.11l1.37,1.37s.06,.08,.08,.13c.02,.05,.03,.1,.03,.15s-.01,.1-.03,.15c-.02,.05-.05,.09-.08,.13l-3.06,3.06,3.06,3.06Z&quot;&gt;&lt;/path&gt;&lt;/g&gt;&lt;path class=&quot;cls-1&quot; d=&quot;M13.99,12.01s.06,.08,.08,.13c.02,.05,.03,.1,.03,.15s-.01,.1-.03,.15c-.02,.05-.05,.09-.08,.13l-1.37,1.37s-.08,.06-.13,.08c-.05,.02-.1,.03-.15,.03s-.1-.01-.15-.03c-.05-.02-.09-.05-.13-.08l-3.06-3.06-3.06,3.06s-.08,.06-.13,.08c-.05,.02-.1,.03-.15,.03s-.1-.01-.15-.03c-.05-.02-.09-.05-.13-.08l-1.37-1.37c-.07-.07-.11-.17-.11-.28s.04-.2,.11-.28l3.06-3.06-3.06-3.06c-.07-.07-.11-.17-.11-.28s.04-.2,.11-.28l1.37-1.37c.07-.07,.17-.11,.28-.11s.2,.04,.28,.11l3.06,3.06,3.06-3.06c.07-.07,.17-.11,.28-.11s.2,.04,.28,.11l1.37,1.37s.06,.08,.08,.13c.02,.05,.03,.1,.03,.15s-.01,.1-.03,.15c-.02,.05-.05,.09-.08,.13l-3.06,3.06,3.06,3.06Z&quot;&gt;&lt;/path&gt;&lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const LogoblunderSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot;  width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
+      &lt;g id=&quot;blunder&quot;&gt;
+    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
+    &lt;path class=&quot;icon-background&quot; fill=&quot;#FA412D&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
+    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
+      &lt;path d=&quot;M14.74,5.45A2.58,2.58,0,0,0,14,4.54,3.76,3.76,0,0,0,12.89,4a4.07,4.07,0,0,0-1.2-.19A3.92,3.92,0,0,0,10.51,4a5.87,5.87,0,0,0-.9.37,3,3,0,0,0-.32.2,3.46,3.46,0,0,1,.42.63,3.29,3.29,0,0,1,.36,1.47.31.31,0,0,0,.19-.06l.11-.08a2.9,2.9,0,0,1,.29-.19,3.89,3.89,0,0,1,.41-.17,1.55,1.55,0,0,1,.48-.07,1.1,1.1,0,0,1,.72.24.72.72,0,0,1,.23.26.8.8,0,0,1,.07.34,1,1,0,0,1-.25.67,7.71,7.71,0,0,1-.65.63,6.2,6.2,0,0,0-.48.43,2.93,2.93,0,0,0-.45.54,2.55,2.55,0,0,0-.33.66,2.62,2.62,0,0,0-.13.83V11a.24.24,0,0,0,0,.12.35.35,0,0,0,.17.17l.12,0h1.71l.12,0a.23.23,0,0,0,.1-.07.21.21,0,0,0,.06-.1.27.27,0,0,0,0-.12V10.8a1,1,0,0,1,.26-.7q.27-.28.66-.63A5.79,5.79,0,0,0,14.05,9a4.51,4.51,0,0,0,.48-.6,2.56,2.56,0,0,0,.36-.72,2.81,2.81,0,0,0,.14-1A2.66,2.66,0,0,0,14.74,5.45Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M12.38,12.65H10.5l-.12,0a.34.34,0,0,0-.18.29v1.82a.36.36,0,0,0,.08.23.23.23,0,0,0,.1.07l.12,0h1.88a.24.24,0,0,0,.12,0,.26.26,0,0,0,.11-.07.36.36,0,0,0,.07-.1.28.28,0,0,0,0-.13V13a.27.27,0,0,0,0-.12.61.61,0,0,0-.07-.1A.32.32,0,0,0,12.38,12.65Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M6.79,12.65H4.91l-.12,0a.34.34,0,0,0-.18.29v1.82a.36.36,0,0,0,.08.23.23.23,0,0,0,.1.07l.12,0H6.79a.24.24,0,0,0,.12,0A.26.26,0,0,0,7,15a.36.36,0,0,0,.07-.1.28.28,0,0,0,0-.13V13a.27.27,0,0,0,0-.12.61.61,0,0,0-.07-.1A.32.32,0,0,0,6.79,12.65Z&quot;&gt;&lt;/path&gt;
+      &lt;path d=&quot;M8.39,4.54A3.76,3.76,0,0,0,7.3,4a4.07,4.07,0,0,0-1.2-.19A3.92,3.92,0,0,0,4.92,4a5.87,5.87,0,0,0-.9.37,3.37,3.37,0,0,0-.55.38l-.21.19a.32.32,0,0,0,0,.41l1,1.2a.26.26,0,0,0,.2.12.48.48,0,0,0,.24-.06l.11-.08a2.9,2.9,0,0,1,.29-.19l.4-.17A1.66,1.66,0,0,1,6,6.06a1.1,1.1,0,0,1,.72.24.72.72,0,0,1,.23.26A.77.77,0,0,1,7,6.9a1,1,0,0,1-.26.67,7.6,7.6,0,0,1-.64.63,6.28,6.28,0,0,0-.49.43,2.93,2.93,0,0,0-.45.54,2.72,2.72,0,0,0-.33.66,2.62,2.62,0,0,0-.13.83V11a.43.43,0,0,0,0,.12.39.39,0,0,0,.08.1.18.18,0,0,0,.1.07.21.21,0,0,0,.12,0H6.72l.12,0a.23.23,0,0,0,.1-.07.36.36,0,0,0,.07-.1A.5.5,0,0,0,7,11V10.8a1,1,0,0,1,.27-.7A8,8,0,0,1,8,9.47c.18-.15.35-.31.52-.48A7,7,0,0,0,9,8.39a3.23,3.23,0,0,0,.36-.72,3.07,3.07,0,0,0,.13-1,2.66,2.66,0,0,0-.29-1.27A2.58,2.58,0,0,0,8.39,4.54Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+    &lt;g&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M14.74,5A2.58,2.58,0,0,0,14,4a3.76,3.76,0,0,0-1.09-.56,4.07,4.07,0,0,0-1.2-.19,3.92,3.92,0,0,0-1.18.17,5.87,5.87,0,0,0-.9.37,3,3,0,0,0-.32.2,3.46,3.46,0,0,1,.42.63,3.29,3.29,0,0,1,.36,1.47.31.31,0,0,0,.19-.06L10.37,6a2.9,2.9,0,0,1,.29-.19,3.89,3.89,0,0,1,.41-.17,1.55,1.55,0,0,1,.48-.07,1.1,1.1,0,0,1,.72.24.72.72,0,0,1,.23.26.8.8,0,0,1,.07.34,1,1,0,0,1-.25.67,7.71,7.71,0,0,1-.65.63,6.2,6.2,0,0,0-.48.43,2.93,2.93,0,0,0-.45.54,2.55,2.55,0,0,0-.33.66,2.62,2.62,0,0,0-.13.83v.35a.24.24,0,0,0,0,.12.35.35,0,0,0,.17.17l.12,0h1.71l.12,0a.23.23,0,0,0,.1-.07.21.21,0,0,0,.06-.1.27.27,0,0,0,0-.12V10.3a1,1,0,0,1,.26-.7q.27-.28.66-.63a5.79,5.79,0,0,0,.51-.48,4.51,4.51,0,0,0,.48-.6,2.56,2.56,0,0,0,.36-.72,2.81,2.81,0,0,0,.14-1A2.66,2.66,0,0,0,14.74,5Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M12.38,12.15H10.5l-.12,0a.34.34,0,0,0-.18.29v1.82a.36.36,0,0,0,.08.23.23.23,0,0,0,.1.07l.12,0h1.88a.24.24,0,0,0,.12,0,.26.26,0,0,0,.11-.07.36.36,0,0,0,.07-.1.28.28,0,0,0,0-.13V12.46a.27.27,0,0,0,0-.12.61.61,0,0,0-.07-.1A.32.32,0,0,0,12.38,12.15Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M6.79,12.15H4.91l-.12,0a.34.34,0,0,0-.18.29v1.82a.36.36,0,0,0,.08.23.23.23,0,0,0,.1.07l.12,0H6.79a.24.24,0,0,0,.12,0A.26.26,0,0,0,7,14.51a.36.36,0,0,0,.07-.1.28.28,0,0,0,0-.13V12.46a.27.27,0,0,0,0-.12.61.61,0,0,0-.07-.1A.32.32,0,0,0,6.79,12.15Z&quot;&gt;&lt;/path&gt;
+      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M8.39,4A3.76,3.76,0,0,0,7.3,3.48a4.07,4.07,0,0,0-1.2-.19,3.92,3.92,0,0,0-1.18.17,5.87,5.87,0,0,0-.9.37,3.37,3.37,0,0,0-.55.38l-.21.19a.32.32,0,0,0,0,.41l1,1.2a.26.26,0,0,0,.2.12.48.48,0,0,0,.24-.06L4.78,6a2.9,2.9,0,0,1,.29-.19l.4-.17A1.66,1.66,0,0,1,6,5.56a1.1,1.1,0,0,1,.72.24.72.72,0,0,1,.23.26A.77.77,0,0,1,7,6.4a1,1,0,0,1-.26.67,7.6,7.6,0,0,1-.64.63,6.28,6.28,0,0,0-.49.43,2.93,2.93,0,0,0-.45.54,2.72,2.72,0,0,0-.33.66,2.62,2.62,0,0,0-.13.83v.35a.43.43,0,0,0,0,.12.39.39,0,0,0,.08.1.18.18,0,0,0,.1.07.21.21,0,0,0,.12,0H6.72l.12,0a.23.23,0,0,0,.1-.07.36.36,0,0,0,.07-.1.5.5,0,0,0,0-.12V10.3a1,1,0,0,1,.27-.7A8,8,0,0,1,8,9c.18-.15.35-.31.52-.48A7,7,0,0,0,9,7.89a3.23,3.23,0,0,0,.36-.72,3.07,3.07,0,0,0,.13-1A2.66,2.66,0,0,0,9.15,5,2.58,2.58,0,0,0,8.39,4Z&quot;&gt;&lt;/path&gt;
+    &lt;/g&gt;
+  &lt;/g&gt;
+    &lt;/svg&gt;`;
+
+const classificationSVG = {
+  [MoveClassification.Best]: bestMoveSVG,
+  [MoveClassification.Blunder]: blunderSVG,
+  [MoveClassification.Book]: bookSVG,
+  [MoveClassification.Brilliant]: BrillantSVG,
+  [MoveClassification.Excellent]: excellentMoveSVG,
+  [MoveClassification.Forced]: forcedSVG,
+  [MoveClassification.Good]: goodMoveSVG,
+  [MoveClassification.Great]: greatMoveSVG,
+  [MoveClassification.Inaccuracy]: inaccuracyMoveSVG,
+  [MoveClassification.Miss]: missSVG,
+  [MoveClassification.Mistake]: mistakeSVG,
+};
+
+const classificationColor = {
+  [MoveClassification.Best]: &quot;#81B64C&quot;,
+  [MoveClassification.Excellent]: &quot;#81B64C&quot;,
+  [MoveClassification.Good]: &quot;#95B776&quot;,
+  [MoveClassification.Great]: &quot;#749BBF&quot;,
+  [MoveClassification.Brilliant]: &quot;#26C2A3&quot;,
+  [MoveClassification.Book]: &quot;#D5A47D&quot;,
+  [MoveClassification.Forced]: &quot;#96AF8B&quot;,
+
+  [MoveClassification.Inaccuracy]: &quot;#F7C631&quot;,
+  [MoveClassification.Mistake]: &quot;#FFA459&quot;,
+  [MoveClassification.Blunder]: &quot;#FA412D&quot;,
+  [MoveClassification.Miss]: &quot;#FF7769&quot;,
+};
+
+/==============================================================================/</code></pre>
+</section>
+<section id="sec-4">
+  <h2><span class="badge">4</span> BOARD ICON PLACEMENT + ANIMATIONS (placeSVGOnBoard)
+    <span class="src">source: scripts/core.js lines 968-1112</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+function placeSVGOnBoard(side, square, svgCode) {
+  const board =
+    document.querySelector(&quot;wc-chess-board&quot;) ||
+    document.querySelector(&quot;cg-board&quot;).parentElement;
+
+  if (!board) {
+    console.log(&quot;no board&quot;);
+    return;
+  }
+
+  const wrapperTmp = document.createElement(&quot;div&quot;);
+  wrapperTmp.innerHTML = svgCode;
+
+  let detectedColor = null;
+
+  const bg = wrapperTmp.querySelector(&quot;.icon-background&quot;);
+  if (bg) {
+    detectedColor = bg.getAttribute(&quot;fill&quot;);
+  }
+
+  if (!detectedColor) {
+    const anyFill = wrapperTmp.querySelector(&quot;[fill]&quot;);
+    detectedColor = anyFill?.getAttribute(&quot;fill&quot;) || &quot;#000&quot;;
+  }
+
+  const rect = board.getBoundingClientRect();
+  const boardSize = rect.width;
+  const squareSize = boardSize / 8;
+
+  const file = square.charCodeAt(0) - 97;
+  const rank = parseInt(square[1]);
+
+  let x, y;
+
+  if (side === &quot;white&quot;) {
+    x = file * squareSize;
+    y = (8 - rank) * squareSize;
+  } else {
+    x = (7 - file) * squareSize;
+    y = (rank - 1) * squareSize;
+  }
+
+  const squareContainer = document.createElement(&quot;div&quot;);
+  squareContainer.style.position = &quot;absolute&quot;;
+  squareContainer.style.left = rect.left + x + squareSize + &quot;px&quot;;
+  squareContainer.style.top = rect.top + y + &quot;px&quot;;
+  squareContainer.style.pointerEvents = &quot;none&quot;;
+
+  const wrapper = document.createElement(&quot;div&quot;);
+  wrapper.innerHTML = svgCode;
+
+  const svg = wrapper.querySelector(&quot;svg&quot;);
+  svg.style.position = &quot;absolute&quot;;
+  svg.style.zIndex = &quot;9999&quot;;
+  svg.style.borderRadius = &quot;50%&quot;;
+  svg.style.overflow = &quot;visible&quot;;
+
+  squareContainer.appendChild(svg);
+  document.body.appendChild(squareContainer);
+
+  requestAnimationFrame(() =&gt; {
+    const box = svg.getBBox();
+    const svgW = box.width;
+    const svgH = box.height;
+    svg.style.left = -svgW / 2 + &quot;px&quot;;
+    svg.style.top = -svgH / 2 + &quot;px&quot;;
+
+    const isBrilliant = detectedColor?.toLowerCase() === &quot;#26c2a3&quot;;
+    const isGreatFind = detectedColor?.toLowerCase() === &quot;#749bbf&quot;;
+    const isBlunder = detectedColor?.toLowerCase() === &quot;#fa412d&quot;;
+
+    // ─── BRILLIANT : double pulse inversé ────────────────────────────────────
+    if (isBrilliant) {
+      svg.animate(
+        [
+          { transform: &quot;scale(1)&quot;, offset: 0 },
+          { transform: &quot;scale(1.45)&quot;, offset: 0.35, easing: &quot;ease-out&quot; },
+          { transform: &quot;scale(0.82)&quot;, offset: 0.65, easing: &quot;ease-in-out&quot; },
+          { transform: &quot;scale(1.1)&quot;, offset: 0.82, easing: &quot;ease-out&quot; },
+          { transform: &quot;scale(1)&quot;, offset: 1 },
+        ],
+        {
+          duration: 700,
+          easing: &quot;ease-in&quot;,
+          fill: &quot;forwards&quot;,
+        },
+      );
+    }
+
+    // ─── GREAT FIND : respiration douce ──────────────────────────────────────
+    if (isGreatFind) {
+      svg.animate(
+        [
+          { transform: &quot;scale(1)&quot;, offset: 0 },
+          { transform: &quot;scale(1.1)&quot;, offset: 0.2, easing: &quot;ease-in-out&quot; },
+          { transform: &quot;scale(1)&quot;, offset: 0.4, easing: &quot;ease-in-out&quot; },
+          { transform: &quot;scale(1.08)&quot;, offset: 0.6, easing: &quot;ease-in-out&quot; },
+          { transform: &quot;scale(1)&quot;, offset: 0.8, easing: &quot;ease-in-out&quot; },
+          { transform: &quot;scale(1.05)&quot;, offset: 0.9, easing: &quot;ease-in-out&quot; },
+          { transform: &quot;scale(1)&quot;, offset: 1 },
+        ],
+        {
+          duration: 2800,
+          easing: &quot;ease-in-out&quot;,
+          fill: &quot;forwards&quot;,
+        },
+      );
+    }
+
+    // ─── BLUNDER : chute / bâtiment qui tombe ────────────────────────────────
+    if (isBlunder) {
+      svg.style.transformOrigin = &quot;bottom center&quot;;
+
+      svg.animate(
+        [
+          { transform: &quot;rotate(0deg)&quot;, offset: 0 },
+          { transform: &quot;rotate(3deg)&quot;, offset: 0.3, easing: &quot;ease-in&quot; },
+          { transform: &quot;rotate(7deg)&quot;, offset: 0.6, easing: &quot;ease-in&quot; },
+          { transform: &quot;rotate(12deg)&quot;, offset: 0.8, easing: &quot;ease-out&quot; },
+          { transform: &quot;rotate(15deg)&quot;, offset: 0.92, easing: &quot;ease-out&quot; },
+          { transform: &quot;rotate(16deg)&quot;, offset: 1 },
+        ],
+        {
+          duration: 1200,
+          easing: &quot;ease-in&quot;,
+          fill: &quot;forwards&quot;,
+        },
+      );
+    }
+  });
+
+  if (window.location.host === &quot;www.chess.com&quot;) {
+    document.querySelectorAll(&#x27;.highlight[class*=&quot;square-&quot;]&#x27;).forEach((el) =&gt; {
+      el.style.backgroundColor = detectedColor;
+      el.style.opacity = &quot;0.6&quot;;
+    });
+  }
+
+  if (window.location.host === &quot;lichess.org&quot;) {
+    document.querySelectorAll(&quot;.last-move&quot;).forEach((el) =&gt; {
+      el.style.setProperty(&quot;background-color&quot;, detectedColor, &quot;important&quot;);
+      el.style.setProperty(&quot;opacity&quot;, &quot;0.6&quot;, &quot;important&quot;);
+    });
+  }
+}
+
+/==============================================================================/</code></pre>
+</section>
+<section id="sec-5">
+  <h2><span class="badge">5</span> SETTINGS MENU OVERLAY + CREDITS MODAL (toggleCoachMenu)
+    <span class="src">source: scripts/core.js lines 1190-1740</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+function toggleCoachMenu() {
+  const existing = document.getElementById(&quot;ichess-coach-overlay&quot;);
+  if (existing) { existing.remove(); return; }
+
+  const S = document.createElement(&quot;style&quot;);
+  S.id = &quot;ichess-coach-styles&quot;;
+  S.textContent = `
+    @keyframes ichessFadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes ichessFadeOut { from{opacity:1} to{opacity:0} }
+    @keyframes ichessPanelIn { from{opacity:0;transform:translateY(20px) scale(.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+    @keyframes ichessPanelOut { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(12px) scale(.97)} }
+
+    #ichess-coach-overlay {
+      position:fixed; inset:0; z-index:9999999;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.45);
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      animation:ichessFadeIn .18s ease;
+    }
+    #ichess-coach-overlay.ichess-closing {
+      animation:ichessFadeOut .15s ease forwards;
+    }
+
+    #ichess-coach-overlay .ichess-panel {
+      position:relative;
+      width:340px; max-height:82vh; overflow-y:auto;
+      background:rgba(16,16,16,.72);
+      backdrop-filter:blur(32px); -webkit-backdrop-filter:blur(32px);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:20px;
+      padding:0;
+      font-family:&#x27;Space Mono&#x27;,monospace; color:#f5f5f5;
+      animation:ichessPanelIn .22s cubic-bezier(.16,1,.3,1);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.03) inset,
+        0 48px 100px rgba(0,0,0,.6),
+        0 0 80px rgba(255,255,255,.02);
+    }
+    #ichess-coach-overlay.ichess-closing .ichess-panel {
+      animation:ichessPanelOut .15s ease forwards;
+    }
+
+    #ichess-coach-overlay .ichess-panel-header {
+      position:relative; padding:22px 24px 16px;
+      border-bottom:1px solid rgba(255,255,255,.05);
+      background:linear-gradient(180deg, rgba(255,255,255,.03) 0%, transparent 100%);
+    }
+    #ichess-coach-overlay .ichess-panel-title {
+      font-size:13px; font-weight:700; letter-spacing:4px; text-transform:uppercase;
+      color:#fff; text-align:center;
+      text-shadow:0 0 12px rgba(255,255,255,.35), 0 0 30px rgba(255,255,255,.1);
+    }
+    #ichess-coach-overlay .ichess-panel-title::before,
+    #ichess-coach-overlay .ichess-panel-title::after {
+      content:&#x27;&#x27;; display:inline-block; width:5px; height:5px;
+      background:rgba(255,255,255,.5); border-radius:50%; margin:0 10px;
+      box-shadow:0 0 8px rgba(255,255,255,.3);
+      vertical-align:middle;
+    }
+    #ichess-coach-overlay .ichess-close {
+      position:absolute; top:14px; right:16px;
+      width:28px; height:28px; border-radius:50%;
+      background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.06);
+      color:#888; font-size:16px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:all .2s; line-height:1;
+    }
+    #ichess-coach-overlay .ichess-close:hover {
+      background:rgba(255,255,255,.12); color:#fff;
+      border-color:rgba(255,255,255,.15);
+      box-shadow:0 0 12px rgba(255,255,255,.06);
+    }
+
+    #ichess-coach-overlay .ichess-body { padding:16px 20px 20px; }
+
+    #ichess-coach-overlay .ichess-section-label {
+      font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase;
+      color:#888; margin:14px 0 8px; display:flex; align-items:center; gap:10px;
+    }
+    #ichess-coach-overlay .ichess-section-label::before,
+    #ichess-coach-overlay .ichess-section-label::after {
+      content:&#x27;&#x27;; flex:1; height:1px;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+    }
+
+    #ichess-coach-overlay .ichess-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:11px 14px; margin-bottom:3px;
+      background:rgba(255,255,255,.03);
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,.05);
+      border-radius:12px;
+      transition:all .2s; position:relative; overflow:hidden;
+    }
+    #ichess-coach-overlay .ichess-row::before {
+      content:&#x27;&#x27;; position:absolute; left:0; top:0; bottom:0; width:2px;
+      background:linear-gradient(to bottom,rgba(255,255,255,.3),transparent);
+      opacity:0; transition:opacity .2s; border-radius:2px 0 0 2px;
+    }
+    #ichess-coach-overlay .ichess-row:hover {
+      background:rgba(255,255,255,.06);
+      border-color:rgba(255,255,255,.1);
+      box-shadow:0 4px 20px rgba(0,0,0,.3);
+    }
+    #ichess-coach-overlay .ichess-row:hover::before { opacity:1; }
+
+    #ichess-coach-overlay .ichess-row span {
+      font-size:11.5px; font-weight:600; color:#e0e0e0; letter-spacing:.3px;
+    }
+
+    #ichess-coach-overlay .ichess-help {
+      font-size:9px; color:#555; margin:0 0 8px 14px; line-height:1.5;
+    }
+
+    #ichess-coach-overlay .ichess-toggle { position:relative; width:42px; height:23px; flex-shrink:0; }
+    #ichess-coach-overlay .ichess-toggle input { display:none; }
+    #ichess-coach-overlay .ichess-toggle .ichess-slider {
+      position:absolute; inset:0;
+      background:rgba(255,255,255,.07); border-radius:23px;
+      border:1px solid rgba(255,255,255,.07);
+      cursor:pointer; transition:.3s;
+    }
+    #ichess-coach-overlay .ichess-toggle .ichess-slider::before {
+      content:&#x27;&#x27;; position:absolute; width:17px; height:17px;
+      left:2px; top:2px; background:#777; border-radius:50%; transition:.3s;
+      box-shadow:0 1px 4px rgba(0,0,0,.4);
+    }
+    #ichess-coach-overlay .ichess-toggle input:checked + .ichess-slider {
+      background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.2);
+      box-shadow:0 0 20px rgba(255,255,255,.06), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    #ichess-coach-overlay .ichess-toggle input:checked + .ichess-slider::before {
+      transform:translateX(19px); background:#fff;
+      box-shadow:0 0 10px rgba(255,255,255,.35), 0 2px 6px rgba(0,0,0,.3);
+    }
+
+    #ichess-coach-overlay .ichess-badge {
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:30px; padding:2px 9px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);
+      border-radius:16px; font-size:11px; font-weight:700; color:#f5f5f5;
+      backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    }
+
+    #ichess-coach-overlay .ichess-row input[type=&quot;range&quot;] {
+      width:42%; height:3px; background:rgba(255,255,255,.08);
+      appearance:none; border:none; border-radius:4px; outline:none;
+    }
+    #ichess-coach-overlay .ichess-row input[type=&quot;range&quot;]::-webkit-slider-thumb {
+      appearance:none; width:15px; height:15px; border-radius:50%;
+      background:#fff; border:2px solid rgba(0,0,0,.4); cursor:pointer;
+      box-shadow:0 0 12px rgba(255,255,255,.2), 0 2px 6px rgba(0,0,0,.3);
+      transition:transform .15s, box-shadow .15s;
+    }
+    #ichess-coach-overlay .ichess-row input[type=&quot;range&quot;]::-webkit-slider-thumb:hover {
+      transform:scale(1.25);
+      box-shadow:0 0 18px rgba(255,255,255,.3), 0 2px 8px rgba(0,0,0,.4);
+    }
+
+    #ichess-coach-overlay .ichess-row select {
+      padding:6px 10px; background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08); border-radius:8px;
+      color:#f5f5f5; font-family:&#x27;Space Mono&#x27;,monospace; font-size:11px;
+      cursor:pointer; outline:none; transition:.2s;
+    }
+    #ichess-coach-overlay .ichess-row select:hover,
+    #ichess-coach-overlay .ichess-row select:focus {
+      border-color:rgba(255,255,255,.18);
+      box-shadow:0 0 0 3px rgba(255,255,255,.04);
+    }
+
+    #ichess-coach-overlay .ichess-footer {
+      padding:14px 20px; border-top:1px solid rgba(255,255,255,.04);
+      display:flex; justify-content:center;
+    }
+    #ichess-coach-overlay .ichess-reset-btn {
+      padding:8px 20px; font-family:&#x27;Space Mono&#x27;,monospace; font-size:10px;
+      font-weight:700; letter-spacing:2px; text-transform:uppercase;
+      border-radius:8px; border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.04); color:#aaa;
+      cursor:pointer; transition:all .2s;
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    }
+    #ichess-coach-overlay .ichess-reset-btn:hover {
+      background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.15);
+      color:#fff; box-shadow:0 0 16px rgba(255,255,255,.05);
+    }
+
+    #ichess-coach-overlay ::-webkit-scrollbar { width:4px; }
+    #ichess-coach-overlay ::-webkit-scrollbar-track { background:transparent; }
+    #ichess-coach-overlay ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.08); border-radius:2px; }
+    #ichess-coach-overlay ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,.15); }
+  `;
+  document.head.appendChild(S);
+
+  const overlay = document.createElement(&quot;div&quot;);
+  overlay.id = &quot;ichess-coach-overlay&quot;;
+
+  const panel = document.createElement(&quot;div&quot;);
+  panel.className = &quot;ichess-panel&quot;;
+
+  const header = document.createElement(&quot;div&quot;);
+  header.className = &quot;ichess-panel-header&quot;;
+
+  const title = document.createElement(&quot;div&quot;);
+  title.className = &quot;ichess-panel-title&quot;;
+  title.textContent = &quot;iChess&quot;;
+
+  const closeBtn = document.createElement(&quot;button&quot;);
+  closeBtn.className = &quot;ichess-close&quot;;
+  closeBtn.innerHTML = &quot;\u00d7&quot;;
+  closeBtn.onclick = close;
+
+  header.appendChild(title);
+  header.appendChild(closeBtn);
+  panel.appendChild(header);
+
+  const body = document.createElement(&quot;div&quot;);
+  body.className = &quot;ichess-body&quot;;
+  panel.appendChild(body);
+
+  function close() {
+    overlay.classList.add(&quot;ichess-closing&quot;);
+    setTimeout(() =&gt; { overlay.remove(); S.remove(); }, 150);
+  }
+
+  overlay.addEventListener(&quot;click&quot;, (e) =&gt; { if (e.target === overlay) close(); });
+  document.addEventListener(&quot;keydown&quot;, function esc(ev) {
+    if (ev.key === &quot;Escape&quot;) { close(); document.removeEventListener(&quot;keydown&quot;, esc); }
+  });
+
+  function addSection(label) {
+    const s = document.createElement(&quot;div&quot;);
+    s.className = &quot;ichess-section-label&quot;;
+    s.textContent = label;
+    body.appendChild(s);
+  }
+
+  function addToggle(label, configKey, helpText) {
+    const row = document.createElement(&quot;div&quot;);
+    row.className = &quot;ichess-row&quot;;
+    const sp = document.createElement(&quot;span&quot;);
+    sp.textContent = label;
+    const wrap = document.createElement(&quot;label&quot;);
+    wrap.className = &quot;ichess-toggle&quot;;
+    const cb = document.createElement(&quot;input&quot;);
+    cb.type = &quot;checkbox&quot;;
+    cb.checked = !!config[configKey];
+    cb.onchange = () =&gt; { config[configKey] = cb.checked; chrome.storage.local.set({ chessConfig: config }); };
+    const sl = document.createElement(&quot;span&quot;);
+    sl.className = &quot;ichess-slider&quot;;
+    wrap.appendChild(cb);
+    wrap.appendChild(sl);
+    row.appendChild(sp);
+    row.appendChild(wrap);
+    body.appendChild(row);
+    if (helpText) {
+      const h = document.createElement(&quot;div&quot;);
+      h.className = &quot;ichess-help&quot;;
+      h.textContent = helpText;
+      body.appendChild(h);
+    }
+  }
+
+  function addRange(label, configKey, min, max, step, helpText) {
+    const row = document.createElement(&quot;div&quot;);
+    row.className = &quot;ichess-row&quot;;
+    const sp = document.createElement(&quot;span&quot;);
+    sp.textContent = label;
+    const badge = document.createElement(&quot;span&quot;);
+    badge.className = &quot;ichess-badge&quot;;
+    badge.textContent = config[configKey];
+    const inp = document.createElement(&quot;input&quot;);
+    inp.type = &quot;range&quot;;
+    inp.min = min; inp.max = max; inp.step = step; inp.value = config[configKey];
+    inp.oninput = () =&gt; { config[configKey] = +inp.value; badge.textContent = inp.value; chrome.storage.local.set({ chessConfig: config }); };
+    row.appendChild(sp);
+    row.appendChild(badge);
+    row.appendChild(inp);
+    body.appendChild(row);
+    if (helpText) {
+      const h = document.createElement(&quot;div&quot;);
+      h.className = &quot;ichess-help&quot;;
+      h.textContent = helpText;
+      body.appendChild(h);
+    }
+  }
+
+  function addSelect(label, configKey, options, helpText) {
+    const row = document.createElement(&quot;div&quot;);
+    row.className = &quot;ichess-row&quot;;
+    const sp = document.createElement(&quot;span&quot;);
+    sp.textContent = label;
+    const sel = document.createElement(&quot;select&quot;);
+    options.forEach(([val, txt]) =&gt; {
+      const o = document.createElement(&quot;option&quot;);
+      o.value = val; o.textContent = txt;
+      if (config[configKey] == val) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.onchange = () =&gt; { config[configKey] = sel.value === &quot;999&quot; ? 999 : +sel.value; chrome.storage.local.set({ chessConfig: config }); };
+    row.appendChild(sp);
+    row.appendChild(sel);
+    body.appendChild(row);
+    if (helpText) {
+      const h = document.createElement(&quot;div&quot;);
+      h.className = &quot;ichess-help&quot;;
+      h.textContent = helpText;
+      body.appendChild(h);
+    }
+  }
+
+  addSection(&quot;Coach&quot;);
+  addSelect(&quot;Coach&quot;, &quot;coach&quot;, [
+    [999, &quot;None&quot;],
+    [0, &quot;David&quot;], [12, &quot;Mae&quot;], [24, &quot;Dante&quot;], [36, &quot;Nadia&quot;],
+    [48, &quot;Levy&quot;], [49, &quot;Magnus&quot;], [50, &quot;Hikaru&quot;], [51, &quot;Anna&quot;],
+  ], &quot;Choose your AI coach&quot;);
+
+  addSection(&quot;Analysis&quot;);
+  addRange(&quot;Engine Depth&quot;, &quot;depth2&quot;, 1, 15, 1, &quot;Higher = more accurate (slower)&quot;);
+
+  addSection(&quot;Review&quot;);
+  addToggle(&quot;Move Classification&quot;, &quot;moveClassification&quot;, &quot;Show !! or ?? icons on board&quot;);
+  addToggle(&quot;Coach Voice&quot;, &quot;speach&quot;, &quot;Coach speaks move explanations&quot;);
+  addToggle(&quot;Accuracy Widget&quot;, &quot;showAccWidget&quot;, &quot;Show accuracy display during review&quot;);
+
+  (function addEvalBarToggle() {
+    const row = document.createElement(&quot;div&quot;);
+    row.className = &quot;ichess-row&quot;;
+    const sp = document.createElement(&quot;span&quot;);
+    sp.textContent = &quot;Evaluation Bar&quot;;
+    const wrap = document.createElement(&quot;label&quot;);
+    wrap.className = &quot;ichess-toggle&quot;;
+    const cb = document.createElement(&quot;input&quot;);
+    cb.type = &quot;checkbox&quot;;
+    cb.checked = !!config.showEval;
+    cb.onchange = () =&gt; {
+      config.showEval = cb.checked;
+      chrome.storage.local.set({ chessConfig: config });
+      if (!cb.checked) {
+        const el = document.querySelector(&quot;#customEval&quot;);
+        if (el) el.remove();
+      } else if (typeof createEvalBar === &quot;function&quot;) {
+        const board = document.querySelector(&quot;.board, cg-board&quot;);
+        if (!document.querySelector(&quot;#customEval&quot;) &amp;&amp; board) {
+          const eb = createEvalBar();
+          if (eb) eb.update(&quot;0.0&quot;, &quot;white&quot;);
+        }
+      }
+    };
+    const sl = document.createElement(&quot;span&quot;);
+    sl.className = &quot;ichess-slider&quot;;
+    wrap.appendChild(cb);
+    wrap.appendChild(sl);
+    row.appendChild(sp);
+    row.appendChild(wrap);
+    body.appendChild(row);
+    const h = document.createElement(&quot;div&quot;);
+    h.className = &quot;ichess-help&quot;;
+    h.textContent = &quot;Show live evaluation bar on the board&quot;;
+    body.appendChild(h);
+  })();
+
+  const footer = document.createElement(&quot;div&quot;);
+  footer.className = &quot;ichess-footer&quot;;
+  const resetBtn = document.createElement(&quot;button&quot;);
+  resetBtn.className = &quot;ichess-reset-btn&quot;;
+  resetBtn.textContent = &quot;Reset Defaults&quot;;
+  resetBtn.onclick = () =&gt; {
+    config.coach = 999; config.depth2 = 10;
+    config.moveClassification = false; config.speach = false; config.showAccWidget = true; config.showEval = false;
+    chrome.storage.local.set({ chessConfig: config });
+    overlay.remove(); S.remove();
+    toggleCoachMenu();
+  };
+  footer.appendChild(resetBtn);
+  panel.appendChild(footer);
+
+  const credits = document.createElement(&quot;div&quot;);
+  credits.style.cssText = &quot;padding:12px 20px 16px;text-align:center;border-top:1px solid rgba(255,255,255,.04);&quot;;
+  const creditsTitle = document.createElement(&quot;div&quot;);
+  creditsTitle.style.cssText = &quot;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#666;margin-bottom:4px;&quot;;
+  creditsTitle.textContent = &quot;iChess Coach&quot;;
+  const creditsSub = document.createElement(&quot;div&quot;);
+  creditsSub.style.cssText = &quot;font-size:9px;color:#444;line-height:1.5;&quot;;
+  creditsSub.textContent = &quot;Chess.com \u00b7 Lichess.org \u00b7 WorldChess.com&quot;;
+  credits.appendChild(creditsTitle);
+  credits.appendChild(creditsSub);
+  panel.appendChild(credits);
+
+  /* -------- Credits Modal -------- */
+  const creditsModalStyles = document.createElement(&quot;style&quot;);
+  creditsModalStyles.id = &quot;ichess-credits-modal-styles&quot;;
+  creditsModalStyles.textContent = `
+    #ichess-credits-modal-overlay {
+      position:fixed; inset:0; z-index:10000000;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.7);
+      backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+      animation:ichessFadeIn .25s ease;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-content {
+      position:relative;
+      width:340px; padding:32px 28px;
+      background:rgba(16,16,16,.92);
+      backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+      border:1px solid rgba(255,255,255,.07);
+      border-radius:16px;
+      font-family:&#x27;Space Mono&#x27;,monospace; color:#f5f5f5;
+      animation:ichessPanelIn .3s cubic-bezier(.16,1,.3,1);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.03) inset,
+        0 32px 80px rgba(0,0,0,.6),
+        0 0 120px rgba(255,255,255,.015),
+        inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    #ichess-credits-modal-overlay .ichess-credits-close {
+      position:absolute; top:14px; right:16px;
+      width:30px; height:30px;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:8px; color:#888;
+      font-size:18px; cursor:pointer;
+      transition:all .2s; line-height:1;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-close:hover {
+      background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.2);
+      color:#fff;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-title {
+      text-align:center; margin-bottom:28px;
+      font-size:14px; font-weight:700;
+      letter-spacing:3px; text-transform:uppercase; color:#fff;
+      text-shadow:0 0 12px rgba(255,255,255,.3);
+    }
+    #ichess-credits-modal-overlay .ichess-credits-section { margin-bottom:20px; }
+    #ichess-credits-modal-overlay .ichess-credits-label {
+      font-size:10px; font-weight:700;
+      letter-spacing:2.5px; text-transform:uppercase;
+      color:#888; margin-bottom:8px;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-value {
+      font-size:13px; font-weight:600; color:#e0e0e0;
+      letter-spacing:.3px;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-divider {
+      height:1px; margin:4px 0 20px;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);
+    }
+    #ichess-credits-modal-overlay .ichess-credits-link {
+      display:inline-block; padding:9px 20px;
+      font-family:&#x27;Space Mono&#x27;,monospace; font-size:11px;
+      font-weight:700; letter-spacing:2px; text-transform:uppercase;
+      border-radius:10px; border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.05);
+      backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+      color:#e0e0e0; text-decoration:none; cursor:pointer;
+      transition:all .22s cubic-bezier(.4,0,.2,1);
+      position:relative; overflow:hidden;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-link::before {
+      content:&#x27;&#x27;; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,transparent 50%);
+      opacity:0; transition:opacity .22s;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-link:hover {
+      background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.2);
+      box-shadow:0 0 24px rgba(255,255,255,.06), inset 0 1px 0 rgba(255,255,255,.08);
+      color:#fff;
+    }
+    #ichess-credits-modal-overlay .ichess-credits-link:hover::before { opacity:1; }
+  `;
+  document.head.appendChild(creditsModalStyles);
+
+  function openCreditsModal() {
+    const mOverlay = document.createElement(&quot;div&quot;);
+    mOverlay.id = &quot;ichess-credits-modal-overlay&quot;;
+
+    const mContent = document.createElement(&quot;div&quot;);
+    mContent.className = &quot;ichess-credits-content&quot;;
+
+    const mClose = document.createElement(&quot;button&quot;);
+    mClose.className = &quot;ichess-credits-close&quot;;
+    mClose.innerHTML = &quot;\u00d7&quot;;
+
+    const mTitle = document.createElement(&quot;div&quot;);
+    mTitle.className = &quot;ichess-credits-title&quot;;
+    mTitle.textContent = &quot;iChess Coach&quot;;
+
+    const secDev = document.createElement(&quot;div&quot;);
+    secDev.className = &quot;ichess-credits-section&quot;;
+    const lblDev = document.createElement(&quot;div&quot;);
+    lblDev.className = &quot;ichess-credits-label&quot;;
+    lblDev.textContent = &quot;Developer&quot;;
+    const valDev = document.createElement(&quot;div&quot;);
+    valDev.className = &quot;ichess-credits-value&quot;;
+    valDev.textContent = &quot;(i) ishatxt&quot;;
+    secDev.appendChild(lblDev);
+    secDev.appendChild(valDev);
+
+    const divider = document.createElement(&quot;div&quot;);
+    divider.className = &quot;ichess-credits-divider&quot;;
+
+    const secCommunity = document.createElement(&quot;div&quot;);
+    secCommunity.className = &quot;ichess-credits-section&quot;;
+    const lblCommunity = document.createElement(&quot;div&quot;);
+    lblCommunity.className = &quot;ichess-credits-label&quot;;
+    lblCommunity.textContent = &quot;Community &amp; Support&quot;;
+    const linkBtn = document.createElement(&quot;a&quot;);
+    linkBtn.className = &quot;ichess-credits-link&quot;;
+    linkBtn.href = &quot;https://discord.gg/gVgn5Bn8d5&quot;;
+    linkBtn.target = &quot;_blank&quot;;
+    linkBtn.rel = &quot;noopener noreferrer&quot;;
+    linkBtn.textContent = &quot;Join Discord&quot;;
+    secCommunity.appendChild(lblCommunity);
+    secCommunity.appendChild(linkBtn);
+
+    mContent.appendChild(mClose);
+    mContent.appendChild(mTitle);
+    mContent.appendChild(secDev);
+    mContent.appendChild(divider);
+    mContent.appendChild(secCommunity);
+    mOverlay.appendChild(mContent);
+
+    function closeModal() {
+      mOverlay.classList.add(&quot;ichess-closing&quot;);
+      setTimeout(() =&gt; { mOverlay.remove(); }, 150);
+    }
+
+    mClose.addEventListener(&quot;click&quot;, closeModal);
+    mOverlay.addEventListener(&quot;click&quot;, (e) =&gt; { if (e.target === mOverlay) closeModal(); });
+
+    document.body.appendChild(mOverlay);
+  }
+
+  footer.innerHTML = &quot;&quot;;
+  const creditsBtnRow = document.createElement(&quot;div&quot;);
+  creditsBtnRow.style.cssText = &quot;display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;&quot;;
+  const creditsBtn = document.createElement(&quot;button&quot;);
+  creditsBtn.className = &quot;ichess-reset-btn&quot;;
+  creditsBtn.textContent = &quot;Credits&quot;;
+  creditsBtn.onclick = openCreditsModal;
+  creditsBtnRow.appendChild(creditsBtn);
+  creditsBtnRow.appendChild(resetBtn);
+  footer.appendChild(creditsBtnRow);
+
+  overlay.appendChild(panel);
+  document.body.appendChild(overlay);
+}
+
+/==============================================================================/</code></pre>
+</section>
+<section id="sec-6">
+  <h2><span class="badge">6</span> FLOATING ACCURACY WIDGET (createSimpleAccuracyDisplay)
+    <span class="src">source: scripts/core.js lines 1995-2352</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+    function createSimpleAccuracyDisplay(
+      initialWhiteAcc = 0,
+      initialWhiteElo = 0,
+      initialBlackAcc = 0,
+      initialBlackElo = 0,
+      side = &quot;white&quot;,
+      statW = null,
+      statB = null,
+      displayMode = 2,
+    ) {
+      // ─── Styles ───────────────────────────────────────────────────────────────
+
+      if (!document.getElementById(&quot;acc-display-styles&quot;)) {
+        const style = document.createElement(&quot;style&quot;);
+        style.id = &quot;acc-display-styles&quot;;
+        style.textContent = `
+      @import url(&#x27;https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap&#x27;);
+
+      #acc-widget {
+        position: fixed;
+        z-index: 999999;
+        top: 80px;
+        left: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        cursor: grab;
+        user-select: none;
+        touch-action: none;
+        font-family: &#x27;IBM Plex Mono&#x27;, ui-monospace, monospace;
+        transition: opacity 0.2s ease;
+      }
+
+      #acc-widget.acc-hidden { opacity: 0; pointer-events: none; }
+      #acc-widget.dragging   { cursor: grabbing; opacity: 0.8; transform: scale(0.97); }
+
+      .acc-row { display: flex; align-items: center; gap: 5px; }
+
+      .acc-card, .acc-segment, .acc-label, .acc-value,
+      .acc-side-badge, .acc-threat-dot { pointer-events: none; }
+
+      .acc-side-badge {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        font-family: &#x27;IBM Plex Mono&#x27;, ui-monospace, monospace;
+        font-size: 5px;
+        font-weight: 600;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        padding: 5px 2px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        line-height: 1;
+        width: 12px;
+        text-align: center;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .acc-side-badge-white        { background: rgba(255,255,255,0.4); color: #aaa; }
+      .acc-side-badge-black        { background: rgba(0,0,0,0.3); color: #666; }
+      .acc-side-badge-you-white    { background: rgba(255,255,255,0.55); color: #555; }
+      .acc-side-badge-you-black    { background: rgba(0,0,0,0.5); color: #bbb; }
+
+      .acc-mode1 .acc-side-badge { font-size: 4px; padding: 4px 2px; width: 10px; }
+
+      .acc-card {
+        width: 180px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-radius: 12px;
+        overflow: hidden;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.15);
+      }
+      .acc-mode1 .acc-card { width: 140px; border-radius: 10px; }
+
+      .acc-card-white {
+        background: rgba(255,255,255,0.6);
+        border: 1px solid rgba(0,0,0,0.1);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      }
+      .acc-card-black {
+        background: rgba(30,30,28,0.7);
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      }
+      .acc-card-active-white { border: 1px solid rgba(0,0,0,0.18); }
+      .acc-card-active-black { border: 1px solid rgba(255,255,255,0.14); }
+
+      .acc-segment {
+        padding: 7px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .acc-mode1 .acc-segment { padding: 5px 8px; gap: 2px; }
+
+      .acc-segment:first-child { border-right-width: 1px; border-right-style: solid; }
+      .acc-card-white .acc-segment:first-child { border-right-color: rgba(0,0,0,0.07); }
+      .acc-card-black .acc-segment:first-child { border-right-color: rgba(255,255,255,0.06); }
+
+      .acc-label {
+        font-size: 8px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        white-space: nowrap;
+      }
+      .acc-card-white .acc-label { color: rgba(0,0,0,0.35); }
+      .acc-card-black .acc-label { color: rgba(255,255,255,0.3); }
+
+      .acc-value {
+        font-family: &#x27;JetBrains Mono&#x27;, ui-monospace, &#x27;Courier New&#x27;, monospace;
+        font-size: 17px;
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        transition: color 0.3s ease;
+      }
+      .acc-mode1 .acc-value { font-size: 14px; }
+      .acc-card-white .acc-value { color: #111; }
+      .acc-card-black .acc-value { color: #eee; }
+
+      .acc-card-inactive .acc-value      { opacity: 0.25; }
+      .acc-card-inactive .acc-label      { opacity: 0.3; }
+      .acc-card-inactive .acc-threat-dot { opacity: 0.2; }
+
+      .acc-threat-dot {
+        display: inline-block;
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-left: 2px;
+        position: relative; top: -1px;
+        transition: background 0.35s ease, box-shadow 0.35s ease;
+      }
+      .acc-threat-safe   { background: #888; box-shadow: 0 0 4px rgba(136,136,136,0.5); }
+      .acc-threat-warn   { background: #999; box-shadow: 0 0 4px rgba(153,153,153,0.5); }
+      .acc-threat-sus    { background: #aaa; box-shadow: 0 0 5px rgba(170,170,170,0.5); }
+      .acc-threat-cheat  { background: #ccc; box-shadow: 0 0 6px rgba(204,204,204,0.6); }
+      .acc-threat-hidden { background: transparent; box-shadow: none; }
+
+      .acc-card-active-white .acc-value-cheat { color: #000; }
+      .acc-card-active-white .acc-value-sus   { color: #222; }
+      .acc-card-active-white .acc-value-warn  { color: #444; }
+      .acc-card-active-white .acc-value-safe  { color: #666; }
+      .acc-card-active-black .acc-value-cheat { color: #fff; }
+      .acc-card-active-black .acc-value-sus   { color: #ddd; }
+      .acc-card-active-black .acc-value-warn  { color: #bbb; }
+      .acc-card-active-black .acc-value-safe  { color: #999; }
+
+      .acc-label-row { display: flex; align-items: center; gap: 4px; }
+    `;
+        document.head.appendChild(style);
+      }
+
+      // ─── Internal state ───────────────────────────────────────────────────────
+
+      let whiteAcc = initialWhiteAcc;
+      let whiteElo = initialWhiteElo;
+      let blackAcc = initialBlackAcc;
+      let blackElo = initialBlackElo;
+
+      // ─── Threat level ─────────────────────────────────────────────────────────
+
+      function threatLevel(acc) {
+        const n = parseFloat(acc);
+        if (isNaN(n) || n === 0) return null;
+        if (n &gt;= 95) return &quot;cheat&quot;;
+        if (n &gt;= 90) return &quot;sus&quot;;
+        if (n &gt;= 88) return &quot;warn&quot;;
+        return &quot;safe&quot;;
+      }
+
+      // ─── HTML builder ─────────────────────────────────────────────────────────
+
+      function rowHTML(color, isYou) {
+        const badgeText = isYou ? &quot;you&quot; : &quot;&amp;nbsp;&quot;;
+        const badgeClass = isYou
+          ? `acc-side-badge acc-side-badge-you-${color}`
+          : `acc-side-badge acc-side-badge-${color}`;
+        const activeClass = isYou
+          ? `acc-card-active-${color}`
+          : `acc-card-inactive`;
+
+        return `
+      &lt;div class=&quot;acc-row&quot;&gt;
+        &lt;div class=&quot;${badgeClass}&quot;&gt;${badgeText}&lt;/div&gt;
+        &lt;div class=&quot;acc-card acc-card-${color} ${activeClass}&quot; id=&quot;acc-card-${color}&quot;&gt;
+          &lt;div class=&quot;acc-segment&quot;&gt;
+            &lt;div class=&quot;acc-label-row&quot;&gt;
+              &lt;span class=&quot;acc-label&quot;&gt;Accuracy&lt;/span&gt;
+              &lt;span class=&quot;acc-threat-dot acc-threat-hidden&quot; id=&quot;acc-dot-${color}&quot;&gt;&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;span class=&quot;acc-value&quot; id=&quot;acc-val-acc-${color}&quot;&gt;—&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;acc-segment&quot;&gt;
+            &lt;span class=&quot;acc-label&quot;&gt;Rating&lt;/span&gt;
+            &lt;span class=&quot;acc-value&quot; id=&quot;acc-val-elo-${color}&quot;&gt;—&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;`;
+      }
+
+      // ─── Widget mount ─────────────────────────────────────────────────────────
+
+      const widget = document.createElement(&quot;div&quot;);
+      widget.id = &quot;acc-widget&quot;;
+      document.body.appendChild(widget);
+
+      chrome.storage.local.get(&quot;accWidgetPos&quot;, (result) =&gt; {
+        if (result.accWidgetPos) {
+          widget.style.left = result.accWidgetPos.left;
+          widget.style.top = result.accWidgetPos.top;
+        }
+      });
+
+      function applyDisplayMode() {
+        widget.classList.toggle(&quot;acc-hidden&quot;, displayMode === 0);
+        widget.classList.toggle(&quot;acc-mode1&quot;, displayMode === 1);
+      }
+
+      function render() {
+        widget.innerHTML =
+          side === &quot;white&quot;
+            ? rowHTML(&quot;black&quot;, false) + rowHTML(&quot;white&quot;, true)
+            : rowHTML(&quot;white&quot;, false) + rowHTML(&quot;black&quot;, true);
+        applyDisplayMode();
+      }
+
+      // ─── Drag — mouse ─────────────────────────────────────────────────────────
+
+      let isDragging = false,
+        offsetX = 0,
+        offsetY = 0;
+
+      widget.addEventListener(&quot;mousedown&quot;, (e) =&gt; {
+        if (displayMode === 0) return;
+        isDragging = true;
+        widget.classList.add(&quot;dragging&quot;);
+        offsetX = e.clientX - widget.getBoundingClientRect().left;
+        offsetY = e.clientY - widget.getBoundingClientRect().top;
+        e.preventDefault();
+      });
+      document.addEventListener(&quot;mousemove&quot;, (e) =&gt; {
+        if (!isDragging) return;
+        widget.style.left = `${e.clientX - offsetX}px`;
+        widget.style.top = `${e.clientY - offsetY}px`;
+      });
+      document.addEventListener(&quot;mouseup&quot;, () =&gt; {
+        if (!isDragging) return;
+        isDragging = false;
+        widget.classList.remove(&quot;dragging&quot;);
+        chrome.storage.local.set({
+          accWidgetPos: { left: widget.style.left, top: widget.style.top },
+        });
+      });
+
+      // ─── Drag — touch ─────────────────────────────────────────────────────────
+
+      widget.addEventListener(
+        &quot;touchstart&quot;,
+        (e) =&gt; {
+          if (displayMode === 0) return;
+          const t = e.touches[0];
+          isDragging = true;
+          widget.classList.add(&quot;dragging&quot;);
+          offsetX = t.clientX - widget.getBoundingClientRect().left;
+          offsetY = t.clientY - widget.getBoundingClientRect().top;
+          e.preventDefault();
+        },
+        { passive: false },
+      );
+      document.addEventListener(
+        &quot;touchmove&quot;,
+        (e) =&gt; {
+          if (!isDragging) return;
+          const t = e.touches[0];
+          widget.style.left = `${t.clientX - offsetX}px`;
+          widget.style.top = `${t.clientY - offsetY}px`;
+          e.preventDefault();
+        },
+        { passive: false },
+      );
+      document.addEventListener(&quot;touchend&quot;, () =&gt; {
+        if (!isDragging) return;
+        isDragging = false;
+        widget.classList.remove(&quot;dragging&quot;);
+        chrome.storage.local.set({
+          accWidgetPos: { left: widget.style.left, top: widget.style.top },
+        });
+      });
+
+      // ─── DOM helpers ──────────────────────────────────────────────────────────
+
+      function setVal(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      function applyThreat(color, acc) {
+        const level = threatLevel(acc);
+        const dot = document.getElementById(`acc-dot-${color}`);
+        const val = document.getElementById(`acc-val-acc-${color}`);
+        if (!dot || !val) return;
+        dot.className = &quot;acc-threat-dot&quot;;
+        val.classList.remove(
+          &quot;acc-value-cheat&quot;,
+          &quot;acc-value-sus&quot;,
+          &quot;acc-value-warn&quot;,
+          &quot;acc-value-safe&quot;,
+        );
+        if (!level) {
+          dot.classList.add(&quot;acc-threat-hidden&quot;);
+          return;
+        }
+        dot.classList.add(`acc-threat-${level}`);
+        val.classList.add(`acc-value-${level}`);
+      }
+
+      function flushDOM() {
+        setVal(&quot;acc-val-acc-white&quot;, whiteAcc ? `${whiteAcc}%` : &quot;—&quot;);
+        setVal(&quot;acc-val-elo-white&quot;, whiteElo || &quot;—&quot;);
+        setVal(&quot;acc-val-acc-black&quot;, blackAcc ? `${blackAcc}%` : &quot;—&quot;);
+        setVal(&quot;acc-val-elo-black&quot;, blackElo || &quot;—&quot;);
+        applyThreat(&quot;white&quot;, whiteAcc);
+        applyThreat(&quot;black&quot;, blackAcc);
+      }
+
+      // ─── Update ───────────────────────────────────────────────────────────────
+
+      function update(changes = {}) {
+        const sideChanged = changes.side !== undefined &amp;&amp; changes.side !== side;
+        const modeChanged =
+          changes.displayMode !== undefined &amp;&amp;
+          changes.displayMode !== displayMode;
+
+        if (changes.whiteAcc !== undefined) whiteAcc = changes.whiteAcc;
+        if (changes.whiteElo !== undefined) whiteElo = changes.whiteElo;
+        if (changes.blackAcc !== undefined) blackAcc = changes.blackAcc;
+        if (changes.blackElo !== undefined) blackElo = changes.blackElo;
+        if (sideChanged) side = changes.side;
+        if (modeChanged) displayMode = changes.displayMode;
+
+        if (sideChanged || modeChanged) {
+          render();
+        } else {
+          applyDisplayMode();
+        }
+
+        flushDOM();
+      }
+
+      render();
+      flushDOM();
+      return { update };
+    }
+
+/==============================================================================/</code></pre>
+</section>
+<section id="sec-7">
+  <h2><span class="badge">7</span> EVAL BAR - CHESS.COM VARIANT (createEvalBar)
+    <span class="src">source: scripts/core.js lines 2527-2639</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+        function createEvalBar(initialScore = &quot;0.0&quot;, initialColor = &quot;white&quot;) {
+          const boardContainer = document.querySelector(&quot;.board&quot;);
+          let w_ = boardContainer.offsetWidth;
+
+          if (!boardContainer) return console.error(&quot;Plateau non trouvé !&quot;);
+
+          const evalContainer = document.createElement(&quot;div&quot;);
+          evalContainer.id = &quot;customEval&quot;;
+          evalContainer.style.zIndex = &quot;9999&quot;;
+          evalContainer.style.width = `${(w_ * 6) / 100}px`;
+          evalContainer.style.height = `${boardContainer.offsetWidth}px`;
+          evalContainer.style.background = &quot;rgba(16,16,16,.65)&quot;;
+          evalContainer.style.backdropFilter = &quot;blur(24px)&quot;;
+          evalContainer.style.marginLeft = &quot;12px&quot;;
+          evalContainer.style.position = &quot;relative&quot;;
+          evalContainer.style.border = &quot;1px solid rgba(255,255,255,.08)&quot;;
+          evalContainer.style.borderRadius = &quot;12px&quot;;
+          evalContainer.style.overflow = &quot;hidden&quot;;
+          evalContainer.style.boxShadow = &quot;0 8px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset&quot;;
+
+          const topBar = document.createElement(&quot;div&quot;);
+          const bottomBar = document.createElement(&quot;div&quot;);
+
+          [topBar, bottomBar].forEach((bar) =&gt; {
+            bar.style.width = &quot;100%&quot;;
+            bar.style.position = &quot;absolute&quot;;
+            bar.style.transition = &quot;height 0.3s ease&quot;;
+          });
+
+          topBar.style.top = &quot;0&quot;;
+          bottomBar.style.bottom = &quot;0&quot;;
+
+          evalContainer.appendChild(topBar);
+          evalContainer.appendChild(bottomBar);
+          const scoreText = document.createElement(&quot;div&quot;);
+          scoreText.style.position = &quot;absolute&quot;;
+          scoreText.style.bottom = &quot;4px&quot;;
+          scoreText.style.left = &quot;50%&quot;;
+          scoreText.style.transform = &quot;translateX(-50%)&quot;;
+          scoreText.style.color = &quot;rgba(255,255,255,.85)&quot;;
+          scoreText.style.fontWeight = &quot;700&quot;;
+          scoreText.style.fontSize = &quot;11px&quot;;
+          scoreText.style.fontFamily = &quot;&#x27;Space Mono&#x27;, monospace&quot;;
+          scoreText.style.textShadow = &quot;0 0 12px rgba(0,0,0,.6), 0 2px 4px rgba(0,0,0,.4)&quot;;
+          scoreText.style.pointerEvents = &quot;none&quot;;
+          evalContainer.appendChild(scoreText);
+
+          boardContainer.parentNode.style.display = &quot;flex&quot;;
+          // boardContainer.parentNode.appendChild(evalContainer);
+          boardContainer.parentNode.insertBefore(evalContainer, boardContainer);
+
+          function parseScore(scoreStr) {
+            if (!scoreStr) {
+              return { score: 0, mate: false };
+            }
+
+            scoreStr = scoreStr.trim();
+            let mate = false;
+            let score = 0;
+
+            if (scoreStr.startsWith(&quot;#&quot;)) {
+              mate = true;
+              scoreStr = scoreStr.slice(1);
+            }
+
+            score = parseFloat(scoreStr.replace(&quot;+&quot;, &quot;&quot;)) || 0;
+            return { score, mate };
+          }
+
+          function update(scoreStr, color = &quot;white&quot;) {
+            let { score, mate } = parseScore(scoreStr);
+
+            let percent = 50;
+
+            if (mate) {
+              let sign = score &gt; 0 ? &quot;+&quot; : &quot;-&quot;;
+              scoreText.textContent = &quot;#&quot; + sign + Math.abs(score);
+              if (
+                (score &gt; 0 &amp;&amp; color === &quot;white&quot;) ||
+                (score &lt; 0 &amp;&amp; color === &quot;black&quot;)
+              ) {
+                percent = 100;
+              } else {
+                percent = 0;
+              }
+            } else {
+              let sign = score &gt; 0 ? &quot;+&quot; : &quot;&quot;;
+              scoreText.textContent = sign + score.toFixed(1);
+              if (color === &quot;black&quot;) score = -score;
+              if (score &gt;= 7) {
+                percent = 90;
+              } else if (score &lt;= -7) {
+                percent = 10;
+              } else {
+                percent = 50 + (score / 7) * 40;
+              }
+            }
+
+            if (color === &quot;white&quot;) {
+              bottomBar.style.background = &quot;#ffffff&quot;;
+              topBar.style.background = &quot;#312e2b&quot;;
+            } else {
+              bottomBar.style.background = &quot;#312e2b&quot;;
+              topBar.style.background = &quot;#ffffff&quot;;
+            }
+
+            bottomBar.style.height = percent + &quot;%&quot;;
+            topBar.style.height = 100 - percent + &quot;%&quot;;
+          }
+
+          update(initialScore, initialColor);
+          return { update };
+        }
+
+/==============================================================================/</code></pre>
+</section>
+<section id="sec-8">
+  <h2><span class="badge">8</span> EVAL BAR - LICHESS VARIANT (createEvalBar)
+    <span class="src">source: scripts/core.js lines 2874-2985</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+        function createEvalBar(initialScore = &quot;0.0&quot;, initialColor = &quot;white&quot;) {
+          const boardContainer = document.querySelector(&quot;cg-board&quot;);
+          let w_ = boardContainer.offsetWidth;
+
+          if (!boardContainer) return console.error(&quot;Plateau non trouvé !&quot;);
+
+          // Conteneur principal
+          const evalContainer = document.createElement(&quot;div&quot;);
+          evalContainer.id = &quot;customEval&quot;;
+          evalContainer.style.zIndex = &quot;9999&quot;;
+          evalContainer.style.width = `${(w_ * 6) / 100}px`;
+          evalContainer.style.height = `${boardContainer.offsetWidth}px`;
+          evalContainer.style.background = &quot;#eee&quot;;
+          evalContainer.style.marginLeft = &quot;10px&quot;;
+          evalContainer.style.position = &quot;relative&quot;;
+          evalContainer.style.left = &quot;-50px&quot;;
+          evalContainer.style.border = &quot;1px solid #aaa&quot;;
+          evalContainer.style.borderRadius = &quot;4px&quot;;
+          evalContainer.style.overflow = &quot;hidden&quot;;
+
+          const topBar = document.createElement(&quot;div&quot;);
+          const bottomBar = document.createElement(&quot;div&quot;);
+
+          [topBar, bottomBar].forEach((bar) =&gt; {
+            bar.style.width = &quot;100%&quot;;
+            bar.style.position = &quot;absolute&quot;;
+            bar.style.transition = &quot;height 0.3s ease&quot;;
+          });
+
+          topBar.style.top = &quot;0&quot;;
+          bottomBar.style.bottom = &quot;0&quot;;
+
+          evalContainer.appendChild(topBar);
+          evalContainer.appendChild(bottomBar);
+
+          // Texte en bas
+          const scoreText = document.createElement(&quot;div&quot;);
+          scoreText.style.position = &quot;absolute&quot;;
+          scoreText.style.bottom = &quot;0&quot;;
+          scoreText.style.left = &quot;50%&quot;;
+          scoreText.style.transform = &quot;translateX(-50%)&quot;;
+          scoreText.style.color = &quot;red&quot;;
+          scoreText.style.fontWeight = &quot;bold&quot;;
+          scoreText.style.fontSize = &quot;12px&quot;;
+          scoreText.style.pointerEvents = &quot;none&quot;;
+          evalContainer.appendChild(scoreText);
+
+          boardContainer.parentNode.style.display = &quot;flex&quot;;
+          // boardContainer.parentNode.appendChild(evalContainer);
+          boardContainer.parentNode.insertBefore(evalContainer, boardContainer);
+
+          function parseScore(scoreStr) {
+            if (!scoreStr) {
+              return { score: 0, mate: false };
+            }
+
+            scoreStr = scoreStr.trim();
+            let mate = false;
+            let score = 0;
+
+            if (scoreStr.startsWith(&quot;#&quot;)) {
+              mate = true;
+              scoreStr = scoreStr.slice(1);
+            }
+
+            score = parseFloat(scoreStr.replace(&quot;+&quot;, &quot;&quot;)) || 0;
+            return { score, mate };
+          }
+
+          function update(scoreStr, color = &quot;white&quot;) {
+            let { score, mate } = parseScore(scoreStr);
+            let percent = 50;
+
+            if (mate) {
+              let sign = score &gt; 0 ? &quot;+&quot; : &quot;-&quot;;
+              scoreText.textContent = &quot;#&quot; + sign + Math.abs(score);
+              if (
+                (score &gt; 0 &amp;&amp; color === &quot;white&quot;) ||
+                (score &lt; 0 &amp;&amp; color === &quot;black&quot;)
+              ) {
+                percent = 100;
+              } else {
+                percent = 0;
+              }
+            } else {
+              let sign = score &gt; 0 ? &quot;+&quot; : &quot;&quot;;
+              scoreText.textContent = sign + score.toFixed(1);
+              if (color === &quot;black&quot;) score = -score;
+              if (score &gt;= 7) {
+                percent = 90;
+              } else if (score &lt;= -7) {
+                percent = 10;
+              } else {
+                percent = 50 + (score / 7) * 40;
+              }
+            }
+
+            if (color === &quot;white&quot;) {
+              bottomBar.style.background = &quot;#ffffff&quot;;
+              topBar.style.background = &quot;#312e2b&quot;;
+            } else {
+              bottomBar.style.background = &quot;#312e2b&quot;;
+              topBar.style.background = &quot;#ffffff&quot;;
+            }
+
+            bottomBar.style.height = percent + &quot;%&quot;;
+            topBar.style.height = 100 - percent + &quot;%&quot;;
+          }
+
+          update(initialScore, initialColor);
+          return { update };
+        }
+
+/==============================================================================/</code></pre>
+</section>
+<section id="sec-9">
+  <h2><span class="badge">9</span> EVAL BAR - WORLDCHESS VARIANT (createEvalBar)
+    <span class="src">source: scripts/core.js lines 3238-3349</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+                function createEvalBar(initialScore = &quot;0.0&quot;, initialColor = &quot;white&quot;) {
+          const boardContainer = document.querySelector(&quot;cg-board&quot;);
+
+          if (!boardContainer) return console.error(&quot;Plateau non trouvé !&quot;);
+          let w_ = boardContainer.offsetWidth;
+          const evalContainer = document.createElement(&quot;div&quot;);
+          evalContainer.id = &quot;customEval&quot;;
+          evalContainer.style.zIndex = &quot;9999&quot;;
+          evalContainer.style.width = `${(w_ * 6) / 100}px`;
+          evalContainer.style.height = `${boardContainer.offsetWidth}px`;
+          evalContainer.style.background = &quot;rgba(16,16,16,.65)&quot;;
+          evalContainer.style.backdropFilter = &quot;blur(24px)&quot;;
+          evalContainer.style.marginLeft = &quot;12px&quot;;
+          evalContainer.style.position = &quot;relative&quot;;
+          evalContainer.style.left = &quot;-10px&quot;;
+          evalContainer.style.border = &quot;1px solid rgba(255,255,255,.08)&quot;;
+          evalContainer.style.borderRadius = &quot;12px&quot;;
+          evalContainer.style.overflow = &quot;hidden&quot;;
+          evalContainer.style.boxShadow = &quot;0 8px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.03) inset&quot;;
+
+          const topBar = document.createElement(&quot;div&quot;);
+          const bottomBar = document.createElement(&quot;div&quot;);
+
+          [topBar, bottomBar].forEach((bar) =&gt; {
+            bar.style.width = &quot;100%&quot;;
+            bar.style.position = &quot;absolute&quot;;
+            bar.style.transition = &quot;height 0.3s ease&quot;;
+          });
+
+          topBar.style.top = &quot;0&quot;;
+          bottomBar.style.bottom = &quot;0&quot;;
+
+          evalContainer.appendChild(topBar);
+          evalContainer.appendChild(bottomBar);
+
+          const scoreText = document.createElement(&quot;div&quot;);
+          scoreText.style.position = &quot;absolute&quot;;
+          scoreText.style.bottom = &quot;4px&quot;;
+          scoreText.style.left = &quot;50%&quot;;
+          scoreText.style.transform = &quot;translateX(-50%)&quot;;
+          scoreText.style.color = &quot;rgba(255,255,255,.85)&quot;;
+          scoreText.style.fontWeight = &quot;700&quot;;
+          scoreText.style.fontSize = &quot;11px&quot;;
+          scoreText.style.fontFamily = &quot;&#x27;Space Mono&#x27;, monospace&quot;;
+          scoreText.style.textShadow = &quot;0 0 12px rgba(0,0,0,.6), 0 2px 4px rgba(0,0,0,.4)&quot;;
+          scoreText.style.pointerEvents = &quot;none&quot;;
+          evalContainer.appendChild(scoreText);
+
+          boardContainer.parentNode.style.display = &quot;flex&quot;;
+          boardContainer.parentNode.insertBefore(evalContainer, boardContainer);
+
+          function parseScore(scoreStr) {
+            if (!scoreStr) {
+              return { score: 0, mate: false };
+            }
+
+            scoreStr = scoreStr.trim();
+            let mate = false;
+            let score = 0;
+
+            if (scoreStr.startsWith(&quot;#&quot;)) {
+              mate = true;
+              scoreStr = scoreStr.slice(1);
+            }
+
+            score = parseFloat(scoreStr.replace(&quot;+&quot;, &quot;&quot;)) || 0;
+            return { score, mate };
+          }
+
+          function update(scoreStr, color = &quot;white&quot;) {
+            let { score, mate } = parseScore(scoreStr);
+            let percent = 50;
+
+            if (mate) {
+              let sign = score &gt; 0 ? &quot;+&quot; : &quot;-&quot;;
+              scoreText.textContent = &quot;#&quot; + sign + Math.abs(score);
+              if (
+                (score &gt; 0 &amp;&amp; color === &quot;white&quot;) ||
+                (score &lt; 0 &amp;&amp; color === &quot;black&quot;)
+              ) {
+                percent = 100;
+              } else {
+                percent = 0;
+              }
+            } else {
+              let sign = score &gt; 0 ? &quot;+&quot; : &quot;&quot;;
+              scoreText.textContent = sign + score.toFixed(1);
+              if (color === &quot;black&quot;) score = -score;
+              if (score &gt;= 7) {
+                percent = 90;
+              } else if (score &lt;= -7) {
+                percent = 10;
+              } else {
+                percent = 50 + (score / 7) * 40;
+              }
+            }
+
+            if (color === &quot;white&quot;) {
+              bottomBar.style.background = &quot;#ffffff&quot;;
+              topBar.style.background = &quot;#312e2b&quot;;
+            } else {
+              bottomBar.style.background = &quot;#312e2b&quot;;
+              topBar.style.background = &quot;#ffffff&quot;;
+            }
+
+            bottomBar.style.height = percent + &quot;%&quot;;
+            topBar.style.height = 100 - percent + &quot;%&quot;;
+          }
+
+          update(initialScore, initialColor);
+          return { update };
+        }
+
+/==============================================================================/</code></pre>
+</section>
+<section id="sec-10">
+  <h2><span class="badge">10</span> UPDATE BANNER (showUpdateBanner)
+    <span class="src">source: scripts/core.js lines 3523-3620</span></h2>
+  <pre><code class="language-javascript">/==============================================================================/
+(function showUpdateBanner() {
+  if (document.getElementById(&quot;ichess-update-banner&quot;)) return;
+
+  chrome.storage.local.get([&quot;updateAvailable&quot;, &quot;latestVersion&quot;], (result) =&gt; {
+    if (!result.updateAvailable) return;
+
+    const version = result.latestVersion || &quot;?&quot;;
+
+    const S = document.createElement(&quot;style&quot;);
+    S.id = &quot;ichess-update-banner-styles&quot;;
+    S.textContent = `
+      @keyframes ichessBannerIn { from{opacity:0;transform:translateY(-16px) scale(.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+      @keyframes ichessBannerOut { from{opacity:1;transform:translateY(0) scale(1)} to{opacity:0;transform:translateY(-12px) scale(.97)} }
+
+      #ichess-update-banner {
+        position:fixed; top:12px; right:12px; z-index:999999;
+        max-width:380px; width:auto;
+        background:rgba(16,16,16,.72);
+        backdrop-filter:blur(32px); -webkit-backdrop-filter:blur(32px);
+        border:1px solid rgba(255,255,255,.07);
+        border-radius:16px;
+        padding:16px 40px 16px 18px;
+        font-family:&#x27;Space Mono&#x27;,monospace; color:#f5f5f5;
+        animation:ichessBannerIn .25s cubic-bezier(.16,1,.3,1);
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,.03) inset,
+          0 24px 60px rgba(0,0,0,.5),
+          0 0 60px rgba(255,255,255,.015);
+      }
+      #ichess-update-banner.ichess-banner-closing {
+        animation:ichessBannerOut .15s ease forwards;
+      }
+
+      #ichess-update-banner .ichess-banner-close {
+        position:absolute; top:10px; right:12px;
+        width:24px; height:24px; border-radius:50%;
+        background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.06);
+        color:#888; font-size:14px; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
+        transition:all .2s; line-height:1;
+      }
+      #ichess-update-banner .ichess-banner-close:hover {
+        background:rgba(255,255,255,.12); color:#fff;
+        border-color:rgba(255,255,255,.15);
+      }
+
+      #ichess-update-banner .ichess-banner-text {
+        font-size:11px; line-height:1.6; color:#ccc;
+        margin-bottom:12px;
+      }
+      #ichess-update-banner .ichess-banner-text strong {
+        color:#fff; font-weight:700;
+      }
+
+      #ichess-update-banner .ichess-banner-btn {
+        display:inline-block;
+        padding:7px 16px; border-radius:8px;
+        background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1);
+        font-family:&#x27;Space Mono&#x27;,monospace; font-size:10px; font-weight:700;
+        letter-spacing:1.5px; text-transform:uppercase;
+        color:#f5f5f5; text-decoration:none; cursor:pointer;
+        transition:all .2s;
+      }
+      #ichess-update-banner .ichess-banner-btn:hover {
+        background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.2);
+        box-shadow:0 0 16px rgba(255,255,255,.05);
+      }
+    `;
+    document.head.appendChild(S);
+
+    const banner = document.createElement(&quot;div&quot;);
+    banner.id = &quot;ichess-update-banner&quot;;
+
+    const closeBtn = document.createElement(&quot;button&quot;);
+    closeBtn.className = &quot;ichess-banner-close&quot;;
+    closeBtn.innerHTML = &quot;\u00d7&quot;;
+    closeBtn.onclick = () =&gt; {
+      banner.classList.add(&quot;ichess-banner-closing&quot;);
+      setTimeout(() =&gt; { banner.remove(); S.remove(); }, 150);
+    };
+
+    const text = document.createElement(&quot;div&quot;);
+    text.className = &quot;ichess-banner-text&quot;;
+    text.innerHTML = &quot;iChess-Coach updated to &lt;strong&gt;v&quot; + version + &quot;&lt;/strong&gt;! Join our Discord for the latest features &amp; updates.&quot;;
+
+    const btn = document.createElement(&quot;a&quot;);
+    btn.className = &quot;ichess-banner-btn&quot;;
+    btn.href = &quot;https://discord.gg/gVgn5Bn8d5&quot;;
+    btn.target = &quot;_blank&quot;;
+    btn.rel = &quot;noopener noreferrer&quot;;
+    btn.textContent = &quot;Join Discord&quot;;
+
+    banner.appendChild(closeBtn);
+    banner.appendChild(text);
+    banner.appendChild(btn);
+    document.body.appendChild(banner);
+  });
+})();</code></pre>
+</section>
+</main>
+
+<button id="to-top" aria-label="Back to top">&uarr;</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+function flash(btn) {
+  const t = btn.textContent;
+  btn.textContent = 'Copied!';
+  btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = t; btn.classList.remove('ok'); }, 1200);
+}
+function fallbackCopy(text, btn) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); flash(btn); } catch (e) {}
+  document.body.removeChild(ta);
+}
+function copyText(text, btn) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => flash(btn)).catch(() => fallbackCopy(text, btn));
+  } else {
+    fallbackCopy(text, btn);
+  }
+}
+function sectionTitle(h2) {
+  const c = h2.cloneNode(true);
+  c.querySelectorAll('.src, .copy-btn').forEach(e => e.remove());
+  return c.textContent.replace(/\s+/g, ' ').trim();
+}
+
+/* rebuild headings responsively + wire per-section copy */
+document.querySelectorAll('main section').forEach(sec => {
+  const h2 = sec.querySelector('h2');
+  const code = sec.querySelector('pre code');
+  if (!h2 || !code) return;
+  const num = h2.querySelector('.badge') ? h2.querySelector('.badge').textContent : '';
+  const noteEl = h2.querySelector('.src');
+  const note = noteEl ? noteEl.textContent.trim() : '';
+  const title = sectionTitle(h2);
+  h2.textContent = '';
+
+  const b = document.createElement('button');
+  b.className = 'copy-btn';
+  b.textContent = 'Copy';
+  b.addEventListener('click', () =>
+    copyText('// [' + num + '] ' + title + (note ? '\n' + note : '') + '\n\n' + code.textContent, b));
+
+  const badge = document.createElement('span'); badge.className = 'badge'; badge.textContent = num;
+  const tt = document.createElement('span'); tt.className = 'tt'; tt.textContent = title;
+  const src = document.createElement('span'); src.className = 'src'; src.textContent = note;
+
+  h2.append(b, badge, tt, src);
+  sec._meta = { num, title, note, code };
+});
+
+/* copy-all (desktop header + mobile topbar) */
+document.querySelectorAll('#copy-all, #copy-all-m').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const rule = '/' + '='.repeat(78) + '/';
+    const parts = ['iChess Coach - UI extracted from scripts/core.js', ''];
+    document.querySelectorAll('main section').forEach(s => {
+      const m = s._meta;
+      parts.push(rule, '// [' + m.num + '] ' + m.title);
+      if (m.note) parts.push(m.note);
+      parts.push(rule, m.code.textContent.trim(), '');
+    });
+    copyText(parts.join('\n'), btn);
+  });
+});
+
+/* sidebar toggle: slide-in drawer on mobile, collapse on desktop */
+const sidebar = document.getElementById('sidebar');
+const backdrop = document.getElementById('backdrop');
+const menuBtn = document.getElementById('menu-btn');
+const mqMobile = matchMedia('(max-width:959px)');
+let navOpen = true;
+function applyNav() {
+  const mobile = mqMobile.matches;
+  document.body.classList.toggle('nav-open', mobile && navOpen);
+  document.body.classList.toggle('nav-closed', !mobile && !navOpen);
+  backdrop.classList.toggle('show', mobile && navOpen);
+}
+menuBtn.addEventListener('click', () => { navOpen = !navOpen; applyNav(); });
+backdrop.addEventListener('click', () => { navOpen = false; applyNav(); });
+sidebar.querySelectorAll('.links a').forEach(a => a.addEventListener('click', () => {
+  if (mqMobile.matches) { navOpen = false; applyNav(); }
+}));
+if (mqMobile.addEventListener) mqMobile.addEventListener('change', applyNav);
+else mqMobile.addListener(applyNav);
+
+/* section filter */
+const filter = document.getElementById('filter');
+filter.addEventListener('input', () => {
+  const q = filter.value.toLowerCase();
+  sidebar.querySelectorAll('.links a').forEach(a => {
+    a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
+
+/* active-section highlighting */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    sidebar.querySelectorAll('.links a').forEach(a =>
+      a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+  });
+}, { rootMargin: '-15% 0px -70% 0px' });
+document.querySelectorAll('main section').forEach(s => io.observe(s));
+
+/* back to top */
+const toTop = document.getElementById('to-top');
+addEventListener('scroll', () => toTop.classList.toggle('show', scrollY > 420), { passive: true });
+toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+/* syntax highlighting runs last so a CDN failure can never break the UI */
+try { if (window.hljs) hljs.highlightAll(); } catch (e) {}
+</script>
+</body>
+</html>
