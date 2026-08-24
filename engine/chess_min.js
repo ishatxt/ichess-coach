@@ -912,14 +912,21 @@ let Chess = function (r) {
 function playAudio(url) {
   chrome.runtime.sendMessage(
     { type: "FETCH_AUDIO", url },
-    ({ buffer, error }) => {
+    ({ b64, error }) => {
       if (error) return console.error("Audio fetch failed:", error);
 
-      const blob = new Blob([new Uint8Array(buffer)], { type: "audio/mp3" });
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+
+      const blob = new Blob([bytes], { type: "audio/mp3" });
       const blobUrl = URL.createObjectURL(blob);
 
       audioLichess.pause();
 
+      if (audioLichess.src.startsWith("blob:")) {
+        URL.revokeObjectURL(audioLichess.src);
+      }
       audioLichess.src = blobUrl;
       audioLichess.play();
     },

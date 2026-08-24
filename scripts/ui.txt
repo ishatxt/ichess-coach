@@ -1468,7 +1468,11 @@ function toggleCoachMenu() {
 
       let isDragging = false,
         offsetX = 0,
-        offsetY = 0;
+        offsetY = 0,
+        mouseFrame = null,
+        lastMouseEvent = null,
+        touchFrame = null,
+        lastTouchEvent = null;
 
       widget.addEventListener("mousedown", (e) => {
         if (displayMode === 0) return;
@@ -1480,12 +1484,22 @@ function toggleCoachMenu() {
       });
       document.addEventListener("mousemove", (e) => {
         if (!isDragging) return;
-        widget.style.left = `${e.clientX - offsetX}px`;
-        widget.style.top = `${e.clientY - offsetY}px`;
+        lastMouseEvent = e;
+        if (mouseFrame) return;
+        mouseFrame = requestAnimationFrame(() => {
+          mouseFrame = null;
+          if (!isDragging || !lastMouseEvent) return;
+          widget.style.left = `${lastMouseEvent.clientX - offsetX}px`;
+          widget.style.top = `${lastMouseEvent.clientY - offsetY}px`;
+        });
       });
       document.addEventListener("mouseup", () => {
         if (!isDragging) return;
         isDragging = false;
+        if (mouseFrame) {
+          cancelAnimationFrame(mouseFrame);
+          mouseFrame = null;
+        }
         widget.classList.remove("dragging");
         chrome.storage.local.set({
           accWidgetPos: { left: widget.style.left, top: widget.style.top },
@@ -1511,9 +1525,17 @@ function toggleCoachMenu() {
         "touchmove",
         (e) => {
           if (!isDragging) return;
-          const t = e.touches[0];
-          widget.style.left = `${t.clientX - offsetX}px`;
-          widget.style.top = `${t.clientY - offsetY}px`;
+          lastTouchEvent = e.touches[0];
+          if (touchFrame) {
+            e.preventDefault();
+            return;
+          }
+          touchFrame = requestAnimationFrame(() => {
+            touchFrame = null;
+            if (!isDragging || !lastTouchEvent) return;
+            widget.style.left = `${lastTouchEvent.clientX - offsetX}px`;
+            widget.style.top = `${lastTouchEvent.clientY - offsetY}px`;
+          });
           e.preventDefault();
         },
         { passive: false },
@@ -1521,6 +1543,10 @@ function toggleCoachMenu() {
       document.addEventListener("touchend", () => {
         if (!isDragging) return;
         isDragging = false;
+        if (touchFrame) {
+          cancelAnimationFrame(touchFrame);
+          touchFrame = null;
+        }
         widget.classList.remove("dragging");
         chrome.storage.local.set({
           accWidgetPos: { left: widget.style.left, top: widget.style.top },

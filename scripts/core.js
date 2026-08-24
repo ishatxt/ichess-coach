@@ -1862,14 +1862,29 @@ chrome.storage.local.get(["chessConfig"], (result) => {
       }
     }
 
-    const engine = new komodo({
-      elo: config.elo,
-      depth: config.depth,
-      multipv: config.lines,
-      threads: 2,
-      hash: 128,
-      personality: config.style,
-    });
+    // Lazily booted Komodo wrapper: the WASM worker (2 threads / 128 MB
+    // hash) only starts on first real use instead of every page load.
+    const engine = new Proxy(
+      {},
+      {
+        get(target, prop) {
+          if (!target._instance) {
+            target._instance = new komodo({
+              elo: config.elo,
+              depth: config.depth,
+              multipv: config.lines,
+              threads: 2,
+              hash: 128,
+              personality: config.style,
+            });
+          }
+          const value = target._instance[prop];
+          return typeof value === "function"
+            ? value.bind(target._instance)
+            : value;
+        },
+      },
+    );
 
     // variable for key press Move
 
@@ -2146,7 +2161,11 @@ chrome.storage.local.get(["chessConfig"], (result) => {
 
       let isDragging = false,
         offsetX = 0,
-        offsetY = 0;
+        offsetY = 0,
+        mouseFrame = null,
+        lastMouseEvent = null,
+        touchFrame = null,
+        lastTouchEvent = null;
 
       widget.addEventListener("mousedown", (e) => {
         if (displayMode === 0) return;
@@ -2158,12 +2177,22 @@ chrome.storage.local.get(["chessConfig"], (result) => {
       });
       document.addEventListener("mousemove", (e) => {
         if (!isDragging) return;
-        widget.style.left = `${e.clientX - offsetX}px`;
-        widget.style.top = `${e.clientY - offsetY}px`;
+        lastMouseEvent = e;
+        if (mouseFrame) return;
+        mouseFrame = requestAnimationFrame(() => {
+          mouseFrame = null;
+          if (!isDragging || !lastMouseEvent) return;
+          widget.style.left = `${lastMouseEvent.clientX - offsetX}px`;
+          widget.style.top = `${lastMouseEvent.clientY - offsetY}px`;
+        });
       });
       document.addEventListener("mouseup", () => {
         if (!isDragging) return;
         isDragging = false;
+        if (mouseFrame) {
+          cancelAnimationFrame(mouseFrame);
+          mouseFrame = null;
+        }
         widget.classList.remove("dragging");
         chrome.storage.local.set({
           accWidgetPos: { left: widget.style.left, top: widget.style.top },
@@ -2189,9 +2218,17 @@ chrome.storage.local.get(["chessConfig"], (result) => {
         "touchmove",
         (e) => {
           if (!isDragging) return;
-          const t = e.touches[0];
-          widget.style.left = `${t.clientX - offsetX}px`;
-          widget.style.top = `${t.clientY - offsetY}px`;
+          lastTouchEvent = e.touches[0];
+          if (touchFrame) {
+            e.preventDefault();
+            return;
+          }
+          touchFrame = requestAnimationFrame(() => {
+            touchFrame = null;
+            if (!isDragging || !lastTouchEvent) return;
+            widget.style.left = `${lastTouchEvent.clientX - offsetX}px`;
+            widget.style.top = `${lastTouchEvent.clientY - offsetY}px`;
+          });
           e.preventDefault();
         },
         { passive: false },
@@ -2199,6 +2236,10 @@ chrome.storage.local.get(["chessConfig"], (result) => {
       document.addEventListener("touchend", () => {
         if (!isDragging) return;
         isDragging = false;
+        if (touchFrame) {
+          cancelAnimationFrame(touchFrame);
+          touchFrame = null;
+        }
         widget.classList.remove("dragging");
         chrome.storage.local.set({
           accWidgetPos: { left: widget.style.left, top: widget.style.top },

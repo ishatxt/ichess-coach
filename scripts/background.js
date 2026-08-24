@@ -492,7 +492,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     fetch(msg.url)
       .then(r => r.arrayBuffer())
       .then(buffer => {
-        sendResponse({ buffer: Array.from(new Uint8Array(buffer)) });
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        const CHUNK = 0x8000;
+        for (let i = 0; i < bytes.length; i += CHUNK) {
+          binary += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
+        }
+        sendResponse({ b64: btoa(binary) });
       })
       .catch(err => sendResponse({ error: err.message }));
     return true;

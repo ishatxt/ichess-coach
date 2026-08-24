@@ -1591,7 +1591,11 @@ const classificationColor = {
 
       let isDragging = false,
         offsetX = 0,
-        offsetY = 0;
+        offsetY = 0,
+        mouseFrame = null,
+        lastMouseEvent = null,
+        touchFrame = null,
+        lastTouchEvent = null;
 
       widget.addEventListener(&quot;mousedown&quot;, (e) =&gt; {
         if (displayMode === 0) return;
@@ -1603,12 +1607,22 @@ const classificationColor = {
       });
       document.addEventListener(&quot;mousemove&quot;, (e) =&gt; {
         if (!isDragging) return;
-        widget.style.left = `${e.clientX - offsetX}px`;
-        widget.style.top = `${e.clientY - offsetY}px`;
+        lastMouseEvent = e;
+        if (mouseFrame) return;
+        mouseFrame = requestAnimationFrame(() =&gt; {
+          mouseFrame = null;
+          if (!isDragging || !lastMouseEvent) return;
+          widget.style.left = `${lastMouseEvent.clientX - offsetX}px`;
+          widget.style.top = `${lastMouseEvent.clientY - offsetY}px`;
+        });
       });
       document.addEventListener(&quot;mouseup&quot;, () =&gt; {
         if (!isDragging) return;
         isDragging = false;
+        if (mouseFrame) {
+          cancelAnimationFrame(mouseFrame);
+          mouseFrame = null;
+        }
         widget.classList.remove(&quot;dragging&quot;);
         chrome.storage.local.set({
           accWidgetPos: { left: widget.style.left, top: widget.style.top },
@@ -1634,9 +1648,17 @@ const classificationColor = {
         &quot;touchmove&quot;,
         (e) =&gt; {
           if (!isDragging) return;
-          const t = e.touches[0];
-          widget.style.left = `${t.clientX - offsetX}px`;
-          widget.style.top = `${t.clientY - offsetY}px`;
+          lastTouchEvent = e.touches[0];
+          if (touchFrame) {
+            e.preventDefault();
+            return;
+          }
+          touchFrame = requestAnimationFrame(() =&gt; {
+            touchFrame = null;
+            if (!isDragging || !lastTouchEvent) return;
+            widget.style.left = `${lastTouchEvent.clientX - offsetX}px`;
+            widget.style.top = `${lastTouchEvent.clientY - offsetY}px`;
+          });
           e.preventDefault();
         },
         { passive: false },
@@ -1644,6 +1666,10 @@ const classificationColor = {
       document.addEventListener(&quot;touchend&quot;, () =&gt; {
         if (!isDragging) return;
         isDragging = false;
+        if (touchFrame) {
+          cancelAnimationFrame(touchFrame);
+          touchFrame = null;
+        }
         widget.classList.remove(&quot;dragging&quot;);
         chrome.storage.local.set({
           accWidgetPos: { left: widget.style.left, top: widget.style.top },
