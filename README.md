@@ -232,7 +232,7 @@ One JSON report drives four independent UI outputs:
 
 ### Candidate Lines & Hotkeys
 
-In parallel, a plain-Komodo instance (`getMovesByFen`) streams `info depth … multipv k pv …` output into a ranked candidate list. Pressing <kbd>-</kbd> cycles through these lines, and with `autoMove` enabled the chosen line is played through the page bridge (Strategy A) or synthesized mouse drags (Strategy B — `Input.dispatchMouseEvent` press → 10 interpolated moves → release).
+In parallel, a plain-Komodo instance (`getMovesByFen`) streams `info depth … multipv k pv …` output into a ranked candidate list. Pressing <kbd>-</kbd> cycles through these lines. The infrastructure to play a chosen line also exists — `sub-main.js` accepts `MOVE` messages (chess.com: `game.move()`, lichess: `window.playMove()`), and Strategy B can synthesize piece drags via `Input.dispatchMouseEvent` (press → 10 interpolated moves → release) — but no trigger wires it to the engine today.
 
 ## Message Protocol Summary
 
@@ -263,9 +263,6 @@ All settings persist in `chrome.storage.local` under one `chessConfig` object:
   moveClassification: false,
   showAccWidget: true,
   showEval: false,
-  autoStart: false,        // auto-click "New Game" buttons
-  autoMove: false,         // let the coach play moves
-  winningMove: false,
   key: "=", key2: "-",     // hotkeys
 }
 ```

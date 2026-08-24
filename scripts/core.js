@@ -1084,13 +1084,10 @@ let config = {
   depth2: 10,
   delay: 100,
   style: "Default",
-  autoMove: false,
   floatingBtn: false,
   speach: false,
   moveClassification: false,
   showAccWidget: true,
-  autoStart: false,
-  winningMove: false,
   showEval: false,
   onlyShowEval: false,
   key: "=",
@@ -2603,23 +2600,6 @@ chrome.storage.local.get(["chessConfig"], (result) => {
             isGameOverFlag = true;
           }
 
-          // auto start game
-          if (config.autoStart) {
-            const startBtn =
-              document.querySelector(".new-game-buttons-buttons") ||
-              document.querySelector(
-                ".game-over-secondary-actions-row-component",
-              ) ||
-              document.querySelector(".game-over-arena-button-component") ||
-              document.querySelector(".arena-footer-component") ||
-              null;
-
-            if (startBtn) {
-              if (startBtn.children[0].innerText.length > 0) {
-                startBtn.children[0].click();
-              }
-            }
-          }
 
           requestFen();
 
@@ -3012,14 +2992,6 @@ chrome.storage.local.get(["chessConfig"], (result) => {
             }
           }
 
-          if (config.autoStart) {
-            const startNewGameBtn =
-              document.querySelector(".fbt.new-opponent") || null;
-            if (startNewGameBtn) {
-              startNewGameBtn.click();
-              startNewGameBtn.remove();
-            }
-          }
 
           requestFen();
         }, interval);
@@ -3306,14 +3278,6 @@ chrome.storage.local.get(["chessConfig"], (result) => {
             }
           }
 
-          if (config.autoStart) {
-            const startBtn = document.querySelector("#newGame");
-            if (startBtn && startBtn.children[0]) {
-              if (startBtn.children[0].innerText.length >= 1) {
-                startBtn.click();
-              }
-            }
-          }
 
           if (fen_ && fen_ !== currentFen) {
             currentFen = fen_;
