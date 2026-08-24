@@ -22,14 +22,14 @@
 
 | | Feature | Description |
 |---|---------|-------------|
-| :chess_pawn: | **Multi-Platform** | Chess.com, Lichess.org, WorldChess.com |
-| :brain: | **AI Coaches** | David, Mae, Dante, Nadia in 12 languages + Celebrity coaches |
-| :bar_chart: | **Engine Analysis** | Komodo & Torch via WebAssembly, running 100% locally |
-| :sparkles: | **Move Classification** | Brilliant, Great, Best, Book, Inaccuracy, Mistake, Miss, Blunder icons |
-| :dart: | **Accuracy Widget** | Live CAPS accuracy %, estimated Elo, and threat-level dots during review |
-| :studio_microphone: | **Voice Coaching** | Coach speaks move explanations in real time |
-| :sliders: | **Configurable Depth** | Analysis depth from 1 to 15 |
-| :art: | **Retro UI** | 1990s chess-computer aesthetic with scanlines, pixel shadows, and stepped animations |
+| ♟ | **Multi-Platform** | Chess.com, Lichess.org, WorldChess.com |
+| 🧠 | **AI Coaches** | David, Mae, Dante, Nadia in 12 languages + Celebrity coaches |
+| 📊 | **Engine Analysis** | Komodo & Torch via WebAssembly, running 100% locally |
+| ✦ | **Move Classification** | Brilliant, Great, Best, Book, Inaccuracy, Mistake, Miss, Blunder icons |
+| 🎯 | **Accuracy Widget** | Live CAPS accuracy %, estimated Elo, and threat-level dots during review |
+| 🎙 | **Voice Coaching** | Coach speaks move explanations in real time |
+| 🎚 | **Configurable Depth** | Analysis depth from 1 to 15 |
+| 🎨 | **Retro UI** | 1990s chess-computer aesthetic with scanlines, pixel shadows, and stepped animations |
 
 ---
 
@@ -79,8 +79,25 @@ chrome://extensions/
 | Key | Action |
 |-----|--------|
 | <kbd>=</kbd> | Toggle the coach menu |
-| <kbd>-</kbd> | Cycle through the engine's candidate lines |
 | <kbd>Alt+C</kbd> | Toggle icon colors between Retro and Classic palettes |
+
+---
+
+## Move Classification Colors
+
+Icons are tinted per verdict, and <kbd>Alt+C</kbd> swaps the whole set at runtime:
+
+| Verdict | Retro (default) | Classic |
+|---------|-----------------|---------|
+| Brilliant | `#B404BC` purple | `#26C2A3` teal |
+| Great | `#26C2A3` teal | `#749BBF` blue |
+| Best / Excellent | `#A8D66D` / `#7FB04A` greens | same |
+| Book / Forced | `#D5A47D` / `#96AF8B` | same |
+| Inaccuracy | `#D6C85A` gold | same |
+| Mistake | `#C98A3C` orange | same |
+| Blunder / Miss | `#B84A4A` / `#B85E5E` reds | same |
+
+The toggle rewrites the icon fills in the `classificationSVG` map and keeps the pulse animations in sync (they detect the move type from the injected icon's own background fill).
 
 ---
 
@@ -232,7 +249,7 @@ One JSON report drives four independent UI outputs:
 
 ### Candidate Lines & Hotkeys
 
-In parallel, a plain-Komodo instance (`getMovesByFen`) streams `info depth … multipv k pv …` output into a ranked candidate list. Pressing <kbd>-</kbd> cycles through these lines. The infrastructure to play a chosen line also exists — `sub-main.js` accepts `MOVE` messages (chess.com: `game.move()`, lichess: `window.playMove()`), and Strategy B can synthesize piece drags via `Input.dispatchMouseEvent` (press → 10 interpolated moves → release) — but no trigger wires it to the engine today.
+In parallel, a plain-Komodo instance (`getMovesByFen`) streams `info depth … multipv k pv …` output into a ranked candidate list (`keyMove[]`, ranked best-first with evals). The infrastructure to play a chosen line also exists — `sub-main.js` accepts `MOVE` messages (chess.com: `game.move()`, lichess: `window.playMove()`), and Strategy B can synthesize piece drags via `Input.dispatchMouseEvent` (press → 10 interpolated moves → release) — but no trigger wires it to the engine today; the lines currently serve as hints and feed the eval bar.
 
 ## Message Protocol Summary
 
@@ -263,9 +280,11 @@ All settings persist in `chrome.storage.local` under one `chessConfig` object:
   moveClassification: false,
   showAccWidget: true,
   showEval: false,
-  key: "=", key2: "-",     // hotkeys
+  key: "=",                // menu hotkey
 }
 ```
+
+> Legacy keys (`colors`, `delay`, `floatingBtn`, `onlyShowEval`, `key2`) still exist in the defaults but are not referenced anywhere — they are safe to ignore.
 
 ## Why a Breakpoint Instead of DOM Scraping?
 
@@ -312,5 +331,5 @@ ichess-coach-main/
 ---
 
 <p align="center">
-  <sub>Built with :chess_pawn: by <b>Isha</b></sub>
+  <sub>Built with ♟ by <b>Isha</b></sub>
 </p>
