@@ -20,7 +20,7 @@
 
 ## Features
 
-| | Feature | Description |
+| ⛧ | Feature | Description |
 |---|---------|-------------|
 | ⛧  | **Multi-Platform** | Chess.com, Lichess.org, WorldChess.com |
 | ⛧  | **AI Coaches** | David, Mae, Dante, Nadia in 12 languages + Celebrity coaches |
