@@ -22,14 +22,14 @@
 
 | | Feature | Description |
 |---|---------|-------------|
-| ♟ | **Multi-Platform** | Chess.com, Lichess.org, WorldChess.com |
-| 🧠 | **AI Coaches** | David, Mae, Dante, Nadia in 12 languages + Celebrity coaches |
-| 📊 | **Engine Analysis** | Komodo & Torch via WebAssembly, running 100% locally |
-| ✦ | **Move Classification** | Brilliant, Great, Best, Book, Inaccuracy, Mistake, Miss, Blunder icons |
-| 🎯 | **Accuracy Widget** | Live CAPS accuracy %, estimated Elo, and threat-level dots during review |
-| 🎙 | **Voice Coaching** | Coach speaks move explanations in real time |
-| 🎚 | **Configurable Depth** | Analysis depth from 1 to 15 |
-| 🎨 | **Retro UI** | 1990s chess-computer aesthetic with scanlines, pixel shadows, and stepped animations |
+| ⛧  | **Multi-Platform** | Chess.com, Lichess.org, WorldChess.com |
+| ⛧  | **AI Coaches** | David, Mae, Dante, Nadia in 12 languages + Celebrity coaches |
+| ⛧  | **Engine Analysis** | Komodo & Torch via WebAssembly, running 100% locally |
+| ⛧ | **Move Classification** | Brilliant, Great, Best, Book, Inaccuracy, Mistake, Miss, Blunder icons |
+| ⛧  | **Accuracy Widget** | Live CAPS accuracy %, estimated Elo, and threat-level dots during review |
+| ⛧  | **Voice Coaching** | Coach speaks move explanations in real time |
+| ⛧ | **Configurable Depth** | Analysis depth from 1 to 15 |
+| ⛧  | **Retro UI** | 1990s chess-computer aesthetic with scanlines, pixel shadows, and stepped animations |
 
 ---
 
@@ -331,5 +331,5 @@ ichess-coach-main/
 ---
 
 <p align="center">
-  <sub>Built with ♟ by <b>Isha</b></sub>
+  <sub>Built with ⛧  by <b>i+</b></sub>
 </p>
