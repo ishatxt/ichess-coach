@@ -15,8 +15,7 @@
     --border:#252c1c; --text:#dad7cd; --soft:#8f8878;
     --mono:'Space Mono',ui-monospace,SFMono-Regular,monospace;
     --sans:'DM Sans',system-ui,-apple-system,sans-serif; }
-  * { box-sizing:border-box }
-  html { scroll-behavior:smooth }
+  * { box-sizing:border-box } html { scroll-behavior:smooth }
   body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans);
          font-size:14px; padding-top:54px }
   ::selection { background:rgba(127,176,74,.35) }
@@ -40,8 +39,7 @@
   #filter { width:100%; margin:14px 0 10px; padding:9px 12px; background:var(--panel2);
             border:1px solid var(--border); border-radius:9px; color:var(--text);
             font:12.5px var(--sans); outline:none; transition:border-color .15s }
-  #filter:focus { border-color:var(--olive-dim) }
-  #filter::placeholder { color:var(--soft) }
+  #filter:focus { border-color:var(--olive-dim) } #filter::placeholder { color:var(--soft) }
   .links { display:flex; flex-direction:column; gap:2px }
   .links a { display:flex; gap:10px; align-items:baseline; padding:8px 10px; border-radius:8px;
              border-left:2px solid transparent; color:var(--text); text-decoration:none;
@@ -94,9 +92,7 @@
                transform:translateX(-105%); transition:transform .28s ease;
                box-shadow:24px 0 60px rgba(0,0,0,.5); height:100dvh }
     body.nav-open #sidebar { transform:none }
-    main { padding-top:20px }
-    section.card { scroll-margin-top:66px }
-    pre { max-height:62vh } }
+    main { padding-top:20px } section.card { scroll-margin-top:66px } pre { max-height:62vh } }
   @media (min-width:960px) {
     #sidebar { transition:margin-left .28s ease }
     body.nav-closed #sidebar { margin-left:-301px } }
@@ -139,7 +135,7 @@
   </header>
   <section class="card" id="sec-1">
   <h2><span class="badge">1</span> SWEETALERT THEME CSS (swalThemeCSS)
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">const swalThemeCSS = `
   &lt;style&gt;
     @import url(&#x27;https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;display=swap&#x27;);
@@ -402,7 +398,7 @@
 </section>
 <section class="card" id="sec-2">
   <h2><span class="badge">2</span> MOVE CLASSIFICATION ENUM
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">const MoveClassification = {
   Brilliant: &quot;brilliant&quot;,
   Great: &quot;greatFind&quot;,
@@ -419,7 +415,7 @@
 </section>
 <section class="card" id="sec-3">
   <h2><span class="badge">3</span> CLASSIFICATION ICON SVGs + MAPS + ALT+C COLOUR TOGGLE
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">const classMoveClassification = &quot;hint-svg&quot;;
 
 // ─── Icon colour palettes (toggle with Alt+C) ──────────────────────────────
@@ -429,19 +425,16 @@ let useRetroIconColors = true;
 const activePalette = () =&gt; (useRetroIconColors ? RETRO_COLORS : CLASSIC_COLORS);
 
 const BrillantSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
-      &lt;g id=&quot;Brilliant&quot;&gt;
-    &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M9,.5a9,9,0,1,0,9,9A9,9,0,0,0,9,.5Z&quot;&gt;&lt;/path&gt;
-    &lt;path class=&quot;icon-background&quot; fill=&quot;#b404bc&quot; d=&quot;M9,0a9,9,0,1,0,9,9A9,9,0,0,0,9,0Z&quot;&gt;&lt;/path&gt;
-    &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot;&gt;
-      &lt;path d=&quot;M12.57,14.6a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0L10,14.84A.41.41,0,0,1,10,14.6V12.7a.32.32,0,0,1,.09-.23.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H10.35a.31.31,0,0,1-.34-.31L9.86,3.9A.36.36,0,0,1,10,3.66a.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H12.3a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
-      &lt;path d=&quot;M8.07,14.6a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.7a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13ZM8,10.67a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H5.85a.31.31,0,0,1-.34-.31L5.36,3.9a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H7.8a.35.35,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
-    &lt;/g&gt;
-    &lt;g&gt;
-      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M12.57,14.1a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0L10,14.34A.41.41,0,0,1,10,14.1V12.2A.32.32,0,0,1,10,12a.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H10.35a.31.31,0,0,1-.34-.31L9.86,3.4A.36.36,0,0,1,10,3.16a.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H12.3a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
-      &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M8.07,14.1a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.2a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2A.31.31,0,0,1,8,12a.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13ZM8,10.17a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H5.85a.31.31,0,0,1-.34-.31L5.36,3.4a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H7.8a.35.35,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;&gt;&lt;/path&gt;
-    &lt;/g&gt;
+  &lt;path class=&quot;icon-shadow&quot; opacity=&quot;0.3&quot; d=&quot;M 8.966 0.092 C 2.038 0.092 -2.292 7.734 1.172 13.848 C 4.636 19.961 13.296 19.961 16.76 13.848 C 17.55 12.453 17.966 10.872 17.966 9.262 C 17.966 4.198 13.937 0.092 8.966 0.092 Z&quot; style=&quot;&quot;/&gt;
+  &lt;path class=&quot;icon-background&quot; fill=&quot;#b404bc&quot; d=&quot;M 8.966 0.204 C 2.038 0.204 -2.292 7.704 1.172 13.704 C 3.016 16.898 6.333 18.392 9.555 18.185 C 12.385 18.003 15.14 16.51 16.76 13.704 C 17.55 12.336 17.966 10.784 17.966 9.204 C 17.966 4.233 13.937 0.204 8.966 0.204 Z&quot; style=&quot;transform-box: fill-box; transform-origin: 50% 48.867%;&quot;/&gt;
+  &lt;g class=&quot;icon-component-shadow&quot; opacity=&quot;0.2&quot; transform=&quot;matrix(1, 0, 0, 1, -2.175313, -0.135957)&quot;&gt;
+    &lt;path d=&quot;M12.57,14.6a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0L10,14.84A.41.41,0,0,1,10,14.6V12.7a.32.32,0,0,1,.09-.23.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13Zm-.12-3.93a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H10.35a.31.31,0,0,1-.34-.31L9.86,3.9A.36.36,0,0,1,10,3.66a.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H12.3a.32.32,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;/&gt;
+    &lt;path d=&quot;M8.07,14.6a.51.51,0,0,1,0,.13.44.44,0,0,1-.08.11l-.11.08-.13,0h-2l-.13,0-.11-.08a.41.41,0,0,1-.08-.24V12.7a.27.27,0,0,1,0-.13.36.36,0,0,1,.07-.1.39.39,0,0,1,.1-.08l.13,0h2a.31.31,0,0,1,.24.1.39.39,0,0,1,.08.1.51.51,0,0,1,0,.13ZM8,10.67a.17.17,0,0,1,0,.12.41.41,0,0,1-.07.11.4.4,0,0,1-.23.08H5.85a.31.31,0,0,1-.34-.31L5.36,3.9a.36.36,0,0,1,.09-.24.23.23,0,0,1,.11-.08.27.27,0,0,1,.13,0H7.8a.35.35,0,0,1,.25.1.36.36,0,0,1,.09.24Z&quot;/&gt;
   &lt;/g&gt;
-    &lt;/svg&gt;`;
+  &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M 5.975 14.373 C 5.981 14.416 5.981 14.46 5.975 14.503 C 5.955 14.544 5.928 14.581 5.895 14.613 L 5.785 14.693 L 5.655 14.693 L 3.655 14.693 L 3.525 14.693 L 3.405 14.613 C 3.381 14.535 3.381 14.451 3.405 14.373 L 3.405 12.473 C 3.384 12.408 3.384 12.338 3.405 12.273 C 3.434 12.241 3.468 12.214 3.505 12.193 L 3.635 12.193 L 5.635 12.193 C 5.726 12.19 5.814 12.226 5.875 12.293 C 5.907 12.322 5.934 12.356 5.955 12.393 C 5.961 12.436 5.961 12.48 5.955 12.523 L 5.975 14.373 Z M 5.855 10.443 C 5.87 10.482 5.87 10.524 5.855 10.563 C 5.838 10.603 5.814 10.64 5.785 10.673 C 5.719 10.723 5.638 10.751 5.555 10.753 L 3.755 10.753 C 3.573 10.771 3.414 10.627 3.415 10.443 L 3.265 3.673 C 3.278 3.578 3.328 3.491 3.405 3.433 C 3.433 3.396 3.471 3.368 3.515 3.353 C 3.558 3.342 3.603 3.342 3.645 3.353 L 5.705 3.353 C 5.799 3.348 5.891 3.385 5.955 3.453 C 6.014 3.519 6.046 3.605 6.045 3.693 L 5.855 10.443 Z&quot; style=&quot;stroke-width: 1; transform-box: fill-box; transform-origin: 233.785% -29.0706%;&quot;/&gt;
+  &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M 10.416 14.339 C 10.421 14.382 10.421 14.426 10.416 14.469 C 10.395 14.51 10.368 14.547 10.336 14.579 L 10.226 14.659 L 10.096 14.659 L 8.096 14.659 L 7.966 14.659 L 7.856 14.579 C 7.804 14.509 7.776 14.425 7.776 14.339 L 7.776 12.439 C 7.765 12.396 7.765 12.352 7.776 12.309 C 7.793 12.272 7.817 12.238 7.846 12.209 C 7.874 12.177 7.908 12.15 7.946 12.129 L 8.076 12.129 L 10.076 12.129 C 10.178 12.118 10.28 12.16 10.346 12.239 C 10.378 12.268 10.405 12.302 10.426 12.339 C 10.431 12.382 10.431 12.426 10.426 12.469 L 10.416 14.339 Z M 10.346 10.409 C 10.36 10.448 10.36 10.49 10.346 10.529 C 10.328 10.569 10.305 10.606 10.276 10.639 C 10.209 10.689 10.129 10.717 10.046 10.719 L 8.196 10.719 C 8.013 10.737 7.855 10.593 7.856 10.409 L 7.706 3.639 C 7.705 3.551 7.737 3.465 7.796 3.399 C 7.823 3.362 7.862 3.334 7.906 3.319 C 7.948 3.308 7.993 3.308 8.036 3.319 L 10.146 3.319 C 10.239 3.318 10.329 3.354 10.396 3.419 C 10.454 3.485 10.486 3.571 10.486 3.659 L 10.346 10.409 Z&quot; style=&quot;stroke-width: 1; transform-box: fill-box; transform-origin: 429.863% -28.771%;&quot;/&gt;
+  &lt;path class=&quot;icon-component&quot; fill=&quot;#fff&quot; d=&quot;M 14.677 14.475 C 14.682 14.518 14.682 14.562 14.677 14.605 C 14.656 14.646 14.629 14.683 14.597 14.715 L 14.487 14.795 L 14.357 14.795 L 12.357 14.795 L 12.227 14.795 L 12.107 14.715 C 12.083 14.637 12.083 14.553 12.107 14.475 L 12.107 12.575 C 12.085 12.51 12.085 12.44 12.107 12.375 C 12.136 12.343 12.169 12.316 12.207 12.295 L 12.337 12.295 L 14.337 12.295 C 14.428 12.292 14.515 12.328 14.577 12.395 C 14.609 12.424 14.636 12.457 14.657 12.495 C 14.662 12.538 14.662 12.582 14.657 12.625 L 14.677 14.475 Z M 14.557 10.545 C 14.571 10.584 14.571 10.626 14.557 10.665 C 14.54 10.705 14.516 10.742 14.487 10.775 C 14.42 10.825 14.34 10.853 14.257 10.855 L 12.457 10.855 C 12.274 10.873 12.116 10.729 12.117 10.545 L 11.967 3.775 C 11.98 3.679 12.03 3.593 12.107 3.535 C 12.135 3.498 12.173 3.47 12.217 3.455 C 12.26 3.444 12.304 3.444 12.347 3.455 L 14.407 3.455 C 14.501 3.45 14.592 3.486 14.657 3.555 C 14.715 3.621 14.747 3.707 14.747 3.795 L 14.557 10.545 Z&quot; style=&quot;stroke-width: 1; transform-box: fill-box; transform-origin: 61.3767% -31.767%;&quot;/&gt;
+&lt;/svg&gt;`;
 
 const forcedSVG = `&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; class=&quot;${classMoveClassification}&quot; width=&quot;24&quot; height=&quot;24&quot; viewBox=&quot;0 0 18 19&quot;&gt;
       &lt;g id=&quot;forced&quot;&gt;
@@ -642,7 +635,7 @@ const classificationColor = {
 </section>
 <section class="card" id="sec-4">
   <h2><span class="badge">4</span> BOARD ICON PLACEMENT + ANIMATIONS (placeSVGOnBoard)
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">function placeSVGOnBoard(side, square, svgCode) {
   const board =
     document.querySelector(&quot;wc-chess-board&quot;) ||
@@ -793,7 +786,7 @@ const classificationColor = {
 </section>
 <section class="card" id="sec-5">
   <h2><span class="badge">5</span> SETTINGS MENU OVERLAY + STATUS BAR + CREDITS MODAL (toggleCoachMenu)
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">function toggleCoachMenu() {
   const existing = document.getElementById(&quot;ichess-coach-overlay&quot;);
   if (existing) { existing.remove(); return; }
@@ -1362,7 +1355,7 @@ const classificationColor = {
 </section>
 <section class="card" id="sec-6">
   <h2><span class="badge">6</span> FLOATING ACCURACY WIDGET (createSimpleAccuracyDisplay)
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">// the floating container for accuracy
 
     function createSimpleAccuracyDisplay(
@@ -1724,7 +1717,7 @@ const classificationColor = {
 </section>
 <section class="card" id="sec-7">
   <h2><span class="badge">7</span> EVAL BAR - CHESS.COM VARIANT (createEvalBar)
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">function createEvalBar(initialScore = &quot;0.0&quot;, initialColor = &quot;white&quot;) {
           const boardContainer = document.querySelector(&quot;.board&quot;);
           let w_ = boardContainer.offsetWidth;
@@ -1842,7 +1835,7 @@ const classificationColor = {
 </section>
 <section class="card" id="sec-8">
   <h2><span class="badge">8</span> EVAL BAR - LICHESS VARIANT (createEvalBar)
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">function createEvalBar(initialScore = &quot;0.0&quot;, initialColor = &quot;white&quot;) {
           const boardContainer = document.querySelector(&quot;cg-board&quot;);
           let w_ = boardContainer.offsetWidth;
@@ -1963,7 +1956,7 @@ const classificationColor = {
 </section>
 <section class="card" id="sec-9">
   <h2><span class="badge">9</span> EVAL BAR - WORLDCHESS VARIANT (createEvalBar)
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">function createEvalBar(initialScore = &quot;0.0&quot;, initialColor = &quot;white&quot;) {
           const boardContainer = document.querySelector(&quot;cg-board&quot;);
 
@@ -2080,7 +2073,7 @@ const classificationColor = {
 </section>
 <section class="card" id="sec-10">
   <h2><span class="badge">10</span> UPDATE BANNER (showUpdateBanner)
-    <span class="src">retro restyled &mdash; logic untouched</span></h2>
+    <span class="src">retro restyled</span></h2>
   <pre><code class="language-javascript">(function showUpdateBanner() {
   if (document.getElementById(&quot;ichess-update-banner&quot;)) return;
 
