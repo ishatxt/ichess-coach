@@ -45,7 +45,9 @@
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "*://*.chess.com/*",
+        "*://*.lichess.org/*",
+        "*://*.worldchess.com/*"
       ],
       "js": [
         "scripts/main.js",
@@ -68,16 +70,19 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "scripts/sub-main.js",
+        "coach-assets/*",
         "engine/chess_min.js",
         "engine/komodo.js",
         "engine/komodo.wasm",
         "engine/torch.js",
         "engine/torch.wasm",
-        "overlay/index.html"
+        "overlay/index.html",
+        "scripts/sub-main.js"
       ],
       "matches": [
-        "<all_urls>"
+        "*://*.chess.com/*",
+        "*://*.lichess.org/*",
+        "*://*.worldchess.com/*"
       ]
     }
   ],
