@@ -138,8 +138,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
 
       let breakpointId = null;
+      const checkedUrls = new Set();
 
       async function trySetBreakpoint(url) {
+        if (breakpointId || checkedUrls.has(url)) return false;
+        checkedUrls.add(url);
         try {
           const res = await fetch(url);
           const code = await res.text();
@@ -212,16 +215,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             }
           }
 
-          if (!found) console.log("");
-
           const scriptParsedListener = async (source, method, params) => {
             if (source.tabId !== tabId) return;
             if (method !== "Debugger.scriptParsed") return;
-            if (!params.url) return;
+            if (!params.url || breakpointId) return;
 
-            const newBp = await trySetBreakpoint(params.url);
-            if (newBp) {
-            }
+            await trySetBreakpoint(params.url);
           };
 
           const debuggerEventListener = async (source, method, params) => {

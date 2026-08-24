@@ -2386,11 +2386,11 @@ chrome.storage.local.get(["chessConfig"], (result) => {
 
             if (typeof cleanRaw === "string" && cleanRaw.startsWith("json ")) {
               cleanRaw = cleanRaw.slice(5).trim();
-            } else {
-              console.clear();
-              if (cleanRaw.includes("ABORD")) {
-                alert("crash");
-              }
+            } else if (
+              typeof cleanRaw === "string" &&
+              cleanRaw.includes("ABORD")
+            ) {
+              alert("crash");
             }
 
             try {
