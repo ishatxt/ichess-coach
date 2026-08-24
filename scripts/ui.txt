@@ -1,7 +1,7 @@
 ================================================================================
  iChess Coach - UI EXTRACTED FROM scripts/core.js
  (RETRO REDESIGN - 1990s chess-computer / pixel aesthetic)
- (reference copy only - logic untouched)
+ (reference copy only)
 ================================================================================
 
 /==============================================================================/
@@ -287,10 +287,16 @@ const MoveClassification = {
 };
 
 /==============================================================================/
-// [3] CLASSIFICATION ICON SVGs + MAPS
+// [3] CLASSIFICATION ICON SVGs + MAPS + ALT+C COLOUR TOGGLE
 // retro restyled
 /==============================================================================/
 const classMoveClassification = "hint-svg";
+
+// ─── Icon colour palettes (toggle with Alt+C) ──────────────────────────────
+const CLASSIC_COLORS = { brilliant: "#26c2a3", great: "#749bbf" };
+const RETRO_COLORS = { brilliant: "#b404bc", great: "#26c2a3" };
+let useRetroIconColors = true;
+const activePalette = () => (useRetroIconColors ? RETRO_COLORS : CLASSIC_COLORS);
 
 const BrillantSVG = `<svg xmlns="http://www.w3.org/2000/svg" class="${classMoveClassification}" width="24" height="24" viewBox="0 0 18 19">
       <g id="Brilliant">
@@ -455,6 +461,40 @@ const classificationSVG = {
   [MoveClassification.Mistake]: mistakeSVG,
 };
 
+function applyIconPalette() {
+  const p = activePalette();
+  const swap = (svgStr, hex) =>
+    svgStr.replace(/(<path class="icon-background" fill=")[^"]*(")/, `$1${hex}$2`);
+  classificationSVG[MoveClassification.Brilliant] = swap(BrillantSVG, p.brilliant);
+  classificationSVG[MoveClassification.Great] = swap(greatMoveSVG, p.great);
+}
+applyIconPalette();
+
+window.addEventListener("keydown", (e) => {
+  if (!e.altKey || e.code !== "KeyC") return;
+  const t = e.target;
+  if (
+    t &&
+    (t.tagName === "INPUT" ||
+      t.tagName === "TEXTAREA" ||
+      t.isContentEditable)
+  ) {
+    return;
+  }
+  useRetroIconColors = !useRetroIconColors;
+  applyIconPalette();
+
+  const toast = document.createElement("div");
+  toast.textContent = useRetroIconColors ? "RETRO COLORS ON" : "CLASSIC COLORS";
+  toast.style.cssText =
+    "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);" +
+    "z-index:2147483647;padding:8px 18px;background:#10150D;color:#A8D66D;" +
+    "border:2px solid #5A8A30;box-shadow:4px 4px 0 rgba(0,0,0,.85);" +
+    'font-family:"Space Mono",monospace;font-size:11px;letter-spacing:2px;';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 1400);
+});
+
 const classificationColor = {
   [MoveClassification.Best]: "#A8D66D",
   [MoveClassification.Excellent]: "#7FB04A",
@@ -541,8 +581,10 @@ function placeSVGOnBoard(side, square, svgCode) {
     svg.style.left = -svgW / 2 + "px";
     svg.style.top = -svgH / 2 + "px";
 
-    const isBrilliant = detectedColor?.toLowerCase() === "#b404bc";
-    const isGreatFind = detectedColor?.toLowerCase() === "#26c2a3";
+    const isBrilliant =
+      detectedColor?.toLowerCase() === activePalette().brilliant;
+    const isGreatFind =
+      detectedColor?.toLowerCase() === activePalette().great;
     const isBlunder = detectedColor?.toLowerCase() === "#fa412d";
 
     // ─── BRILLIANT : double pulse inversé ────────────────────────────────────
