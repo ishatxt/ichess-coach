@@ -43,10 +43,10 @@
           evalContainer.style.zIndex = "9999";
           evalContainer.style.width = `${(w_ * 6) / 100}px`;
           evalContainer.style.height = `${boardContainer.offsetWidth}px`;
-          evalContainer.style.background = "#0B0D09";
+          evalContainer.style.background = "#0D0A05";
           evalContainer.style.marginLeft = "12px";
           evalContainer.style.position = "relative";
-          evalContainer.style.border = "2px solid #302B1E";
+          evalContainer.style.border = "2px solid #4A3820";
           evalContainer.style.borderRadius = "0";
           evalContainer.style.overflow = "hidden";
           evalContainer.style.boxShadow = "4px 4px 0 rgba(0,0,0,.85)";
@@ -70,14 +70,14 @@
           scoreText.style.bottom = "4px";
           scoreText.style.left = "50%";
           scoreText.style.transform = "translateX(-50%)";
-          scoreText.style.color = "#E8E3D4";
+          scoreText.style.color = "#F0E6D4";
           scoreText.style.fontWeight = "700";
           scoreText.style.fontSize = "10px";
           scoreText.style.fontFamily = "'Space Mono', monospace";
           scoreText.style.textShadow = "1px 1px 0 #000";
           scoreText.style.pointerEvents = "none";
           const evalTicks = document.createElement("div");
-          evalTicks.style.cssText = "position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(10% - 1px),rgba(11,13,9,.6) calc(10% - 1px),rgba(11,13,9,.6) 10%);";
+          evalTicks.style.cssText = "position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(10% - 1px),rgba(13,10,5,.6) calc(10% - 1px),rgba(13,10,5,.6) 10%);";
           evalContainer.appendChild(evalTicks);
 
           boardContainer.parentNode.style.display = "flex";
@@ -132,11 +132,11 @@
             }
 
             if (color === "white") {
-              bottomBar.style.background = "#B7C98B";
+              bottomBar.style.background = "#C4883B";
               topBar.style.background = "#31552A";
             } else {
               bottomBar.style.background = "#31552A";
-              topBar.style.background = "#B7C98B";
+              topBar.style.background = "#C4883B";
             }
 
             bottomBar.style.height = percent + "%";
@@ -375,11 +375,11 @@
           evalContainer.style.zIndex = "9999";
           evalContainer.style.width = `${(w_ * 6) / 100}px`;
           evalContainer.style.height = `${boardContainer.offsetWidth}px`;
-          evalContainer.style.background = "#0B0D09";
+          evalContainer.style.background = "#0D0A05";
           evalContainer.style.marginLeft = "10px";
           evalContainer.style.position = "relative";
           evalContainer.style.left = "-50px";
-          evalContainer.style.border = "2px solid #302B1E";
+          evalContainer.style.border = "2px solid #4A3820";
           evalContainer.style.borderRadius = "0";
           evalContainer.style.overflow = "hidden";
           evalContainer.style.boxShadow = "4px 4px 0 rgba(0,0,0,.85)";
@@ -405,14 +405,14 @@
           scoreText.style.bottom = "0";
           scoreText.style.left = "50%";
           scoreText.style.transform = "translateX(-50%)";
-          scoreText.style.color = "#E8E3D4";
+          scoreText.style.color = "#F0E6D4";
           scoreText.style.fontWeight = "bold";
           scoreText.style.fontSize = "11px";
           scoreText.style.fontFamily = "'Space Mono', monospace";
           scoreText.style.textShadow = "1px 1px 0 #000";
           scoreText.style.pointerEvents = "none";
           const evalTicks = document.createElement("div");
-          evalTicks.style.cssText = "position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(10% - 1px),rgba(11,13,9,.6) calc(10% - 1px),rgba(11,13,9,.6) 10%);";
+          evalTicks.style.cssText = "position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(10% - 1px),rgba(13,10,5,.6) calc(10% - 1px),rgba(13,10,5,.6) 10%);";
           evalContainer.appendChild(evalTicks);
 
           boardContainer.parentNode.style.display = "flex";
@@ -466,11 +466,11 @@
             }
 
             if (color === "white") {
-              bottomBar.style.background = "#B7C98B";
+              bottomBar.style.background = "#C4883B";
               topBar.style.background = "#31552A";
             } else {
               bottomBar.style.background = "#31552A";
-              topBar.style.background = "#B7C98B";
+              topBar.style.background = "#C4883B";
             }
 
             bottomBar.style.height = percent + "%";
@@ -734,11 +734,11 @@
           evalContainer.style.zIndex = "9999";
           evalContainer.style.width = `${(w_ * 6) / 100}px`;
           evalContainer.style.height = `${boardContainer.offsetWidth}px`;
-          evalContainer.style.background = "#0B0D09";
+          evalContainer.style.background = "#0D0A05";
           evalContainer.style.marginLeft = "12px";
           evalContainer.style.position = "relative";
           evalContainer.style.left = "-10px";
-          evalContainer.style.border = "2px solid #302B1E";
+          evalContainer.style.border = "2px solid #4A3820";
           evalContainer.style.borderRadius = "0";
           evalContainer.style.overflow = "hidden";
           evalContainer.style.boxShadow = "4px 4px 0 rgba(0,0,0,.85)";
@@ -763,14 +763,14 @@
           scoreText.style.bottom = "4px";
           scoreText.style.left = "50%";
           scoreText.style.transform = "translateX(-50%)";
-          scoreText.style.color = "#E8E3D4";
+          scoreText.style.color = "#F0E6D4";
           scoreText.style.fontWeight = "700";
           scoreText.style.fontSize = "10px";
           scoreText.style.fontFamily = "'Space Mono', monospace";
           scoreText.style.textShadow = "1px 1px 0 #000";
           scoreText.style.pointerEvents = "none";
           const evalTicks = document.createElement("div");
-          evalTicks.style.cssText = "position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(10% - 1px),rgba(11,13,9,.6) calc(10% - 1px),rgba(11,13,9,.6) 10%);";
+          evalTicks.style.cssText = "position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(10% - 1px),rgba(13,10,5,.6) calc(10% - 1px),rgba(13,10,5,.6) 10%);";
           evalContainer.appendChild(evalTicks);
 
           boardContainer.parentNode.style.display = "flex";
@@ -823,11 +823,11 @@
             }
 
             if (color === "white") {
-              bottomBar.style.background = "#B7C98B";
+              bottomBar.style.background = "#C4883B";
               topBar.style.background = "#31552A";
             } else {
               bottomBar.style.background = "#31552A";
-              topBar.style.background = "#B7C98B";
+              topBar.style.background = "#C4883B";
             }
 
             bottomBar.style.height = percent + "%";
@@ -1011,16 +1011,16 @@
       #ichess-update-banner {
         position:fixed; top:12px; right:12px; z-index:999999;
         max-width:380px; width:auto;
-        background:#10150D;
+        background:#1A1308;
         background-image:repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
-        border:2px solid #5A8A30;
+        border:2px solid #8B6914;
         border-radius:0;
         padding:14px 38px 14px 16px;
-        font-family:'Space Mono',monospace; color:#E8E3D4;
+        font-family:'Space Mono',monospace; color:#F0E6D4;
         animation:ichessBannerIn .18s steps(4,end);
         box-shadow:
           4px 4px 0 rgba(0,0,0,.85),
-          inset 0 0 0 2px #0B0D09;
+          inset 0 0 0 2px #0D0A05;
       }
       #ichess-update-banner.ichess-banner-closing {
         animation:ichessBannerOut .12s steps(3,end) forwards;
@@ -1029,39 +1029,39 @@
       #ichess-update-banner .ichess-banner-close {
         position:absolute; top:10px; right:12px;
         width:24px; height:24px; border-radius:0;
-        background:#0B0D09; border:2px solid #302B1E;
-        color:#A69F8D; font-size:13px; cursor:pointer;
+        background:#0D0A05; border:2px solid #4A3820;
+        color:#A89878; font-size:13px; cursor:pointer;
         display:flex; align-items:center; justify-content:center;
         transition:all .1s steps(2,end); line-height:1;
       }
       #ichess-update-banner .ichess-banner-close:hover {
-        background:#172014; color:#CE7B7B;
+        background:#201710; color:#CE7B7B;
         border-color:#B84A4A;
       }
 
       #ichess-update-banner .ichess-banner-text {
-        font-size:10.5px; line-height:1.6; color:#A69F8D;
+        font-size:10.5px; line-height:1.6; color:#A89878;
         margin-bottom:12px;
       }
       #ichess-update-banner .ichess-banner-text strong {
-        color:#A8D66D; font-weight:700;
-        text-shadow:1px 1px 0 #0B0D09;
+        color:#D4A76A; font-weight:700;
+        text-shadow:1px 1px 0 #0D0A05;
       }
 
       #ichess-update-banner .ichess-banner-btn {
         display:inline-block;
         padding:7px 14px; border-radius:0;
-        background:#172014; border:2px solid #5A8A30;
+        background:#201710; border:2px solid #8B6914;
         font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
         letter-spacing:1.5px; text-transform:uppercase;
-        color:#A8D66D; text-decoration:none; cursor:pointer;
+        color:#D4A76A; text-decoration:none; cursor:pointer;
         transition:all .1s steps(2,end);
         box-shadow:3px 3px 0 rgba(0,0,0,.85);
       }
       #ichess-update-banner .ichess-banner-btn:hover {
         transform:translate(-1px,-1px);
         box-shadow:4px 4px 0 rgba(0,0,0,.85);
-        background:#1C2618; color:#fff;
+        background:#28200F; color:#fff;
       }
       #ichess-update-banner .ichess-banner-btn:active {
         transform:translate(2px,2px);

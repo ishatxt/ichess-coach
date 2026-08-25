@@ -18,7 +18,7 @@ function toggleCoachMenu() {
     #ichess-coach-overlay {
       position:fixed; inset:0; z-index:9999999;
       display:flex; align-items:center; justify-content:center;
-      background:rgba(5,6,4,.8);
+      background:rgba(8,6,3,.8);
       animation:ichessFadeIn .15s steps(3,end);
     }
     #ichess-coach-overlay.ichess-closing {
@@ -28,16 +28,16 @@ function toggleCoachMenu() {
     #ichess-coach-overlay .ichess-panel {
       position:relative;
       width:340px; max-height:82vh; overflow-y:auto;
-      background:#10150D;
+      background:#1A1308;
       background-image:repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
-      border:2px solid #5A8A30;
+      border:2px solid #8B6914;
       border-radius:0;
       padding:0;
-      font-family:'Space Mono',monospace; color:#E8E3D4;
+      font-family:'Space Mono',monospace; color:#F0E6D4;
       animation:ichessPanelIn .16s steps(4,end);
       box-shadow:
         6px 6px 0 rgba(0,0,0,.85),
-        inset 0 0 0 2px #0B0D09;
+        inset 0 0 0 2px #0D0A05;
     }
     #ichess-coach-overlay.ichess-closing .ichess-panel {
       animation:ichessPanelOut .12s steps(3,end) forwards;
@@ -45,39 +45,39 @@ function toggleCoachMenu() {
 
     #ichess-coach-overlay .ichess-panel-header {
       position:relative; padding:20px 24px 14px;
-      border-bottom:2px dashed #302B1E;
-      background:linear-gradient(180deg,#172014 0%,transparent 100%);
+      border-bottom:2px dashed #4A3820;
+      background:linear-gradient(180deg,#201710 0%,transparent 100%);
     }
     #ichess-coach-overlay .ichess-panel-title {
       font-size:13px; font-weight:700; letter-spacing:4px; text-transform:uppercase;
-      color:#A8D66D; text-align:center;
-      text-shadow:2px 2px 0 #0B0D09;
+      color:#D4A76A; text-align:center;
+      text-shadow:2px 2px 0 #0D0A05;
     }
     #ichess-coach-overlay .ichess-panel-title::before,
     #ichess-coach-overlay .ichess-panel-title::after {
       content:''; display:inline-block; width:6px; height:6px;
-      background:#7FB04A; margin:0 8px;
+      background:#C4883B; margin:0 8px;
       vertical-align:middle;
     }
     #ichess-coach-overlay .ichess-status {
       margin-top:9px; text-align:center;
       font-size:8.5px; letter-spacing:1.5px; text-transform:uppercase;
-      color:#A69F8D;
+      color:#A89878;
     }
     #ichess-coach-overlay .ichess-status .ichess-dot {
-      color:#A8D66D;
+      color:#D4A76A;
       animation:ichessBlink 1.4s steps(2,start) infinite;
     }
     #ichess-coach-overlay .ichess-close {
       position:absolute; top:14px; right:16px;
       width:28px; height:28px; border-radius:0;
-      background:#0B0D09; border:2px solid #302B1E;
-      color:#A69F8D; font-size:15px; cursor:pointer;
+      background:#0D0A05; border:2px solid #4A3820;
+      color:#A89878; font-size:15px; cursor:pointer;
       display:flex; align-items:center; justify-content:center;
       transition:all .1s steps(2,end); line-height:1;
     }
     #ichess-coach-overlay .ichess-close:hover {
-      color:#CE7B7B; border-color:#B84A4A; background:#172014;
+      color:#CE7B7B; border-color:#B84A4A; background:#201710;
     }
     #ichess-coach-overlay .ichess-close:active {
       transform:translate(1px,1px);
@@ -87,79 +87,79 @@ function toggleCoachMenu() {
 
     #ichess-coach-overlay .ichess-section-label {
       font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase;
-      color:#A69F8D; margin:14px 0 8px; display:flex; align-items:center; gap:10px;
+      color:#A89878; margin:14px 0 8px; display:flex; align-items:center; gap:10px;
     }
     #ichess-coach-overlay .ichess-section-label::before,
     #ichess-coach-overlay .ichess-section-label::after {
       content:''; flex:1; height:2px;
-      background:repeating-linear-gradient(90deg,#302B1E 0 6px,transparent 6px 10px);
+      background:repeating-linear-gradient(90deg,#4A3820 0 6px,transparent 6px 10px);
     }
 
     #ichess-coach-overlay .ichess-row {
       display:flex; align-items:center; justify-content:space-between;
       padding:11px 12px; margin-bottom:3px;
-      background:#172014;
-      border:2px solid #302B1E;
+      background:#201710;
+      border:2px solid #4A3820;
       border-radius:0;
       transition:all .1s steps(2,end); position:relative; overflow:hidden;
     }
     #ichess-coach-overlay .ichess-row::before {
       content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
-      background:#7FB04A;
+      background:#C4883B;
       opacity:0; transition:opacity .1s steps(2,end); border-radius:0;
     }
     #ichess-coach-overlay .ichess-row:hover {
-      background:#1C2618;
-      border-color:#5A8A30;
+      background:#28200F;
+      border-color:#8B6914;
       transform:translate(-1px,-1px);
       box-shadow:3px 3px 0 rgba(0,0,0,.85);
     }
     #ichess-coach-overlay .ichess-row:hover::before { opacity:1; }
 
     #ichess-coach-overlay .ichess-row span {
-      font-size:11px; font-weight:700; color:#E8E3D4; letter-spacing:.3px;
+      font-size:11px; font-weight:700; color:#F0E6D4; letter-spacing:.3px;
     }
 
     #ichess-coach-overlay .ichess-help {
-      font-size:8.5px; color:#6E6754; margin:0 0 8px 14px; line-height:1.5; letter-spacing:.5px;
+      font-size:8.5px; color:#7A6B50; margin:0 0 8px 14px; line-height:1.5; letter-spacing:.5px;
     }
 
     #ichess-coach-overlay .ichess-toggle { position:relative; width:42px; height:23px; flex-shrink:0; }
     #ichess-coach-overlay .ichess-toggle input { display:none; }
     #ichess-coach-overlay .ichess-toggle .ichess-slider {
       position:absolute; inset:0;
-      background:#0B0D09; border-radius:0;
-      border:2px solid #302B1E;
+      background:#0D0A05; border-radius:0;
+      border:2px solid #4A3820;
       cursor:pointer; transition:.12s steps(2,end);
     }
     #ichess-coach-overlay .ichess-toggle .ichess-slider::before {
       content:''; position:absolute; width:15px; height:15px;
-      left:2px; top:2px; background:#A69F8D; border-radius:0; transition:.12s steps(2,end);
+      left:2px; top:2px; background:#A89878; border-radius:0; transition:.12s steps(2,end);
       box-shadow:2px 2px 0 #000;
     }
     #ichess-coach-overlay .ichess-toggle input:checked + .ichess-slider {
-      background:#172014; border-color:#7FB04A;
+      background:#201710; border-color:#C4883B;
       box-shadow:none;
     }
     #ichess-coach-overlay .ichess-toggle input:checked + .ichess-slider::before {
-      transform:translateX(19px); background:#A8D66D;
+      transform:translateX(19px); background:#D4A76A;
       box-shadow:2px 2px 0 #000;
     }
 
     #ichess-coach-overlay .ichess-badge {
       display:inline-flex; align-items:center; justify-content:center;
       min-width:30px; padding:2px 8px;
-      background:#0B0D09; border:2px solid #5A8A30;
-      border-radius:0; font-size:11px; font-weight:700; color:#A8D66D;
+      background:#0D0A05; border:2px solid #8B6914;
+      border-radius:0; font-size:11px; font-weight:700; color:#D4A76A;
     }
 
     #ichess-coach-overlay .ichess-row input[type="range"] {
-      width:42%; height:4px; background:#302B1E;
+      width:42%; height:4px; background:#4A3820;
       appearance:none; border:none; border-radius:0; outline:none;
     }
     #ichess-coach-overlay .ichess-row input[type="range"]::-webkit-slider-thumb {
       appearance:none; width:14px; height:14px; border-radius:0;
-      background:#A8D66D; border:2px solid #0B0D09; cursor:pointer;
+      background:#D4A76A; border:2px solid #0D0A05; cursor:pointer;
       box-shadow:2px 2px 0 #000;
       transition:all .1s steps(2,end);
     }
@@ -169,33 +169,33 @@ function toggleCoachMenu() {
     }
 
     #ichess-coach-overlay .ichess-row select {
-      padding:6px 8px; background:#10150D;
-      border:2px solid #302B1E; border-radius:0;
-      color:#E8E3D4; font-family:'Space Mono',monospace; font-size:11px;
+      padding:6px 8px; background:#1A1308;
+      border:2px solid #4A3820; border-radius:0;
+      color:#F0E6D4; font-family:'Space Mono',monospace; font-size:11px;
       cursor:pointer; outline:none; transition:.1s steps(2,end);
     }
     #ichess-coach-overlay .ichess-row select:hover,
     #ichess-coach-overlay .ichess-row select:focus {
-      border-color:#7FB04A;
+      border-color:#C4883B;
       box-shadow:3px 3px 0 rgba(0,0,0,.85);
     }
 
     #ichess-coach-overlay .ichess-footer {
-      padding:14px 20px; border-top:2px dashed #302B1E;
+      padding:14px 20px; border-top:2px dashed #4A3820;
       display:flex; justify-content:center;
     }
     #ichess-coach-overlay .ichess-reset-btn {
       padding:8px 20px; font-family:'Space Mono',monospace; font-size:10px;
       font-weight:700; letter-spacing:2px; text-transform:uppercase;
-      border-radius:0; border:2px solid #302B1E;
-      background:#0B0D09; color:#A69F8D;
+      border-radius:0; border:2px solid #4A3820;
+      background:#0D0A05; color:#A89878;
       cursor:pointer; transition:all .1s steps(2,end);
       box-shadow:3px 3px 0 rgba(0,0,0,.85);
     }
     #ichess-coach-overlay .ichess-reset-btn:hover {
       transform:translate(-1px,-1px);
       box-shadow:4px 4px 0 rgba(0,0,0,.85);
-      background:#172014; border-color:#5A8A30; color:#E8E3D4;
+      background:#201710; border-color:#8B6914; color:#F0E6D4;
     }
     #ichess-coach-overlay .ichess-reset-btn:active {
       transform:translate(2px,2px);
@@ -203,9 +203,9 @@ function toggleCoachMenu() {
     }
 
     #ichess-coach-overlay ::-webkit-scrollbar { width:6px; }
-    #ichess-coach-overlay ::-webkit-scrollbar-track { background:#0B0D09; }
-    #ichess-coach-overlay ::-webkit-scrollbar-thumb { background:#302B1E; border-radius:0; }
-    #ichess-coach-overlay ::-webkit-scrollbar-thumb:hover { background:#5A8A30; }
+    #ichess-coach-overlay ::-webkit-scrollbar-track { background:#0D0A05; }
+    #ichess-coach-overlay ::-webkit-scrollbar-thumb { background:#4A3820; border-radius:0; }
+    #ichess-coach-overlay ::-webkit-scrollbar-thumb:hover { background:#8B6914; }
   `;
   document.head.appendChild(S);
 
@@ -400,12 +400,12 @@ function toggleCoachMenu() {
   panel.appendChild(footer);
 
   const credits = document.createElement("div");
-  credits.style.cssText = "padding:12px 20px 16px;text-align:center;border-top:2px dashed #302B1E;";
+  credits.style.cssText = "padding:12px 20px 16px;text-align:center;border-top:2px dashed #4A3820;";
   const creditsTitle = document.createElement("div");
-  creditsTitle.style.cssText = "font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A69F8D;margin-bottom:4px;text-shadow:1px 1px 0 #0B0D09;";
+  creditsTitle.style.cssText = "font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#A89878;margin-bottom:4px;text-shadow:1px 1px 0 #0D0A05;";
   creditsTitle.textContent = "iChess Coach";
   const creditsSub = document.createElement("div");
-  creditsSub.style.cssText = "font-size:9px;color:#6E6754;line-height:1.5;letter-spacing:.5px;";
+  creditsSub.style.cssText = "font-size:9px;color:#7A6B50;line-height:1.5;letter-spacing:.5px;";
   creditsSub.textContent = "Chess.com \u00b7 Lichess.org \u00b7 WorldChess.com";
   credits.appendChild(creditsTitle);
   credits.appendChild(creditsSub);
@@ -418,71 +418,71 @@ function toggleCoachMenu() {
     #ichess-credits-modal-overlay {
       position:fixed; inset:0; z-index:10000000;
       display:flex; align-items:center; justify-content:center;
-      background:rgba(5,6,4,.82);
+      background:rgba(8,6,3,.82);
       animation:ichessFadeIn .15s steps(3,end);
     }
     #ichess-credits-modal-overlay .ichess-credits-content {
       position:relative;
       width:340px; padding:30px 26px;
-      background:#10150D;
+      background:#1A1308;
       background-image:repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
-      border:2px solid #5A8A30;
+      border:2px solid #8B6914;
       border-radius:0;
-      font-family:'Space Mono',monospace; color:#E8E3D4;
+      font-family:'Space Mono',monospace; color:#F0E6D4;
       animation:ichessPanelIn .16s steps(4,end);
       box-shadow:
         6px 6px 0 rgba(0,0,0,.85),
-        inset 0 0 0 2px #0B0D09;
+        inset 0 0 0 2px #0D0A05;
     }
     #ichess-credits-modal-overlay .ichess-credits-close {
       position:absolute; top:12px; right:14px;
       width:28px; height:28px;
       display:flex; align-items:center; justify-content:center;
-      background:#0B0D09;
-      border:2px solid #302B1E;
-      border-radius:0; color:#A69F8D;
+      background:#0D0A05;
+      border:2px solid #4A3820;
+      border-radius:0; color:#A89878;
       font-size:16px; cursor:pointer;
       transition:all .1s steps(2,end); line-height:1;
     }
     #ichess-credits-modal-overlay .ichess-credits-close:hover {
-      background:#172014; border-color:#B84A4A;
+      background:#201710; border-color:#B84A4A;
       color:#CE7B7B;
     }
     #ichess-credits-modal-overlay .ichess-credits-title {
       text-align:center; margin-bottom:26px;
       font-size:13px; font-weight:700;
-      letter-spacing:3px; text-transform:uppercase; color:#A8D66D;
-      text-shadow:2px 2px 0 #0B0D09;
+      letter-spacing:3px; text-transform:uppercase; color:#D4A76A;
+      text-shadow:2px 2px 0 #0D0A05;
     }
     #ichess-credits-modal-overlay .ichess-credits-section { margin-bottom:20px; }
     #ichess-credits-modal-overlay .ichess-credits-label {
       font-size:9px; font-weight:700;
       letter-spacing:2.5px; text-transform:uppercase;
-      color:#A69F8D; margin-bottom:8px;
+      color:#A89878; margin-bottom:8px;
     }
     #ichess-credits-modal-overlay .ichess-credits-value {
-      font-size:13px; font-weight:700; color:#E8E3D4;
+      font-size:13px; font-weight:700; color:#F0E6D4;
       letter-spacing:.5px;
-      text-shadow:1px 1px 0 #0B0D09;
+      text-shadow:1px 1px 0 #0D0A05;
     }
     #ichess-credits-modal-overlay .ichess-credits-divider {
       height:2px; margin:4px 0 20px;
-      background:repeating-linear-gradient(90deg,#302B1E 0 6px,transparent 6px 10px);
+      background:repeating-linear-gradient(90deg,#4A3820 0 6px,transparent 6px 10px);
     }
     #ichess-credits-modal-overlay .ichess-credits-link {
       display:inline-block; padding:9px 18px;
       font-family:'Space Mono',monospace; font-size:11px;
       font-weight:700; letter-spacing:2px; text-transform:uppercase;
-      border-radius:0; border:2px solid #5A8A30;
-      background:#172014;
-      color:#A8D66D; text-decoration:none; cursor:pointer;
+      border-radius:0; border:2px solid #8B6914;
+      background:#201710;
+      color:#D4A76A; text-decoration:none; cursor:pointer;
       transition:all .1s steps(2,end);
       box-shadow:3px 3px 0 rgba(0,0,0,.85);
     }
     #ichess-credits-modal-overlay .ichess-credits-link:hover {
       transform:translate(-1px,-1px);
       box-shadow:4px 4px 0 rgba(0,0,0,.85);
-      background:#1C2618;
+      background:#28200F;
       color:#fff;
     }
     #ichess-credits-modal-overlay .ichess-credits-link:active {
@@ -879,16 +879,16 @@ function toggleCoachMenu() {
         text-transform: uppercase;
         padding: 5px 2px;
         border-radius: 0;
-        border: 1px solid #302B1E;
+        border: 1px solid #4A3820;
         flex-shrink: 0;
         line-height: 1;
         width: 12px;
         text-align: center;
       }
-      .acc-side-badge-white        { background: rgba(23,32,20,0.85); color: #A69F8D; }
-      .acc-side-badge-black        { background: rgba(11,13,9,0.85); color: #6E6754; }
-      .acc-side-badge-you-white    { background: #B7C98B; color: #1C2413; border-color: #302B1E; }
-      .acc-side-badge-you-black    { background: #172014; color: #E8E3D4; border-color: #5A8A30; }
+      .acc-side-badge-white        { background: rgba(32,23,16,0.85); color: #A89878; }
+      .acc-side-badge-black        { background: rgba(13,10,5,0.85); color: #7A6B50; }
+      .acc-side-badge-you-white    { background: #C4883B; color: #2A1C10; border-color: #4A3820; }
+      .acc-side-badge-you-black    { background: #201710; color: #F0E6D4; border-color: #8B6914; }
 
       .acc-mode1 .acc-side-badge { font-size: 4px; padding: 4px 2px; width: 10px; }
 
@@ -898,22 +898,22 @@ function toggleCoachMenu() {
         grid-template-columns: 1fr 1fr;
         border-radius: 0;
         overflow: hidden;
-        border: 2px solid #302B1E;
+        border: 2px solid #4A3820;
       }
       .acc-mode1 .acc-card { width: 140px; border-radius: 0; }
 
       .acc-card-white {
-        background-color: #B7C98B;
-        background-image: repeating-linear-gradient(0deg, rgba(48,43,30,0.08) 0 1px, transparent 1px 3px);
+        background-color: #C4883B;
+        background-image: repeating-linear-gradient(0deg, rgba(74,56,32,0.08) 0 1px, transparent 1px 3px);
         box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
       }
       .acc-card-black {
-        background-color: #172014;
+        background-color: #201710;
         background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0 1px, transparent 1px 3px);
         box-shadow: 3px 3px 0 rgba(0,0,0,0.75);
       }
-      .acc-card-active-white { border-color: #5A8A30; }
-      .acc-card-active-black { border-color: #7FB04A; }
+      .acc-card-active-white { border-color: #8B6914; }
+      .acc-card-active-black { border-color: #C4883B; }
 
       .acc-segment {
         padding: 7px 10px;
@@ -924,8 +924,8 @@ function toggleCoachMenu() {
       .acc-mode1 .acc-segment { padding: 5px 8px; gap: 2px; }
 
       .acc-segment:first-child { border-right-width: 2px; border-right-style: solid; }
-      .acc-card-white .acc-segment:first-child { border-right-color: rgba(48,43,30,0.35); }
-      .acc-card-black .acc-segment:first-child { border-right-color: rgba(232,227,212,0.14); }
+      .acc-card-white .acc-segment:first-child { border-right-color: rgba(74,56,32,0.35); }
+      .acc-card-black .acc-segment:first-child { border-right-color: rgba(240,230,212,0.14); }
 
       .acc-label {
         font-size: 8px;
@@ -934,8 +934,8 @@ function toggleCoachMenu() {
         letter-spacing: 0.12em;
         white-space: nowrap;
       }
-      .acc-card-white .acc-label { color: #3E4A2A; }
-      .acc-card-black .acc-label { color: #A69F8D; }
+      .acc-card-white .acc-label { color: #5A4230; }
+      .acc-card-black .acc-label { color: #A89878; }
 
       .acc-value {
         font-family: 'Space Mono', ui-monospace, 'Courier New', monospace;
@@ -944,11 +944,11 @@ function toggleCoachMenu() {
         letter-spacing: -0.02em;
         line-height: 1;
         transition: color 0.15s steps(3,end);
-        text-shadow: 1px 1px 0 rgba(11,13,9,0.25);
+        text-shadow: 1px 1px 0 rgba(13,10,5,0.25);
       }
       .acc-mode1 .acc-value { font-size: 13px; }
-      .acc-card-white .acc-value { color: #1C2413; }
-      .acc-card-black .acc-value { color: #E8E3D4; }
+      .acc-card-white .acc-value { color: #2A1C10; }
+      .acc-card-black .acc-value { color: #F0E6D4; }
 
       .acc-card-inactive .acc-value      { opacity: 0.25; }
       .acc-card-inactive .acc-label      { opacity: 0.3; }
@@ -963,10 +963,10 @@ function toggleCoachMenu() {
         position: relative; top: -1px;
         transition: background 0.15s steps(3,end), box-shadow 0.15s steps(3,end);
       }
-      .acc-threat-safe   { background: #7FB04A; box-shadow: 0 0 0 1px #0B0D09; }
-      .acc-threat-warn   { background: #D6C85A; box-shadow: 0 0 0 1px #0B0D09; }
-      .acc-threat-sus    { background: #C98A3C; box-shadow: 0 0 0 1px #0B0D09; }
-      .acc-threat-cheat  { background: #B84A4A; box-shadow: 0 0 0 1px #0B0D09; }
+      .acc-threat-safe   { background: #C4883B; box-shadow: 0 0 0 1px #0D0A05; }
+      .acc-threat-warn   { background: #D6C85A; box-shadow: 0 0 0 1px #0D0A05; }
+      .acc-threat-sus    { background: #C98A3C; box-shadow: 0 0 0 1px #0D0A05; }
+      .acc-threat-cheat  { background: #B84A4A; box-shadow: 0 0 0 1px #0D0A05; }
       .acc-threat-hidden { background: transparent; box-shadow: none; }
 
       .acc-card-active-white .acc-value-cheat { color: #8F2F2F; }
@@ -976,7 +976,7 @@ function toggleCoachMenu() {
       .acc-card-active-black .acc-value-cheat { color: #CE7B7B; }
       .acc-card-active-black .acc-value-sus   { color: #C89A6A; }
       .acc-card-active-black .acc-value-warn  { color: #CBBF6A; }
-      .acc-card-active-black .acc-value-safe  { color: #A8D66D; }
+      .acc-card-active-black .acc-value-safe  { color: #D4A76A; }
 
       .acc-label-row { display: flex; align-items: center; gap: 4px; }
     `;

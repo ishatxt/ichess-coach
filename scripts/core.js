@@ -5,20 +5,20 @@ const swalThemeCSS = `
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
     :root {
-      --olive-vivid:   #7FB04A;
-      --olive-bright:  #A8D66D;
-      --olive-mid:     #5A8A30;
-      --olive-border:  rgba(127,176,74,0.45);
-      --bg-panel:      #10150D;
-      --bg-deep:       #0B0D09;
-      --bg-card:       #172014;
-      --bg-hover:      #1C2618;
-      --border-strong: #302B1E;
+      --olive-vivid:   #C4883B;
+      --olive-bright:  #D4A76A;
+      --olive-mid:     #8B6914;
+      --olive-border:  rgba(196,136,59,0.45);
+      --bg-panel:      #1A1308;
+      --bg-deep:       #0D0A05;
+      --bg-card:       #201710;
+      --bg-hover:      #28200F;
+      --border-strong: #4A3820;
       --danger:        #B84A4A;
-      --grey-fish:     #E8E3D4;
-      --text-main:     #E8E3D4;
-      --text-soft:     #A69F8D;
-      --text-dim:      #6E6754;
+      --grey-fish:     #F0E6D4;
+      --text-main:     #F0E6D4;
+      --text-soft:     #A89878;
+      --text-dim:      #7A6B50;
       --font-mono:     'Space Mono', ui-monospace, monospace;
       --font-body:     'Space Mono', ui-monospace, monospace;
     }
@@ -117,7 +117,7 @@ const swalThemeCSS = `
       gap: 10px !important;
     }
     .swal2-container.swal2-backdrop-show {
-      background: rgba(5,6,4,0.78) !important;
+      background: rgba(8,6,3,0.78) !important;
       backdrop-filter: blur(2px) !important;
     }
 
@@ -228,9 +228,9 @@ const swalThemeCSS = `
       border-width: 2px;
       border-style: solid;
     }
-    .badge-legit   { background: rgba(127,176,74,0.15);  color: var(--olive-bright); border-color: var(--olive-mid); }
+    .badge-legit   { background: rgba(196,136,59,0.15);  color: var(--olive-bright); border-color: var(--olive-mid); }
     .badge-sus     { background: rgba(184,74,74,0.15);   color: #CE7B7B; border-color: var(--danger); }
-    .badge-cheater { background: rgba(166,159,141,0.12); color: var(--text-soft); border-color: var(--border-strong); }
+    .badge-cheater { background: rgba(168,152,120,0.12); color: var(--text-soft); border-color: var(--border-strong); }
     .dot { width: 7px; height: 7px; border-radius: 0; display: inline-block; }
     .dot-legit   { background: var(--olive-vivid); }
     .dot-sus     { background: var(--danger); }
@@ -911,16 +911,16 @@ window.addEventListener("keydown", (e) => {
   toast.textContent = useRetroIconColors ? "RETRO COLORS ON" : "CLASSIC COLORS";
   toast.style.cssText =
     "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);" +
-    "z-index:2147483647;padding:8px 18px;background:#10150D;color:#A8D66D;" +
-    "border:2px solid #5A8A30;box-shadow:4px 4px 0 rgba(0,0,0,.85);" +
+    "z-index:2147483647;padding:8px 18px;background:#1A1308;color:#D4A76A;" +
+    "border:2px solid #8B6914;box-shadow:4px 4px 0 rgba(0,0,0,.85);" +
     'font-family:"Space Mono",monospace;font-size:11px;letter-spacing:2px;';
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 1400);
 });
 
 const classificationColor = {
-  [MoveClassification.Best]: "#A8D66D",
-  [MoveClassification.Excellent]: "#7FB04A",
+  [MoveClassification.Best]: "#D4A76A",
+  [MoveClassification.Excellent]: "#C4883B",
   [MoveClassification.Good]: "#95B776",
   [MoveClassification.Great]: "#26C2A3",
   [MoveClassification.Brilliant]: "#B404BC",
