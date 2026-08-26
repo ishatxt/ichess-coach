@@ -227,6 +227,7 @@
             lastFEN = fen_;
 
             chessComAudio.pause();
+            hideSubtitle();
             if (uciHistory) {
               const whiteElo = getElo(getSide())?.white || 3200;
               const blackElo = getElo(getSide())?.black || 3200;
@@ -242,6 +243,7 @@
                         chessComAudio.src = result.urlAudio;
                         chessComAudio.play();
                       }
+                      showSubtitle(result.sentence);
 
                       if (statObj) {
                         statObj.update({
@@ -646,6 +648,7 @@
                   if (config.speach) {
                     playAudio(result.urlAudio);
                   }
+                  showSubtitle(result.sentence);
 
                   if (statObj) {
                     statObj.update({
@@ -958,6 +961,7 @@
                     chessComAudio.src = result.urlAudio;
                     chessComAudio.play();
                   }
+                  showSubtitle(result.sentence);
 
                   if (statObj) {
                     statObj.update({

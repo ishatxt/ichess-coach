@@ -62,7 +62,9 @@
         "*://*.worldchess.com/*"
       ],
       "js": [
-        "scripts/core.js"
+        "scripts/core.js",
+        "scripts/core-engine.js",
+        "scripts/core-main.js"
       ],
       "run_at": "document_idle"
     }

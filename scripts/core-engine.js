@@ -345,6 +345,7 @@ function toggleCoachMenu() {
   addSection("Review");
   addToggle("Move Classification", "moveClassification", "Show !! or ?? icons on board");
   addToggle("Coach Voice", "speach", "Coach speaks move explanations");
+  addToggle("Coach Subtitles", "showSubtitles", "Show subtitles while coach speaks");
   addToggle("Accuracy Widget", "showAccWidget", "Show accuracy display during review");
 
   (function addEvalBarToggle() {
@@ -391,7 +392,7 @@ function toggleCoachMenu() {
   resetBtn.textContent = "Reset Defaults";
   resetBtn.onclick = () => {
     config.coach = 999; config.depth2 = 10;
-    config.moveClassification = false; config.speach = false; config.showAccWidget = true; config.showEval = false;
+    config.moveClassification = false; config.speach = false; config.showSubtitles = false; config.showAccWidget = true; config.showEval = false;
     chrome.storage.local.set({ chessConfig: config });
     overlay.remove(); S.remove();
     toggleCoachMenu();
@@ -1305,6 +1306,7 @@ function toggleCoachMenu() {
               const classificationName = last.classificationName;
               const fen = last.fen;
               const audioUrlHash = last?.playedMove?.speech?.[0]?.audioUrlHash;
+              const sentence = last?.playedMove?.speech?.[0]?.sentence?.[0] || "";
               const moveLan = last?.playedMove?.moveLan;
               if (!audioUrlHash) return;
 
@@ -1316,6 +1318,7 @@ function toggleCoachMenu() {
                 classificationName,
                 fen,
                 urlAudio,
+                sentence,
                 moveLan,
                 whiteAccuracy,
                 whiteElo,

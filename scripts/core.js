@@ -321,6 +321,7 @@ let lastClassification = null;
 let moveIndex_ = 999;
 let isGameOverFlag = true;
 const chessComAudio = new Audio();
+chessComAudio.onended = hideSubtitle;
 let lastFenForAnalyzis =
   "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -1165,10 +1166,34 @@ let config = {
   moveClassification: false,
   showAccWidget: true,
   showEval: false,
+  showSubtitles: false,
   onlyShowEval: false,
   key: "=",
   key2: "-",
 };
+
+// ─── Subtitle Overlay ────────────────────────────────────────────────────────
+let _subtitleEl = null;
+function showSubtitle(text) {
+  if (!config.showSubtitles || !text) return;
+  if (!_subtitleEl) {
+    _subtitleEl = document.createElement("div");
+    _subtitleEl.id = "ichess-coach-subtitle";
+    _subtitleEl.style.cssText =
+      "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999998;" +
+      "max-width:520px;width:auto;padding:10px 20px;text-align:center;" +
+      "background:#1A1308;border:2px solid #8B6914;border-radius:0;" +
+      "font-family:'Space Mono',monospace;font-size:12px;line-height:1.6;" +
+      "color:#F0E6D4;letter-spacing:.3px;box-shadow:4px 4px 0 rgba(0,0,0,.85);" +
+      "opacity:0;transition:opacity .15s steps(3,end);pointer-events:none;";
+    document.body.appendChild(_subtitleEl);
+  }
+  _subtitleEl.textContent = text;
+  _subtitleEl.style.opacity = "1";
+}
+function hideSubtitle() {
+  if (_subtitleEl) _subtitleEl.style.opacity = "0";
+}
 
 // ─── Initialize after all modules are loaded ────────────────────────────────
 // core-engine.js defines: toggleCoachMenu, engine, coach, keyMove,
