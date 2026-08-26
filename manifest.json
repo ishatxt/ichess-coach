@@ -73,18 +73,23 @@
     {
       "resources": [
         "coach-assets/*",
+        "chess-p/*",
         "engine/chess_min.js",
         "engine/komodo.js",
         "engine/komodo.wasm",
         "engine/torch.js",
         "engine/torch.wasm",
         "overlay/index.html",
+        "pgn/index.html",
+        "pgn/index.css",
+        "pgn/index.js",
         "scripts/sub-main.js"
       ],
       "matches": [
         "*://*.chess.com/*",
         "*://*.lichess.org/*",
-        "*://*.worldchess.com/*"
+        "*://*.worldchess.com/*",
+        "chrome-extension://*/*"
       ]
     }
   ],

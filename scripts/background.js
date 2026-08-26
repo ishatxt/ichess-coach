@@ -485,6 +485,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "OPEN_PGN_ANALYSIS") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("pgn/index.html") });
+  }
+});
+
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'FETCH_AUDIO') {

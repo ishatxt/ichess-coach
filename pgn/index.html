@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iChess — PGN Analysis</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="app">
+    <!-- ─── Input Screen ──────────────────────────────────────────────── -->
+    <div id="input-screen">
+      <div class="input-header">
+        <div class="input-title">iChess</div>
+        <div class="input-sub">PGN ANALYSIS</div>
+        <div class="input-divider"></div>
+      </div>
+      <div id="drop-zone">
+        <div class="drop-icon">♔</div>
+        <div class="drop-text">Drag a .pgn file here</div>
+        <div class="drop-or">— or paste below —</div>
+      </div>
+      <textarea id="pgn-input" placeholder="1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 ..." spellcheck="false"></textarea>
+      <button id="analyze-btn">ANALYZE GAME</button>
+      <div id="error-msg"></div>
+    </div>
+
+    <!-- ─── Analysis Screen ───────────────────────────────────────────── -->
+    <div id="analysis-screen" style="display:none">
+      <div class="analysis-header">
+        <div class="analysis-brand">
+          <div class="analysis-title">iChess</div>
+          <div class="analysis-sub">PGN ANALYSIS</div>
+        </div>
+        <div class="header-spacer"></div>
+        <button id="back-btn" class="header-btn">NEW GAME</button>
+      </div>
+
+      <div id="progress-bar" style="display:none">
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-label" id="progress-label">Analyzing move 0 / 0...</div>
+      </div>
+
+      <div class="analysis-layout">
+        <!-- Left: Board -->
+        <div class="board-panel">
+          <div class="board-wrapper">
+            <div class="eval-column">
+              <div class="eval-label">BLACK</div>
+              <div id="eval-bar">
+                <div id="eval-fill"></div>
+              </div>
+              <div id="eval-text">0.0</div>
+              <div class="eval-label">WHITE</div>
+            </div>
+            <div class="board-column">
+              <div id="board"></div>
+              <div class="board-controls">
+                <button class="ctrl-btn" id="btn-start">⏮</button>
+                <button class="ctrl-btn" id="btn-prev">◀</button>
+                <span id="move-counter">0 / 0</span>
+                <button class="ctrl-btn" id="btn-next">▶</button>
+                <button class="ctrl-btn" id="btn-end">⏭</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Info Panel -->
+        <div class="info-panel">
+          <div id="accuracy-widget"></div>
+          <div id="move-list-container">
+            <div class="move-list-header">MOVES</div>
+            <div id="move-list"></div>
+          </div>
+          <div id="tallies"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../engine/chess_min.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>

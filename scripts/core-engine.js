@@ -562,6 +562,17 @@ function toggleCoachMenu() {
   creditsBtn.textContent = "Credits";
   creditsBtn.onclick = openCreditsModal;
   creditsBtnRow.appendChild(creditsBtn);
+
+  const pgnBtn = document.createElement("button");
+  pgnBtn.className = "ichess-reset-btn";
+  pgnBtn.textContent = "PGN Analysis";
+  pgnBtn.style.cssText = "border-color:#8B6914;color:#D4A76A;";
+  pgnBtn.onclick = () => {
+    chrome.runtime.sendMessage({ type: "OPEN_PGN_ANALYSIS" });
+    close();
+  };
+  creditsBtnRow.appendChild(pgnBtn);
+
   creditsBtnRow.appendChild(resetBtn);
   footer.appendChild(creditsBtnRow);
 
