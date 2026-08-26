@@ -321,7 +321,7 @@ let lastClassification = null;
 let moveIndex_ = 999;
 let isGameOverFlag = true;
 const chessComAudio = new Audio();
-chessComAudio.onended = hideSubtitle;
+chessComAudio.onended = null;
 let lastFenForAnalyzis =
   "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -1186,6 +1186,14 @@ let config = {
 
 // ─── Subtitle Overlay ────────────────────────────────────────────────────────
 let _subtitleEl = null;
+let _subtitleImg = null;
+let _subtitleText = null;
+const _coachPfpMap = {
+  0: "coachdavid.png", 48: "coachlevy.png", 49: "coachmagnus.png", 50: "coachhikaru.png",
+  51: "coachanna.png", 52: "coachcanty.png", 53: "coachvishy.png", 54: "coachtania.png",
+  55: "coachdanny.png", 56: "coachbotezsisters.png", 57: "coachben.png", 58: "coachsloane.png",
+  59: "coachruben.png",
+};
 function showSubtitle(text) {
   if (!config.showSubtitles || !text) return;
   if (!_subtitleEl) {
@@ -1193,14 +1201,29 @@ function showSubtitle(text) {
     _subtitleEl.id = "ichess-coach-subtitle";
     _subtitleEl.style.cssText =
       "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999998;" +
-      "max-width:520px;width:auto;padding:10px 20px;text-align:center;" +
+      "display:flex;align-items:center;gap:10px;" +
+      "max-width:560px;width:auto;padding:10px 16px;" +
       "background:#1A1308;border:2px solid #8B6914;border-radius:0;" +
       "font-family:'Space Mono',monospace;font-size:12px;line-height:1.6;" +
       "color:#F0E6D4;letter-spacing:.3px;box-shadow:4px 4px 0 rgba(0,0,0,.85);" +
       "opacity:0;transition:opacity .15s steps(3,end);pointer-events:none;";
+    _subtitleImg = document.createElement("img");
+    _subtitleImg.style.cssText =
+      "width:36px;height:36px;flex-shrink:0;border:1px solid #8B6914;object-fit:cover;";
+    _subtitleText = document.createElement("span");
+    _subtitleText.style.cssText = "flex:1;text-align:left;";
+    _subtitleEl.appendChild(_subtitleImg);
+    _subtitleEl.appendChild(_subtitleText);
     document.body.appendChild(_subtitleEl);
   }
-  _subtitleEl.textContent = text;
+  const pfp = _coachPfpMap[config.coach];
+  if (pfp) {
+    _subtitleImg.src = chrome.runtime.getURL("scripts/coach-assets/coach_pfp/" + pfp);
+    _subtitleImg.style.display = "";
+  } else {
+    _subtitleImg.style.display = "none";
+  }
+  _subtitleText.textContent = text;
   _subtitleEl.style.opacity = "1";
 }
 function hideSubtitle() {

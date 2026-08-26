@@ -227,7 +227,6 @@
             lastFEN = fen_;
 
             chessComAudio.pause();
-            hideSubtitle();
             if (uciHistory) {
               const whiteElo = getElo(getSide())?.white || 3200;
               const blackElo = getElo(getSide())?.black || 3200;
