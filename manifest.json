@@ -73,6 +73,7 @@
     {
       "resources": [
         "coach-assets/*",
+        "scripts/coach-assets/**",
         "chess-p/*",
         "engine/chess_min.js",
         "engine/komodo.js",

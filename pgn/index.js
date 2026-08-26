@@ -59,6 +59,8 @@
     { lang:"en_US", link:"https://text-and-audio.chess.com/prod/released/Magnus_coach/en-US/", prefix:"fetch load-and-set-coach-asset text_id Magnus_coach locale en-US bzp", asset:"coach-assets/Magnus_coach.bzp" },
     { lang:"en_US", link:"https://text-and-audio.chess.com/prod/released/Hikaru_coach/en-US/", prefix:"fetch load-and-set-coach-asset text_id Hikaru_coach locale en-US bzp", asset:"coach-assets/Hikaru_coach.bzp" },
     { lang:"en_US", link:"https://text-and-audio.chess.com/prod/released/Anna_coach/en-US/", prefix:"fetch load-and-set-coach-asset text_id Anna_coach locale en-US bzp", asset:"coach-assets/Anna_coach.bzp" },
+    { lang:"en_US", link:"https://text-and-audio.chess.com/prod/released/Sloane_coach/en-US/", prefix:"fetch load-and-set-coach-asset text_id Sloane_coach locale en-US bzp", asset:"coach-assets/Sloane_coach.bzp" },
+    { lang:"en_US", link:"https://text-and-audio.chess.com/prod/released/Ruben_coach/en-US/", prefix:"fetch load-and-set-coach-asset text_id Ruben_coach locale en-US bzp", asset:"coach-assets/Ruben_coach.bzp" },
   ];
 
   const coachAssetCache = Object.create(null);

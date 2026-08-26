@@ -177,6 +177,39 @@ function toggleCoachMenu() {
     #ichess-coach-overlay .ichess-row select:hover,
     #ichess-coach-overlay .ichess-row select:focus {
       border-color:#C4883B;
+    }
+
+    #ichess-coach-grid {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:6px;
+      padding:4px 0 8px;
+    }
+    #ichess-coach-grid .ichess-coach-item {
+      display:flex; flex-direction:column; align-items:center; gap:3px;
+      padding:6px 2px; background:#0D0A05; border:2px solid #4A3820;
+      cursor:pointer; transition:all .1s steps(2,end);
+    }
+    #ichess-coach-grid .ichess-coach-item:hover {
+      border-color:#C4883B; transform:translateY(-1px);
+      box-shadow:2px 3px 0 #000;
+    }
+    #ichess-coach-grid .ichess-coach-item.active {
+      border-color:#C4883B; background:#1A1308;
+      box-shadow:inset 0 0 12px rgba(196,136,59,0.15);
+    }
+    #ichess-coach-grid .ichess-coach-item img {
+      width:42px; height:42px; border-radius:0; object-fit:cover;
+      border:1px solid #4A3820;
+    }
+    #ichess-coach-grid .ichess-coach-item.active img {
+      border-color:#C4883B;
+    }
+    #ichess-coach-grid .ichess-coach-item span {
+      font-size:8px; font-weight:700; letter-spacing:1px;
+      text-transform:uppercase; color:#7A6B50; text-align:center;
+    }
+    #ichess-coach-grid .ichess-coach-item.active span {
+      color:#D4A76A;
+    }
       box-shadow:3px 3px 0 rgba(0,0,0,.85);
     }
 
@@ -231,7 +264,7 @@ function toggleCoachMenu() {
 
   const statusLine = document.createElement("div");
   statusLine.className = "ichess-status";
-  const coachNames = { 999:"NONE", 0:"DAVID", 12:"MAE", 24:"DANTE", 36:"NADIA", 48:"LEVY", 49:"MAGNUS", 50:"HIKARU", 51:"ANNA" };
+  const coachNames = { 999:"NONE", 0:"DAVID", 12:"MAE", 24:"DANTE", 36:"NADIA", 48:"LEVY", 49:"MAGNUS", 50:"HIKARU", 51:"ANNA", 52:"CANTY", 53:"ANAND", 54:"TANIA", 55:"DANNY", 56:"BOTEZ", 57:"BEN", 58:"SLOANE", 59:"RUBEN" };
   statusLine.innerHTML = '<span class="ichess-dot">\u25cf</span> SYSTEM ONLINE \u00b7 ENGINE READY \u00b7 D' + config.depth2 + ' \u00b7 COACH ' + (coachNames[config.coach] || String(config.coach));
   header.appendChild(statusLine);
   header.appendChild(closeBtn);
@@ -333,11 +366,56 @@ function toggleCoachMenu() {
   }
 
   addSection("Coach");
-  addSelect("Coach", "coach", [
-    [999, "None"],
-    [0, "David"], [12, "Mae"], [24, "Dante"], [36, "Nadia"],
-    [48, "Levy"], [49, "Magnus"], [50, "Hikaru"], [51, "Anna"],
-  ], "Choose your AI coach");
+
+  (function addCoachGrid() {
+    const coachPfpMap = {
+      999: null,
+      0: "coachdavid.png", 12: null, 24: null, 36: null,
+      48: "coachlevy.png", 49: "coachmagnus.png", 50: "coachhikaru.png", 51: "coachanna.png",
+      52: "coachcanty.png", 53: "coachvishy.png", 54: "coachtania.png", 55: "coachdanny.png",
+      56: "coachbotezsisters.png", 57: "coachben.png", 58: "coachsloane.png", 59: "coachruben.png",
+    };
+    const coachLabels = {
+      999: "None", 0: "David", 12: "Mae", 24: "Dante", 36: "Nadia",
+      48: "Levy", 49: "Magnus", 50: "Hikaru", 51: "Anna",
+      52: "Canty", 53: "Anand", 54: "Tania", 55: "Danny", 56: "Botez", 57: "Ben",
+      58: "Sloane", 59: "Ruben",
+    };
+    const grid = document.createElement("div");
+    grid.id = "ichess-coach-grid";
+
+    Object.entries(coachLabels).forEach(([id, name]) => {
+      const numId = +id;
+      const item = document.createElement("div");
+      item.className = "ichess-coach-item" + (config.coach === numId ? " active" : "");
+      const pfp = coachPfpMap[numId];
+      if (pfp) {
+        const img = document.createElement("img");
+        img.src = chrome.runtime.getURL("scripts/coach-assets/coach_pfp/" + pfp);
+        img.alt = name;
+        item.appendChild(img);
+      } else {
+        const placeholder = document.createElement("div");
+        placeholder.style.cssText = "width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#7A6B50;";
+        placeholder.textContent = numId === 999 ? "\u2716" : name[0];
+        item.appendChild(placeholder);
+      }
+      const label = document.createElement("span");
+      label.textContent = name;
+      item.appendChild(label);
+      item.onclick = () => {
+        config.coach = numId;
+        chrome.storage.local.set({ chessConfig: config });
+        grid.querySelectorAll(".ichess-coach-item").forEach(el => el.classList.remove("active"));
+        item.classList.add("active");
+        const statusCoach = document.querySelector(".ichess-status");
+        if (statusCoach) statusCoach.innerHTML = '<span class="ichess-dot">\u25cf</span> SYSTEM ONLINE \u00b7 ENGINE READY \u00b7 D' + config.depth2 + ' \u00b7 COACH ' + (coachNames[config.coach] || String(config.coach));
+      };
+      grid.appendChild(item);
+    });
+
+    body.appendChild(grid);
+  })();
 
   addSection("Analysis");
   addRange("Engine Depth", "depth2", 1, 15, 1, "Higher = more accurate (slower)");
