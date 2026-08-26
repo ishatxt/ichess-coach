@@ -238,7 +238,7 @@
                     // console.log(result);
 
                     if (lastFEN === result.fen) {
-                      if (config.speach) {
+                      if (config.speach && result.urlAudio) {
                         chessComAudio.src = result.urlAudio;
                         chessComAudio.play();
                       }
@@ -644,7 +644,7 @@
                   // console.log(result);
                   const urlAudio_ = result.urlAudio;
 
-                  if (config.speach) {
+                  if (config.speach && result.urlAudio) {
                     playAudio(result.urlAudio);
                   }
                   showSubtitle(result.sentence);
@@ -956,7 +956,7 @@
               coach
                 .getChat(uci__, getSide(), whiteElo, blackElo)
                 .then((result) => {
-                  if (config.speach) {
+                  if (config.speach && result.urlAudio) {
                     chessComAudio.src = result.urlAudio;
                     chessComAudio.play();
                   }

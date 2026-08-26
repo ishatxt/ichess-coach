@@ -1182,6 +1182,7 @@ let config = {
   onlyShowEval: false,
   key: "=",
   key2: "-",
+  menuTheme: "dark",
 };
 
 // ─── Subtitle Overlay ────────────────────────────────────────────────────────

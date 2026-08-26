@@ -16,9 +16,85 @@ function toggleCoachMenu() {
     @keyframes ichessBlink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
     #ichess-coach-overlay {
+      --bg-overlay:rgba(8,6,3,.8);
+      --bg-panel:#1A1308;
+      --bg-row:#201710;
+      --bg-row-hover:#28200F;
+      --bg-input:#0D0A05;
+      --bg-badge:#0D0A05;
+      --bg-header:linear-gradient(180deg,#201710 0%,transparent 100%);
+      --bg-scrollbar:#0D0A05;
+      --bg-toggle-off:#0D0A05;
+      --bg-toggle-on:#201710;
+      --border-main:#8B6914;
+      --border-row:#4A3820;
+      --border-dashed:#4A3820;
+      --border-toggle:#4A3820;
+      --border-toggle-active:#C4883B;
+      --accent:#C4883B;
+      --accent-bright:#D4A76A;
+      --accent-hover:#8B6914;
+      --text-main:#F0E6D4;
+      --text-label:#A89878;
+      --text-dim:#7A6B50;
+      --text-title:#D4A76A;
+      --text-shadow:2px 2px 0 #0D0A05;
+      --close-hover:#CE7B7B;
+      --close-hover-border:#B84A4A;
+      --inset-shadow:inset 0 0 0 2px #0D0A05;
+      --panel-shadow:6px 6px 0 rgba(0,0,0,.85);
+      --row-shadow:3px 3px 0 rgba(0,0,0,.85);
+      --toggle-knob:#A89878;
+      --toggle-knob-active:#D4A76A;
+      --scanlines:repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
+      --grid-item-bg:#0D0A05;
+      --grid-item-active-bg:#1A1308;
+      --grid-item-active-glow:rgba(196,136,59,0.15);
+      --reset-hover-bg:#201710;
+    }
+
+    #ichess-coach-overlay.light-mode {
+      --bg-overlay:rgba(200,190,180,.85);
+      --bg-panel:#F6EEE5;
+      --bg-row:#F5F1F1;
+      --bg-row-hover:#F5A8A5;
+      --bg-input:#FFFFFF;
+      --bg-badge:#FFFFFF;
+      --bg-header:linear-gradient(180deg,#F5A8A5 0%,transparent 100%);
+      --bg-scrollbar:#F5F1F1;
+      --bg-toggle-off:#D1A8A9;
+      --bg-toggle-on:#ED94A4;
+      --border-main:#ED94A4;
+      --border-row:#D1A8A9;
+      --border-dashed:#D1A8A9;
+      --border-toggle:#D1A8A9;
+      --border-toggle-active:#ED94A4;
+      --accent:#ED94A4;
+      --accent-bright:#C4707A;
+      --accent-hover:#D1A8A9;
+      --text-main:#3D2C2E;
+      --text-label:#8B6B6E;
+      --text-dim:#B09496;
+      --text-title:#C4707A;
+      --text-shadow:none;
+      --close-hover:#D1A8A9;
+      --close-hover-border:#ED94A4;
+      --inset-shadow:inset 0 0 0 2px #F6EEE5;
+      --panel-shadow:6px 6px 0 rgba(0,0,0,.1);
+      --row-shadow:3px 3px 0 rgba(0,0,0,.08);
+      --toggle-knob:#8B6B6E;
+      --toggle-knob-active:#C4707A;
+      --scanlines:none;
+      --grid-item-bg:#F5F1F1;
+      --grid-item-active-bg:#FFFFFF;
+      --grid-item-active-glow:rgba(237,148,164,0.2);
+      --reset-hover-bg:#F5A8A5;
+    }
+
+    #ichess-coach-overlay {
       position:fixed; inset:0; z-index:9999999;
       display:flex; align-items:center; justify-content:center;
-      background:rgba(8,6,3,.8);
+      background:var(--bg-overlay);
       animation:ichessFadeIn .15s steps(3,end);
     }
     #ichess-coach-overlay.ichess-closing {
@@ -28,16 +104,14 @@ function toggleCoachMenu() {
     #ichess-coach-overlay .ichess-panel {
       position:relative;
       width:340px; max-height:82vh; overflow-y:auto;
-      background:#1A1308;
-      background-image:repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
-      border:2px solid #8B6914;
+      background:var(--bg-panel);
+      background-image:var(--scanlines);
+      border:2px solid var(--border-main);
       border-radius:0;
       padding:0;
-      font-family:'Space Mono',monospace; color:#F0E6D4;
+      font-family:'Space Mono',monospace; color:var(--text-main);
       animation:ichessPanelIn .16s steps(4,end);
-      box-shadow:
-        6px 6px 0 rgba(0,0,0,.85),
-        inset 0 0 0 2px #0D0A05;
+      box-shadow:var(--panel-shadow), var(--inset-shadow);
     }
     #ichess-coach-overlay.ichess-closing .ichess-panel {
       animation:ichessPanelOut .12s steps(3,end) forwards;
@@ -45,138 +119,150 @@ function toggleCoachMenu() {
 
     #ichess-coach-overlay .ichess-panel-header {
       position:relative; padding:20px 24px 14px;
-      border-bottom:2px dashed #4A3820;
-      background:linear-gradient(180deg,#201710 0%,transparent 100%);
+      border-bottom:2px dashed var(--border-dashed);
+      background:var(--bg-header);
     }
     #ichess-coach-overlay .ichess-panel-title {
       font-size:13px; font-weight:700; letter-spacing:4px; text-transform:uppercase;
-      color:#D4A76A; text-align:center;
-      text-shadow:2px 2px 0 #0D0A05;
+      color:var(--text-title); text-align:center;
+      text-shadow:var(--text-shadow);
     }
     #ichess-coach-overlay .ichess-panel-title::before,
     #ichess-coach-overlay .ichess-panel-title::after {
       content:''; display:inline-block; width:6px; height:6px;
-      background:#C4883B; margin:0 8px;
+      background:var(--accent); margin:0 8px;
       vertical-align:middle;
     }
     #ichess-coach-overlay .ichess-status {
       margin-top:9px; text-align:center;
       font-size:8.5px; letter-spacing:1.5px; text-transform:uppercase;
-      color:#A89878;
+      color:var(--text-label);
     }
     #ichess-coach-overlay .ichess-status .ichess-dot {
-      color:#D4A76A;
+      color:var(--accent-bright);
       animation:ichessBlink 1.4s steps(2,start) infinite;
     }
     #ichess-coach-overlay .ichess-close {
       position:absolute; top:14px; right:16px;
       width:28px; height:28px; border-radius:0;
-      background:#0D0A05; border:2px solid #4A3820;
-      color:#A89878; font-size:15px; cursor:pointer;
+      background:var(--bg-input); border:2px solid var(--border-row);
+      color:var(--text-label); font-size:15px; cursor:pointer;
       display:flex; align-items:center; justify-content:center;
       transition:all .1s steps(2,end); line-height:1;
     }
     #ichess-coach-overlay .ichess-close:hover {
-      color:#CE7B7B; border-color:#B84A4A; background:#201710;
+      color:var(--close-hover); border-color:var(--close-hover-border); background:var(--bg-row);
     }
     #ichess-coach-overlay .ichess-close:active {
       transform:translate(1px,1px);
+    }
+
+    #ichess-coach-overlay .ichess-theme-toggle {
+      position:absolute; top:14px; left:16px;
+      width:28px; height:28px; border-radius:0;
+      background:var(--bg-input); border:2px solid var(--border-row);
+      color:var(--text-label); font-size:13px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition:all .1s steps(2,end); line-height:1;
+    }
+    #ichess-coach-overlay .ichess-theme-toggle:hover {
+      border-color:var(--accent); color:var(--text-main); background:var(--bg-row);
     }
 
     #ichess-coach-overlay .ichess-body { padding:16px 18px 20px; }
 
     #ichess-coach-overlay .ichess-section-label {
       font-size:9px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase;
-      color:#A89878; margin:14px 0 8px; display:flex; align-items:center; gap:10px;
+      color:var(--text-label); margin:14px 0 8px; display:flex; align-items:center; gap:10px;
     }
     #ichess-coach-overlay .ichess-section-label::before,
     #ichess-coach-overlay .ichess-section-label::after {
       content:''; flex:1; height:2px;
-      background:repeating-linear-gradient(90deg,#4A3820 0 6px,transparent 6px 10px);
+      background:repeating-linear-gradient(90deg,var(--border-row) 0 6px,transparent 6px 10px);
     }
 
     #ichess-coach-overlay .ichess-row {
       display:flex; align-items:center; justify-content:space-between;
       padding:11px 12px; margin-bottom:3px;
-      background:#201710;
-      border:2px solid #4A3820;
+      background:var(--bg-row);
+      border:2px solid var(--border-row);
       border-radius:0;
       transition:all .1s steps(2,end); position:relative; overflow:hidden;
     }
     #ichess-coach-overlay .ichess-row::before {
       content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
-      background:#C4883B;
+      background:var(--accent);
       opacity:0; transition:opacity .1s steps(2,end); border-radius:0;
     }
     #ichess-coach-overlay .ichess-row:hover {
-      background:#28200F;
-      border-color:#8B6914;
+      background:var(--bg-row-hover);
+      border-color:var(--accent-hover);
       transform:translate(-1px,-1px);
-      box-shadow:3px 3px 0 rgba(0,0,0,.85);
+      box-shadow:var(--row-shadow);
     }
     #ichess-coach-overlay .ichess-row:hover::before { opacity:1; }
 
     #ichess-coach-overlay .ichess-row span {
-      font-size:11px; font-weight:700; color:#F0E6D4; letter-spacing:.3px;
+      font-size:11px; font-weight:700; color:var(--text-main); letter-spacing:.3px;
     }
 
     #ichess-coach-overlay .ichess-help {
-      font-size:8.5px; color:#7A6B50; margin:0 0 8px 14px; line-height:1.5; letter-spacing:.5px;
+      font-size:8.5px; color:var(--text-dim); margin:0 0 8px 14px; line-height:1.5; letter-spacing:.5px;
     }
 
     #ichess-coach-overlay .ichess-toggle { position:relative; width:42px; height:23px; flex-shrink:0; }
     #ichess-coach-overlay .ichess-toggle input { display:none; }
     #ichess-coach-overlay .ichess-toggle .ichess-slider {
       position:absolute; inset:0;
-      background:#0D0A05; border-radius:0;
-      border:2px solid #4A3820;
+      background:var(--bg-toggle-off); border-radius:0;
+      border:2px solid var(--border-toggle);
       cursor:pointer; transition:.12s steps(2,end);
     }
     #ichess-coach-overlay .ichess-toggle .ichess-slider::before {
       content:''; position:absolute; width:15px; height:15px;
-      left:2px; top:2px; background:#A89878; border-radius:0; transition:.12s steps(2,end);
-      box-shadow:2px 2px 0 #000;
+      left:2px; top:2px; background:var(--toggle-knob); border-radius:0; transition:.12s steps(2,end);
+      box-shadow:2px 2px 0 rgba(0,0,0,.3);
     }
     #ichess-coach-overlay .ichess-toggle input:checked + .ichess-slider {
-      background:#201710; border-color:#C4883B;
+      background:var(--bg-toggle-on); border-color:var(--border-toggle-active);
       box-shadow:none;
     }
     #ichess-coach-overlay .ichess-toggle input:checked + .ichess-slider::before {
-      transform:translateX(19px); background:#D4A76A;
-      box-shadow:2px 2px 0 #000;
+      transform:translateX(19px); background:var(--toggle-knob-active);
+      box-shadow:2px 2px 0 rgba(0,0,0,.3);
     }
 
     #ichess-coach-overlay .ichess-badge {
       display:inline-flex; align-items:center; justify-content:center;
       min-width:30px; padding:2px 8px;
-      background:#0D0A05; border:2px solid #8B6914;
-      border-radius:0; font-size:11px; font-weight:700; color:#D4A76A;
+      background:var(--bg-badge); border:2px solid var(--accent-hover);
+      border-radius:0; font-size:11px; font-weight:700; color:var(--accent-bright);
     }
 
     #ichess-coach-overlay .ichess-row input[type="range"] {
-      width:42%; height:4px; background:#4A3820;
+      width:42%; height:4px; background:var(--border-row);
       appearance:none; border:none; border-radius:0; outline:none;
     }
     #ichess-coach-overlay .ichess-row input[type="range"]::-webkit-slider-thumb {
       appearance:none; width:14px; height:14px; border-radius:0;
-      background:#D4A76A; border:2px solid #0D0A05; cursor:pointer;
-      box-shadow:2px 2px 0 #000;
+      background:var(--accent-bright); border:2px solid var(--bg-input); cursor:pointer;
+      box-shadow:2px 2px 0 rgba(0,0,0,.3);
       transition:all .1s steps(2,end);
     }
     #ichess-coach-overlay .ichess-row input[type="range"]::-webkit-slider-thumb:hover {
       transform:translateY(-1px);
-      box-shadow:2px 3px 0 #000;
+      box-shadow:2px 3px 0 rgba(0,0,0,.3);
     }
 
     #ichess-coach-overlay .ichess-row select {
-      padding:6px 8px; background:#1A1308;
-      border:2px solid #4A3820; border-radius:0;
-      color:#F0E6D4; font-family:'Space Mono',monospace; font-size:11px;
+      padding:6px 8px; background:var(--bg-panel);
+      border:2px solid var(--border-row); border-radius:0;
+      color:var(--text-main); font-family:'Space Mono',monospace; font-size:11px;
       cursor:pointer; outline:none; transition:.1s steps(2,end);
     }
     #ichess-coach-overlay .ichess-row select:hover,
     #ichess-coach-overlay .ichess-row select:focus {
-      border-color:#C4883B;
+      border-color:var(--accent);
     }
 
     #ichess-coach-grid {
@@ -185,60 +271,58 @@ function toggleCoachMenu() {
     }
     #ichess-coach-grid .ichess-coach-item {
       display:flex; flex-direction:column; align-items:center; gap:3px;
-      padding:6px 2px; background:#0D0A05; border:2px solid #4A3820;
+      padding:6px 2px; background:var(--grid-item-bg); border:2px solid var(--border-row);
       cursor:pointer; transition:all .1s steps(2,end);
     }
     #ichess-coach-grid .ichess-coach-item:hover {
-      border-color:#C4883B; transform:translateY(-1px);
-      box-shadow:2px 3px 0 #000;
+      border-color:var(--accent); transform:translateY(-1px);
+      box-shadow:2px 3px 0 rgba(0,0,0,.3);
     }
     #ichess-coach-grid .ichess-coach-item.active {
-      border-color:#C4883B; background:#1A1308;
-      box-shadow:inset 0 0 12px rgba(196,136,59,0.15);
+      border-color:var(--accent); background:var(--grid-item-active-bg);
+      box-shadow:inset 0 0 12px var(--grid-item-active-glow);
     }
     #ichess-coach-grid .ichess-coach-item img {
       width:42px; height:42px; border-radius:0; object-fit:cover;
-      border:1px solid #4A3820;
+      border:1px solid var(--border-row);
     }
     #ichess-coach-grid .ichess-coach-item.active img {
-      border-color:#C4883B;
+      border-color:var(--accent);
     }
     #ichess-coach-grid .ichess-coach-item span {
       font-size:8px; font-weight:700; letter-spacing:1px;
-      text-transform:uppercase; color:#7A6B50; text-align:center;
+      text-transform:uppercase; color:var(--text-dim); text-align:center;
     }
     #ichess-coach-grid .ichess-coach-item.active span {
-      color:#D4A76A;
-    }
-      box-shadow:3px 3px 0 rgba(0,0,0,.85);
+      color:var(--accent-bright);
     }
 
     #ichess-coach-overlay .ichess-footer {
-      padding:14px 20px; border-top:2px dashed #4A3820;
+      padding:14px 20px; border-top:2px dashed var(--border-dashed);
       display:flex; justify-content:center;
     }
     #ichess-coach-overlay .ichess-reset-btn {
       padding:8px 20px; font-family:'Space Mono',monospace; font-size:10px;
       font-weight:700; letter-spacing:2px; text-transform:uppercase;
-      border-radius:0; border:2px solid #4A3820;
-      background:#0D0A05; color:#A89878;
+      border-radius:0; border:2px solid var(--border-row);
+      background:var(--bg-input); color:var(--text-label);
       cursor:pointer; transition:all .1s steps(2,end);
-      box-shadow:3px 3px 0 rgba(0,0,0,.85);
+      box-shadow:var(--row-shadow);
     }
     #ichess-coach-overlay .ichess-reset-btn:hover {
       transform:translate(-1px,-1px);
-      box-shadow:4px 4px 0 rgba(0,0,0,.85);
-      background:#201710; border-color:#8B6914; color:#F0E6D4;
+      box-shadow:4px 4px 0 rgba(0,0,0,.3);
+      background:var(--reset-hover-bg); border-color:var(--accent-hover); color:var(--text-main);
     }
     #ichess-coach-overlay .ichess-reset-btn:active {
       transform:translate(2px,2px);
-      box-shadow:1px 1px 0 rgba(0,0,0,.85);
+      box-shadow:1px 1px 0 rgba(0,0,0,.3);
     }
 
     #ichess-coach-overlay ::-webkit-scrollbar { width:6px; }
-    #ichess-coach-overlay ::-webkit-scrollbar-track { background:#0D0A05; }
-    #ichess-coach-overlay ::-webkit-scrollbar-thumb { background:#4A3820; border-radius:0; }
-    #ichess-coach-overlay ::-webkit-scrollbar-thumb:hover { background:#8B6914; }
+    #ichess-coach-overlay ::-webkit-scrollbar-track { background:var(--bg-scrollbar); }
+    #ichess-coach-overlay ::-webkit-scrollbar-thumb { background:var(--border-row); border-radius:0; }
+    #ichess-coach-overlay ::-webkit-scrollbar-thumb:hover { background:var(--accent-hover); }
   `;
   document.head.appendChild(S);
 
@@ -260,7 +344,19 @@ function toggleCoachMenu() {
   closeBtn.innerHTML = "\u00d7";
   closeBtn.onclick = close;
 
+  const themeToggle = document.createElement("button");
+  themeToggle.className = "ichess-theme-toggle";
+  themeToggle.innerHTML = config.menuTheme === "light" ? "\u263E" : "\u2600";
+  themeToggle.onclick = () => {
+    config.menuTheme = config.menuTheme === "dark" ? "light" : "dark";
+    chrome.storage.local.set({ config });
+    overlay.classList.toggle("light-mode", config.menuTheme === "light");
+    themeToggle.innerHTML = config.menuTheme === "light" ? "\u263E" : "\u2600";
+  };
+  if (config.menuTheme === "light") overlay.classList.add("light-mode");
+
   header.appendChild(title);
+  header.appendChild(themeToggle);
 
   const statusLine = document.createElement("div");
   statusLine.className = "ichess-status";
@@ -1397,7 +1493,11 @@ function toggleCoachMenu() {
               const audioUrlHash = last?.playedMove?.speech?.[0]?.audioUrlHash;
               const sentence = last?.playedMove?.speech?.[0]?.sentence?.[0] || "";
               const moveLan = last?.playedMove?.moveLan;
-              if (!audioUrlHash) return;
+              if (!audioUrlHash) {
+                this.worker.removeEventListener("message", onMessage);
+                resolve({ classificationName, fen, urlAudio: null, sentence, moveLan, whiteAccuracy, whiteElo, blackAccuracy, blackElo });
+                return;
+              }
 
               const urlAudio = `${coachs[config.coach].link}${audioUrlHash}.mp3`;
 
