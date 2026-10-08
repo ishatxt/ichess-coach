@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="pic/iChess.jpeg" alt="iChess Coach" width="420">
+  <img src="icons/1.jpeg" alt="iChess Coach" width="420">
 </p>
 
 <h1 align="center">iChess</h1>
