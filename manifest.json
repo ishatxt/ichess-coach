@@ -28,14 +28,15 @@
     "webNavigation",
     "storage",
     "scripting",
-    "alarms"
+    "alarms",
+    "notifications"
   ],
   "host_permissions": [
     "https://www.chess.com/*",
     "https://chess.com/*",
     "https://*.chess.com/*",
     "https://api.timezonedb.com/*",
-    "https://raw.githubusercontent.com/*",
+    "https://raw.githubusercontent.com/ishatxt/ichess-coach/*",
     "https://api.github.com/*",
     "https://lichess.org/*",
     "https://worldchess.com/*",
@@ -82,8 +83,13 @@
         "engine/torch.wasm",
         "overlay/index.html",
         "pgn/index.html",
-        "pgn/index.css",
-        "pgn/index.js",
+        "pgn/ichess-theme.css",
+        "pgn/assets/*",
+        "pgn/engine/*",
+        "pgn/sound/*",
+        "pgn/favicon.svg",
+        "pgn/icons.svg",
+        "pgn/16.png",
         "scripts/sub-main.js"
       ],
       "matches": [

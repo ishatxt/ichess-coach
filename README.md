@@ -22,6 +22,7 @@
   <a href="#coaches">Coaches</a> ·
   <a href="#settings">Settings</a> ·
   <a href="#pgn-analysis">PGN Analysis</a> ·
+  <a href="#updating-ichess">Update</a> ·
   <a href="#how-it-works">How it works</a>
 </p>
 
@@ -53,7 +54,7 @@ your game history is someone else's database. iChess puts the whole loop in one 
 | 🎚️ | **Depth control** | Engine depth from 1 to 15 — trade accuracy for speed |
 | 🎨 | **Menu themes** | Dark and light, plus a retro/classic icon palette |
 | 📥 | **PGN analysis** | Standalone analyser for any `.pgn` you paste or drop in |
-| 🔔 | **Update checks** | Compares the local `manifest.json` against the remote one every 6 hours |
+| 🔔 | **Update checks** | Compares the local `manifest.json` against the remote one every 6 hours, shows a **NEW** badge and a one-time notification |
 
 ### Move classifications
 
@@ -88,12 +89,101 @@ The first launch takes a few seconds while the ~41 MB of engine WASM is read fro
 
 ### Updating
 
-Pull the latest changes and hit **Reload** on the `chrome://extensions/` card. If the remote
-`manifest.json` version differs from yours, the toolbar badge shows **NEW**.
+Unpacked extensions can't update themselves. iChess shows a **NEW** toolbar badge and a
+one-time notification when a newer version exists; you then update your own copy and reload it.
+See [Updating iChess](#updating-ichess) for the steps.
 
-```bash
-git pull
+---
+
+## Updating iChess
+
+iChess ships an update **notifier**, not an installer: it tells you when a newer version exists,
+then you update your own copy. This is a deliberate limit of how Chrome treats unpacked
+extensions (see [Why this can't install itself](#why-this-cant-install-itself)).
+
+### How the checker works
+
+The service worker downloads the repository's `manifest.json` over HTTPS:
+
 ```
+https://raw.githubusercontent.com/ishatxt/ichess-coach/main/manifest.json
+```
+
+It reads **only** the `version` field and compares it numerically against
+`chrome.runtime.getManifest().version` — so `1.10.0` is correctly treated as newer than `1.9.0`.
+The response is treated as untrusted: non-2xx statuses, timeouts, malformed JSON, and invalid
+version strings are rejected and logged with an `[iChess Updater]` prefix. An older or equal
+remote version is never shown as an update, and a malformed version is never used at all.
+
+No game data, PGNs, FENs, settings, or personal information is ever sent — the request only
+reads version metadata. The remote JavaScript is never downloaded or executed.
+
+### When it checks
+
+- Immediately after install or browser startup.
+- Then every **6 hours** via `chrome.alarms` (a single named alarm used only for the repeats, so
+  restarts never reset or duplicate the schedule).
+- Service-worker suspension and offline time are respected — a check simply runs late and
+  retries on the next schedule, with no retry loops.
+
+If you are offline or GitHub is unreachable, nothing happens and gameplay is unaffected.
+
+### What the badge means
+
+| Signal | Meaning |
+|---|---|
+| **`NEW`** toolbar badge (green) | A newer version exists. Hovering the icon shows the available and installed versions |
+| Chrome notification with **View release** | Shown **once per version**; clicking it or the button opens the GitHub Releases page |
+| Badge disappears | Your installed version is current (or newer) |
+
+The last version you were notified about is stored separately, so you are never notified twice
+about the same release. All existing settings under `chessConfig` are untouched.
+
+### Updating an unpacked install
+
+1. Wait for the **NEW** badge / notification (or just check the releases page).
+2. Open the [latest release](https://github.com/ishatxt/ichess-coach/releases/latest).
+3. Update your local copy — Git clone:
+   ```bash
+   git stash        # only if you have local modifications you want to keep
+   git pull
+   git stash pop    # restore them afterwards
+   ```
+   If `git pull` reports conflicting local changes, commit, stash, or discard them first.
+   Not using Git? Download the new source and replace your folder, keeping it in the same place.
+4. Open `chrome://extensions/`.
+5. Click **Reload** on the iChess card.
+
+Your coach selection, theme, engine depth, and every other setting live in
+`chrome.storage.local` and survive the reload.
+
+### Publishing a new version
+
+1. Bump `version` in `manifest.json` (numeric — `3` → `4`, or `1.9.0` → `1.10.0`).
+2. Commit and push to `main`.
+3. Optionally create a GitHub Release with the changelog so "View release" lands on notes.
+
+Installed users pick up the **NEW** badge within 6 hours, or on their next browser start.
+
+### Why this can't install itself
+
+An unpacked extension has no write access to its own installed source, and Chrome blocks
+programmatic reload/installation outside the Web Store. This updater intentionally does not
+download or execute remote code, disable developer-mode warnings, or change Chrome security
+settings. Any tool claiming to silently auto-update an unpacked extension is bypassing the
+browser — iChess does not.
+
+### About authenticity
+
+The checker compares **version strings only**. It does not verify signatures, checksums, or the
+contents of a release, so a `NEW` badge alone is not proof that a release is safe or authentic.
+Always review the source you pull.
+
+### Chrome Web Store later
+
+If iChess is published to the Chrome Web Store, installations from the store are updated
+automatically by Chrome in the background — no pull, no reload. The notifier can then stay as a
+fallback for people who keep loading the extension from source, so no code needs to be removed.
 
 ---
 
@@ -277,6 +367,8 @@ position — the same reason a screen reader needs accessibility access.
 - **PGN analysis is sequential.** A full game takes one engine call per ply, so long games
   are slow.
 - **Celebrity coaches are English-only.** The 12-language set covers the four standard coaches.
+- **Updates are manual.** The notifier only checks the version string in the repository's
+  `manifest.json`; it cannot verify or install a release for an unpacked extension.
 - `api.github.com` and `api.timezonedb.com` are declared in `host_permissions` but are not
   currently used by the code.
 

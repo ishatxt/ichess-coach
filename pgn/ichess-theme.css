@@ -1,0 +1,480 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   iChess theme override for the PGN analysis page.
+   Re-skins the analysis app to match the in-game iChess coach menu:
+   walnut + gold palette, Space Mono, square corners, hard pixel shadows,
+   dashed separators and scanlines.
+   Loaded AFTER the app stylesheet so it wins the cascade.
+   ───────────────────────────────────────────────────────────────────────── */
+
+@keyframes ichessBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .2; }
+}
+
+/* ── Palette + shape tokens ───────────────────────────────────────────── */
+/* Dark = the iChess menu default: walnut panel, gold accents. */
+:root,
+:root[data-theme="dark"] {
+  --bg-overlay: rgba(8, 6, 3, .8);
+  --bg-panel: #1a1308;
+  --bg-row: #201710;
+  --bg-row-hover: #28200f;
+  --bg-input: #0d0a05;
+  --bg-badge: #0d0a05;
+  --bg-header: linear-gradient(180deg, #201710 0%, transparent 100%);
+  --bg-scrollbar: #0d0a05;
+
+  --border-main: #8b6914;
+  --border-row: #4a3820;
+  --border-dashed: #4a3820;
+
+  --accent: #c4883b;
+  --accent-bright: #d4a76a;
+  --accent-hover: #8b6914;
+
+  --text-main: #f0e6d4;
+  --text-label: #a89878;
+  --text-dim: #7a6b50;
+  --text-title: #d4a76a;
+  --text-shadow: 2px 2px 0 #0d0a05;
+
+  --close-hover: #ce7b7b;
+
+  --panel-shadow: 6px 6px 0 rgba(0, 0, 0, .85);
+  --row-shadow: 3px 3px 0 rgba(0, 0, 0, .85);
+  --scanlines: repeating-linear-gradient(0deg, rgba(0, 0, 0, .14) 0 1px, transparent 1px 3px);
+
+  color-scheme: dark;
+
+  --olive-vivid: #c4883b;
+  --olive-mid: #8b6914;
+  --olive-dark: #6b4f10;
+  --olive-glow: rgba(196, 136, 59, .16);
+  --olive-border: rgba(196, 136, 59, .35);
+  --bg-deep: #0d0a05;
+  --bg-card: #201710;
+  --bg-hover: #28200f;
+  --border-soft: #3a2c18;
+  --border-strong: #8b6914;
+  --grey-fish: #f0e6d4;
+  --grey-scale: #a89878;
+  --grey-shadow: #4a3820;
+  --text-soft: #a89878;
+  --danger: #ce7b7b;
+  --on-primary: #0d0a05;
+  --row-alt: rgba(196, 136, 59, .05);
+  --nav-bg: rgba(26, 19, 8, .92);
+  --shadow-panel: 6px 6px 0 rgba(0, 0, 0, .85);
+
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'Space Mono', monospace;
+  --radius-card: 0;
+  --radius-sm: 0;
+  --transition: .12s steps(2, end);
+}
+
+/* Light = the iChess menu light-mode: blush panel, rose accents. */
+:root[data-theme="light"] {
+  --bg-overlay: rgba(200, 190, 180, .85);
+  --bg-panel: #f6eee5;
+  --bg-row: #f5f1f1;
+  --bg-row-hover: #f5a8a5;
+  --bg-input: #ffffff;
+  --bg-badge: #ffffff;
+  --bg-header: linear-gradient(180deg, #f5a8a5 0%, transparent 100%);
+  --bg-scrollbar: #f5f1f1;
+
+  --border-main: #ed94a4;
+  --border-row: #d1a8a9;
+  --border-dashed: #d1a8a9;
+
+  --accent: #ed94a4;
+  --accent-bright: #c4707a;
+  --accent-hover: #d1a8a9;
+
+  --text-main: #3d2c2e;
+  --text-label: #8b6b6e;
+  --text-dim: #b09496;
+  --text-title: #c4707a;
+  --text-shadow: none;
+
+  --close-hover: #d1a8a9;
+
+  --panel-shadow: 6px 6px 0 rgba(0, 0, 0, .1);
+  --row-shadow: 3px 3px 0 rgba(0, 0, 0, .08);
+  --scanlines: none;
+
+  color-scheme: light;
+
+  --olive-vivid: #ed94a4;
+  --olive-mid: #d1a8a9;
+  --olive-dark: #c4707a;
+  --olive-glow: rgba(237, 148, 164, .18);
+  --olive-border: rgba(237, 148, 164, .45);
+  --bg-deep: #f6eee5;
+  --bg-card: #ffffff;
+  --bg-hover: #f5a8a5;
+  --border-soft: #e7c9ca;
+  --border-strong: #ed94a4;
+  --grey-fish: #3d2c2e;
+  --grey-scale: #8b6b6e;
+  --grey-shadow: #d1a8a9;
+  --text-soft: #8b6b6e;
+  --danger: #c0392b;
+  --on-primary: #ffffff;
+  --row-alt: rgba(237, 148, 164, .06);
+  --nav-bg: rgba(246, 238, 229, .92);
+  --shadow-panel: 6px 6px 0 rgba(0, 0, 0, .1);
+
+  --font-mono: 'Space Mono', monospace;
+  --font-body: 'Space Mono', monospace;
+  --radius-card: 0;
+  --radius-sm: 0;
+  --transition: .12s steps(2, end);
+}
+
+/* ── Page background ──────────────────────────────────────────────────── */
+body {
+  background: var(--bg-deep);
+  background-image: var(--scanlines);
+  background-attachment: fixed;
+  color: var(--text-main);
+}
+
+/* ── Navbar ───────────────────────────────────────────────────────────── */
+.navbar {
+  background: var(--bg-panel);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-bottom: 2px solid var(--border-main);
+}
+h1,
+h2 {
+  color: var(--text-title);
+  text-shadow: var(--text-shadow);
+}
+.nav-brand-sub {
+  color: var(--accent);
+}
+.nav-status {
+  color: var(--text-label);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-size: 9px;
+}
+.nav-status-text.error {
+  color: var(--close-hover);
+}
+
+/* ── Panels / cards / frames ──────────────────────────────────────────── */
+.panel {
+  background: var(--bg-panel);
+  background-image: var(--scanlines);
+  border: 2px solid var(--border-main);
+  border-radius: 0;
+  box-shadow: var(--panel-shadow);
+}
+.card,
+.setting,
+.game-card,
+.board-frame,
+.player-bar,
+.coach-bubble,
+.acc-card,
+.moves-grid,
+.tallies,
+.games-list li,
+.nav-popover,
+.coach-details > summary,
+.coach-pick,
+.seg {
+  background: var(--bg-card);
+  border: 2px solid var(--border-row);
+  border-radius: 0;
+  box-shadow: var(--row-shadow);
+}
+.card:hover,
+.setting:hover,
+.games-list li:hover,
+.coach-pick:hover {
+  border-color: var(--accent-hover);
+  background: var(--bg-hover);
+}
+.coach-pick.active,
+.theme-option.active {
+  border-color: var(--accent);
+  background: var(--bg-row);
+  box-shadow: inset 0 0 12px var(--olive-glow);
+}
+.player-bar {
+  background: var(--bg-card);
+}
+.coach-bubble {
+  border-radius: 0;
+}
+.board-frame {
+  background: var(--bg-card);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, .45);
+}
+
+/* ── Separators ───────────────────────────────────────────────────────── */
+.section-divider:before,
+.section-divider:after,
+.ichess-dashed {
+  background: none;
+  height: 2px;
+  background-image: repeating-linear-gradient(90deg, var(--border-row) 0 6px, transparent 6px 10px);
+}
+.section-divider span {
+  color: var(--text-label);
+}
+.coach-suggest {
+  border-top: 2px dashed var(--border-dashed);
+  color: var(--accent-bright);
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+.btn {
+  font-family: var(--font-mono);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 2px solid var(--border-row);
+  border-radius: 0;
+  background: var(--bg-input);
+  color: var(--text-label);
+  box-shadow: var(--row-shadow);
+}
+.btn:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, .5);
+  border-color: var(--accent-hover);
+  background: var(--bg-row);
+  color: var(--text-main);
+}
+.btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, .5);
+}
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent-hover);
+  color: var(--on-primary);
+  box-shadow: var(--row-shadow);
+}
+.btn.primary:hover:not(:disabled) {
+  background: var(--accent-bright);
+  color: var(--on-primary);
+}
+.icon-btn,
+.nav-btn,
+.nav-dev,
+.theme-toggle {
+  border: 2px solid var(--border-row);
+  border-radius: 0;
+  background: var(--bg-input);
+  color: var(--text-label);
+  transition: all var(--transition);
+}
+.icon-btn:hover:not(:disabled),
+.nav-btn:hover,
+.nav-btn.open,
+.nav-dev:hover,
+.theme-toggle:hover {
+  border-color: var(--accent);
+  background: var(--bg-row);
+  color: var(--text-main);
+  box-shadow: var(--row-shadow);
+  transform: translate(-1px, -1px);
+}
+.icon-btn:active:not(:disabled) {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+.link-btn {
+  color: var(--accent-bright);
+}
+.link-btn:hover {
+  color: var(--text-main);
+}
+
+/* ── Inputs ───────────────────────────────────────────────────────────── */
+.text-input,
+.setting select,
+.setting input[type=range],
+select,
+textarea {
+  background: var(--bg-input);
+  border: 2px solid var(--border-row);
+  border-radius: 0;
+  color: var(--text-main);
+}
+.text-input::placeholder {
+  color: var(--text-dim);
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--olive-glow);
+}
+.setting input[type=range] {
+  height: 6px;
+  border: 2px solid var(--border-row);
+}
+.setting input[type=range]::-webkit-slider-thumb {
+  border-radius: 0;
+  background: var(--accent-bright);
+  border: 2px solid var(--bg-input);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, .3);
+}
+.setting input[type=range]::-webkit-slider-thumb:hover {
+  transform: translateY(-1px);
+  background: var(--accent-bright);
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, .3);
+}
+.setting input[type=range]::-moz-range-thumb {
+  border-radius: 0;
+  background: var(--accent-bright);
+  border: 2px solid var(--bg-input);
+}
+
+/* ── Toggles ──────────────────────────────────────────────────────────── */
+.slider {
+  border-radius: 0;
+  border: 2px solid var(--border-row);
+  background: var(--bg-input);
+}
+.slider:before {
+  border-radius: 0;
+  width: 15px;
+  height: 15px;
+  top: 3px;
+  left: 3px;
+  background: var(--text-label);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, .3);
+}
+.toggle input:checked + .slider {
+  background: var(--bg-row);
+  border-color: var(--accent);
+  box-shadow: none;
+}
+.toggle input:checked + .slider:before {
+  background: var(--accent-bright);
+  transform: translateX(19px);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, .3);
+}
+
+/* ── Segmented control ────────────────────────────────────────────────── */
+.seg button {
+  border-radius: 0;
+}
+.seg button.active {
+  background: var(--bg-row);
+  color: var(--accent-bright);
+  box-shadow: none;
+}
+
+/* ── Badges ───────────────────────────────────────────────────────────── */
+.value-badge,
+.theme-option-swatch,
+.lang-switch,
+.lang-switch button,
+.player-pip,
+.eval-bar,
+.board-busy {
+  border-radius: 0;
+}
+.value-badge {
+  background: var(--bg-badge);
+  border: 2px solid var(--accent-hover);
+  color: var(--accent-bright);
+}
+.lang-switch {
+  background: var(--bg-input);
+  border-color: var(--border-row);
+}
+.lang-switch button.active {
+  background: var(--accent);
+  color: var(--on-primary);
+  box-shadow: none;
+}
+
+/* ── Eval bar ─────────────────────────────────────────────────────────── */
+.eval-bar {
+  border: 2px solid var(--border-row);
+  background: var(--piece-black);
+}
+.eval-bar-white {
+  background: var(--piece-white);
+}
+
+/* ── Avatars / round things → square ──────────────────────────────────── */
+.player-avatar,
+.coach-avatar,
+.coach-avatar.xl,
+.coach-details > summary img,
+.coach-pick img,
+.app-icon,
+.theme-swatch-mini,
+.theme-option-swatch {
+  border-radius: 0;
+}
+.player-avatar {
+  border: 2px solid var(--grey-scale);
+}
+.coach-avatar,
+.coach-pick img {
+  border: 2px solid var(--border-row);
+}
+
+/* ── Move list ────────────────────────────────────────────────────────── */
+.moves-grid,
+.tallies {
+  border: 2px solid var(--border-row);
+  border-radius: 0;
+}
+.move-row:nth-child(odd) {
+  background: var(--row-alt);
+}
+.move-cell {
+  color: var(--text-main);
+  letter-spacing: .3px;
+}
+.move-cell:hover {
+  background: var(--bg-row-hover);
+}
+.move-cell.active {
+  background: var(--olive-glow);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.tallies th {
+  border-bottom: 2px solid var(--border-row);
+  color: var(--text-label);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+.tallies td {
+  border-bottom: 1px solid var(--border-row);
+}
+
+/* ── Popovers ─────────────────────────────────────────────────────────── */
+.nav-popover {
+  border: 2px solid var(--border-row);
+  box-shadow: var(--panel-shadow);
+}
+.popover-title {
+  color: var(--text-label);
+}
+
+/* ── Scrollbars ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar-track {
+  background: var(--bg-input);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-row);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-hover);
+}

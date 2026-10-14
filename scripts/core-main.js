@@ -1086,14 +1086,14 @@
 
     const text = document.createElement("div");
     text.className = "ichess-banner-text";
-    text.innerHTML = "iChess-Coach updated to <strong>v" + version + "</strong>! Join our Discord for the latest features & updates.";
+    text.innerHTML = "iChess <strong>v" + version + "</strong> is available. Update your source, then reload the extension.";
 
     const btn = document.createElement("a");
     btn.className = "ichess-banner-btn";
-    btn.href = "https://discord.gg/gVgn5Bn8d5";
+    btn.href = "https://github.com/ishatxt/ichess-coach/releases/latest";
     btn.target = "_blank";
     btn.rel = "noopener noreferrer";
-    btn.textContent = "Join Discord";
+    btn.textContent = "View release";
 
     banner.appendChild(closeBtn);
     banner.appendChild(text);

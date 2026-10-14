@@ -518,32 +518,254 @@ chrome.action.onClicked.addListener((tab) => {
   chrome.tabs.sendMessage(tab.id, { type: "OPEN_COACH_MENU" });
 });
 
+// ─── Update checker ─────────────────────────────────────────────────────────
+// Fetches only version metadata from the official repository over HTTPS.
+// Remote code is never downloaded or executed, and no user data is sent.
 const UPDATE_URL = "https://raw.githubusercontent.com/ishatxt/ichess-coach/main/manifest.json";
+const UPDATE_RELEASES_URL = "https://github.com/ishatxt/ichess-coach/releases/latest";
+const UPDATE_ALARM = "checkUpdates";
+const UPDATE_PERIOD_MINUTES = 360; // six hours
+const UPDATE_FETCH_TIMEOUT_MS = 10000;
+const UPDATE_NOTIFICATION_ID = "ichess-update";
+const UPDATE_LOG_PREFIX = "[iChess Updater]";
 
-async function checkForUpdates() {
-  try {
-    const res = await fetch(UPDATE_URL + "?t=" + Date.now());
-    const remote = await res.json();
-    const remoteVersion = remote.version;
-    const localVersion = chrome.runtime.getManifest().version;
+function updateLog(...args) {
+  console.log(UPDATE_LOG_PREFIX, ...args);
+}
 
-    if (remoteVersion !== localVersion) {
-      chrome.storage.local.set({ updateAvailable: true, latestVersion: remoteVersion });
-      chrome.action.setBadgeText({ text: "NEW" });
-      chrome.action.setBadgeBackgroundColor({ color: "#22c55e" });
-    } else {
-      chrome.storage.local.set({ updateAvailable: false, latestVersion: remoteVersion });
-      chrome.action.setBadgeText({ text: "" });
+function updateWarn(...args) {
+  console.warn(UPDATE_LOG_PREFIX, ...args);
+}
+
+// Accepts 1 to 4 numeric segments (Chrome manifest rules), rejects anything
+// else so a malformed remote value is never used as a version.
+function parseVersion(value) {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!/^\d+(\.\d+){0,3}$/.test(trimmed)) return null;
+  const parts = trimmed.split(".").map(Number);
+  if (parts.some((part) => part > 65535)) return null;
+  return parts;
+}
+
+// Numeric comparison, so 1.10.0 counts as newer than 1.9.0.
+// Returns 1 / 0 / -1, or null when either version is missing or malformed.
+function compareVersions(a, b) {
+  const pa = parseVersion(a);
+  const pb = parseVersion(b);
+  if (!pa || !pb) return null;
+  const length = Math.max(pa.length, pb.length);
+  for (let i = 0; i < length; i++) {
+    const diff = (pa[i] || 0) - (pb[i] || 0);
+    if (diff > 0) return 1;
+    if (diff < 0) return -1;
+  }
+  return 0;
+}
+
+function setUpdateBadge(remoteVersion) {
+  const localVersion = chrome.runtime.getManifest().version;
+  chrome.action.setBadgeText({ text: "NEW" });
+  chrome.action.setBadgeBackgroundColor({ color: "#22c55e" });
+  chrome.action.setTitle({
+    title: `${chrome.runtime.getManifest().name}: update ${remoteVersion} available (installed ${localVersion})`,
+  });
+}
+
+function clearUpdateBadge() {
+  chrome.action.setBadgeText({ text: "" });
+  chrome.action.setTitle({ title: chrome.runtime.getManifest().name });
+}
+
+function notifyUpdateAvailable(localVersion, remoteVersion) {
+  if (!chrome.notifications || !chrome.notifications.create) {
+    updateWarn("notifications API unavailable, keeping the badge only");
+    return Promise.resolve(false);
+  }
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (created) => {
+      if (settled) return;
+      settled = true;
+      resolve(created);
+    };
+    try {
+      chrome.notifications.create(
+        UPDATE_NOTIFICATION_ID,
+        {
+          type: "basic",
+          iconUrl: chrome.runtime.getURL("icons/3.png"),
+          title: "iChess update available",
+          message:
+            `Version ${remoteVersion} is available (you have ${localVersion}). ` +
+            "Update your source, then reload iChess from chrome://extensions.",
+          buttons: [{ title: "View release" }],
+          priority: 1,
+        },
+        () => {
+          if (chrome.runtime.lastError) {
+            updateWarn("notification failed:", chrome.runtime.lastError.message);
+            finish(false);
+          } else {
+            finish(true);
+          }
+        },
+      );
+    } catch (e) {
+      updateWarn("notification failed:", e && e.message);
+      finish(false);
     }
+  });
+}
+
+function openUpdateReleasePage() {
+  try {
+    chrome.tabs.create({ url: UPDATE_RELEASES_URL }, () => {
+      if (chrome.runtime.lastError) {
+        updateWarn("could not open release page:", chrome.runtime.lastError.message);
+      }
+    });
   } catch (e) {
-    console.error("Update check failed:", e);
+    updateWarn("could not open release page:", e && e.message);
   }
 }
 
-chrome.runtime.onStartup.addListener(checkForUpdates);
-chrome.runtime.onInstalled.addListener(checkForUpdates);
+if (chrome.notifications) {
+  chrome.notifications.onClicked.addListener((id) => {
+    if (id === UPDATE_NOTIFICATION_ID) openUpdateReleasePage();
+  });
+  chrome.notifications.onButtonClicked.addListener((id) => {
+    if (id === UPDATE_NOTIFICATION_ID) openUpdateReleasePage();
+  });
+}
 
-chrome.alarms.create("checkUpdates", { periodInMinutes: 360 });
+// Re-apply the badge after a browser restart, before the network check runs.
+function restoreUpdateBadge() {
+  chrome.storage.local
+    .get(["updateAvailable", "latestVersion"])
+    .then((result) => {
+      if (!result.updateAvailable) return;
+      const remote = result.latestVersion;
+      if (compareVersions(remote, chrome.runtime.getManifest().version) !== 1) return;
+      setUpdateBadge(remote);
+    })
+    .catch((e) => updateWarn("could not restore badge:", e && e.message));
+}
+
+async function checkForUpdates() {
+  const localVersion = chrome.runtime.getManifest().version;
+
+  let response;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), UPDATE_FETCH_TIMEOUT_MS);
+  try {
+    response = await fetch(UPDATE_URL + "?t=" + Date.now(), {
+      cache: "no-store",
+      signal: controller.signal,
+    });
+  } catch (e) {
+    updateWarn(
+      "check skipped (network):",
+      e && e.name === "AbortError" ? "timeout" : (e && e.message) || e,
+    );
+    return;
+  } finally {
+    clearTimeout(timer);
+  }
+
+  if (!response.ok) {
+    updateWarn("check skipped: HTTP", response.status);
+    return;
+  }
+
+  let remote;
+  try {
+    remote = await response.json();
+  } catch (e) {
+    updateWarn("check skipped: response is not valid JSON");
+    return;
+  }
+
+  const remoteVersion =
+    remote && typeof remote.version === "string" ? remote.version.trim() : "";
+  const order = compareVersions(remoteVersion, localVersion);
+  if (order === null) {
+    updateWarn(
+      "check skipped: remote version missing or invalid:",
+      JSON.stringify(remote && remote.version),
+    );
+    return;
+  }
+
+  if (order > 0) {
+    chrome.storage.local.set({ updateAvailable: true, latestVersion: remoteVersion });
+    setUpdateBadge(remoteVersion);
+
+    let skipNotification = false;
+    try {
+      const stored = await chrome.storage.local.get("ichessNotifiedVersion");
+      skipNotification = stored.ichessNotifiedVersion === remoteVersion;
+    } catch (e) {
+      skipNotification = true;
+      updateWarn("could not read notification state; skipping this notification:", e && e.message);
+    }
+
+    if (!skipNotification) {
+      // Remember the version only once Chrome confirms the notification was
+      // created; a failed attempt must not suppress future attempts.
+      const created = await notifyUpdateAvailable(localVersion, remoteVersion);
+      if (created) {
+        chrome.storage.local.set({ ichessNotifiedVersion: remoteVersion });
+      }
+    }
+    updateLog(`update available: ${localVersion} -> ${remoteVersion}`);
+    return;
+  }
+
+  if (order < 0) {
+    updateLog(`remote ${remoteVersion} is older than installed ${localVersion}; ignoring`);
+  }
+
+  chrome.storage.local.set({ updateAvailable: false, latestVersion: remoteVersion });
+  clearUpdateBadge();
+}
+
+function runUpdateCheck() {
+  checkForUpdates().catch((e) => updateWarn("check failed:", e && e.message));
+}
+
+// Single named alarm: ensured once per service-worker start by the top-level
+// call below, and only created when missing, so restarts never reset the
+// six-hour schedule or create duplicates. The immediate check on install/startup
+// covers the first run; this alarm only drives the repeats.
+function ensureUpdateAlarm() {
+  try {
+    chrome.alarms.get(UPDATE_ALARM, (alarm) => {
+      if (chrome.runtime.lastError) {
+        updateWarn("alarm lookup failed:", chrome.runtime.lastError.message);
+        return;
+      }
+      if (alarm) return;
+      chrome.alarms.create(UPDATE_ALARM, { periodInMinutes: UPDATE_PERIOD_MINUTES });
+      updateLog("periodic check scheduled every 6 hours");
+    });
+  } catch (e) {
+    updateWarn("could not schedule the update check:", e && e.message);
+  }
+}
+
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === "checkUpdates") checkForUpdates();
+  if (alarm.name !== UPDATE_ALARM) return;
+  runUpdateCheck();
 });
+
+chrome.runtime.onInstalled.addListener(() => {
+  runUpdateCheck();
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  runUpdateCheck();
+});
+
+restoreUpdateBadge();
+ensureUpdateAlarm();
